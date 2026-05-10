@@ -63,14 +63,17 @@ export async function POST({ params, request, cookies }) {
 	}
 
 	try {
-		const trips = await getCollection('trips');
 		const tripMembers = await getCollection('tripMembers');
 		const users = await getCollection('users');
 
-		// Check if user is owner
-		const trip = await trips.findOne({ _id: new ObjectId(tripId) });
-		if (!trip || trip.createdBy.toString() !== userId) {
-			return json({ success: false, error: 'Only owner can add members' }, { status: 403 });
+		// Any trip member can invite others
+		const isMember = await tripMembers.findOne({
+			tripId: new ObjectId(tripId),
+			userId: new ObjectId(userId)
+		});
+
+		if (!isMember) {
+			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
 		const { email } = await request.json();

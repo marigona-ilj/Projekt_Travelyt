@@ -92,8 +92,7 @@
 		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
 	{/if}
 
-	{#if isOwner}
-		<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+	<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
 			<h3 class="text-sm font-semibold text-blue-800 mb-3">Invite someone by email</h3>
 			<form onsubmit={inviteMember} class="flex gap-2">
 				<input
@@ -117,7 +116,6 @@
 				<p class="text-green-600 text-sm mt-2">✓ {inviteSuccess}</p>
 			{/if}
 		</div>
-	{/if}
 
 	{#if loading}
 		<div class="text-center py-8">

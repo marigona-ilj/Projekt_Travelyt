@@ -132,7 +132,7 @@
 			{:else if activeTab === 'packing'}
 				<PackingList {tripId} {currentUserId} />
 			{:else if activeTab === 'expenses'}
-				<ExpenseList {tripId} />
+				<ExpenseList {tripId} {currentUserId} />
 			{:else if activeTab === 'members'}
 				<MemberList {tripId} {isOwner} />
 			{/if}
