@@ -22,16 +22,30 @@
 <!-- Diese Vorlage ist für eine README.md im Repository gedacht. Abschnitte mit [Optional] können weggelassen werden, wenn in den Übungen nichts anderes verlangt wird. -->
 
 ## 1. Ausgangslage
-Kurz beschreiben, welches Problem adressiert wird und welches Ergebnis angestrebt ist. Wem nützt die Lösung, wer ist beteiligt oder betroffen?
-- **Problem:** _[Das Problem ist identifiziert, verständlich beschrieben und optional mit Beispielen illustriert]_  
-- **Ziele:** _[stichwortartig oder einige Sätze]_  
-- **Primäre Zielgruppe:** _[kurz beschreiben]_  
+Travelyt adressiert das Problem, dass Reiseplanung häufig unübersichtlich und auf verschiedene Tools verteilt ist. Viele Reisende organisieren ihre Trips über WhatsApp-Chats, Notizen, Excel-Listen, Kalender oder separate Apps für Budget, Aktivitäten und Packlisten. Dadurch können wichtige Informationen verloren gehen, Absprachen unklar bleiben oder Aufgaben vergessen werden. Dieses Problem betrifft sowohl Gruppenreisen als auch Einzelreisen: Während Gruppen vor allem gemeinsame Abstimmung benötigen, brauchen Solo-Reisende eine zentrale Übersicht über ihre Planung.
+
+Das angestrebte Ergebnis ist ein funktionaler Web-Prototyp, der die Reiseplanung an einem Ort bündelt. Nutzerinnen und Nutzer sollen Trips erstellen, Aktivitäten planen, Ausgaben erfassen und Packlisten verwalten können. Bei gemeinsamen Reisen sollen mehrere Personen einen Trip einsehen und bearbeiten können.
+
+- **Problem:** Reiseplanung ist oft auf mehrere Apps, Chats oder Dokumente verteilt. Dadurch entstehen Unübersichtlichkeit, vergessene Aufgaben und zusätzlicher Koordinationsaufwand. Bei Gruppenreisen kommt hinzu, dass Aktivitäten, Ausgaben und Packlisten gemeinsam abgestimmt werden müssen. Bei Solo-Reisen fehlt häufig eine zentrale Übersicht über alle wichtigen Reiseinformationen.
+ 
+- **Ziele:**  Ziel des Projekts ist die Entwicklung einer Web-App, mit der Reisen strukturiert geplant und verwaltet werden können. Die App soll es ermöglichen, Trips zu erstellen, Aktivitäten festzuhalten, Ausgaben zu erfassen und Packlisten zu nutzen. Für Gruppenreisen soll zusätzlich eine gemeinsame Bearbeitung möglich sein, damit alle Beteiligten Zugriff auf dieselben Informationen haben. Der Prototyp soll die wichtigsten Workflows einer digitalen Reiseplanung abbilden und als online zugängliche SvelteKit-Anwendung umgesetzt werden.
+
+- **Primäre Zielgruppe:**  Die primäre Zielgruppe sind Personen, die ihre Reisen zentral und übersichtlich planen möchten. Dazu gehören sowohl Solo-Reisende als auch Personen, die gemeinsam mit Freunden, Familie oder Partnern reisen und Aktivitäten, Kosten sowie Vorbereitungsschritte koordinieren wollen.
+
 - **Weitere Stakeholder [Optional]:** _[z. B. Verwaltung, Geschäftsleitung]_  
 
 
 ## 2. Lösungsidee
-Beschreibt die Lösungsidee.
-- **Kernfunktionalität:** _[Workflows kurz nennen und optional illustrieren]_  
+Travelyt ist eine Web-App zur zentralen Organisation von Reisen. Die Lösungsidee besteht darin, verschiedene Planungsbereiche wie Reiseübersicht, Aktivitäten, Packlisten und Ausgaben in einer Anwendung zusammenzuführen. Dadurch sollen Reisende nicht mehr zwischen mehreren Tools, Chats oder Dokumenten wechseln müssen. Die App soll sowohl für Solo-Reisende als auch für Gruppenreisen geeignet sein. Bei Gruppenreisen steht zusätzlich die gemeinsame Bearbeitung eines Trips im Vordergrund.
+
+- **Kernfunktionalität:**  Die zentrale Funktion der App ist das Erstellen und Verwalten von Trips. Nutzer können einen neuen Trip mit grundlegenden Informationen wie Reiseziel, Zeitraum und Beschreibung anlegen. Bei Bedarf kann ein Trip mit Mitreisenden geteilt werden, sodass mehrere Personen gemeinsam darauf zugreifen und Inhalte bearbeiten können.
+
+  Innerhalb eines Trips können Aktivitäten geplant und verwaltet werden. Dazu gehören beispielsweise geplante Ausflüge, Restaurantbesuche, Sehenswürdigkeiten oder andere Programmpunkte. Jede Aktivität kann mit Informationen wie Titel, Datum, Uhrzeit, Ort und Beschreibung ergänzt werden.
+
+  Zusätzlich bietet Travelyt eine Packlisten-Funktion. Nutzer können Packeinträge erfassen, abhaken und organisieren. Die Packliste soll sowohl für persönliche Vorbereitung als auch für gemeinsame Reisegruppen nützlich sein, damit wichtige Gegenstände nicht vergessen werden.
+
+  Ein weiterer wichtiger Bestandteil ist die Verwaltung von Ausgaben. Reisende können Kosten erfassen, zum Beispiel für Unterkunft, Transport, Essen oder Aktivitäten. Besonders bei Gruppenreisen soll die App dabei helfen, Ausgaben transparent zu dokumentieren und automatisch zu berechnen, wer wem wie viel schuldet. Dadurch wird die Kostenaufteilung übersichtlicher und fairer.
+
 - **Annahmen [Optional]:** _[welche Hypothesen werden geprüft?]_
 - **Abgrenzung [Optional]:** _[Was gehört explizit nicht zum Umfang?]_
 
