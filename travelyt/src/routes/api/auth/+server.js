@@ -31,7 +31,12 @@ export async function POST({ request, url }) {
 			return json({ success: false, error: result.error }, { status: 400 });
 		}
 
-		return json({ success: true, message: 'Registration successful' });
+		const response = json({ success: true, message: 'Registration successful' });
+		response.headers.set(
+			'Set-Cookie',
+			`userId=${result.userId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${60 * 60 * 24 * 30}`
+		);
+		return response;
 	} else if (action === 'login') {
 		const { email, password } = await request.json();
 
