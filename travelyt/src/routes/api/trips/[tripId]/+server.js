@@ -41,6 +41,7 @@ export async function GET({ params, cookies }) {
 				description: trip.description,
 				startDate: trip.startDate,
 				endDate: trip.endDate,
+				currency: trip.currency || 'CHF',
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt,
 				updatedAt: trip.updatedAt

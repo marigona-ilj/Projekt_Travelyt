@@ -2,7 +2,7 @@
 	import { formatCurrency } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 
-	let { tripId, currentUserId } = $props();
+	let { tripId, currentUserId, currency = 'CHF' } = $props();
 
 	let expenses = $state([]);
 	let members = $state([]);
@@ -13,7 +13,7 @@
 	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '' });
 	let formLoading = $state(false);
 
-	const fmt = (n) => formatCurrency(n, 'EUR');
+	const fmt = (n) => formatCurrency(n, currency);
 
 	let memberMap = $derived(
 		Object.fromEntries(members.map((m) => [m.userId, m.name]))
@@ -196,7 +196,7 @@
 					<input
 						type="number"
 						bind:value={newExpense.amount}
-						placeholder="Amount (€)"
+						placeholder="Amount ({currency})"
 						step="0.01"
 						min="0"
 						class="px-3 py-2 border border-gray-300 rounded text-sm"

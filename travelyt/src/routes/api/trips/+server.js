@@ -37,6 +37,7 @@ export async function GET({ cookies }) {
 				startDate: trip.startDate,
 				endDate: trip.endDate,
 				description: trip.description,
+				currency: trip.currency || 'CHF',
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt
 			}))
@@ -73,6 +74,7 @@ export async function POST({ request, cookies }) {
 			description: tripData.description || '',
 			startDate: new Date(tripData.startDate),
 			endDate: new Date(tripData.endDate),
+			currency: tripData.currency || 'CHF',
 			createdBy: new ObjectId(userId),
 			createdAt: new Date(),
 			updatedAt: new Date()
