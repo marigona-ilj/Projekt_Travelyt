@@ -9,6 +9,11 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''"
 	},
+	"dependencies": {
+		"mongodb": "^6.0.0",
+		"dotenv": "^16.4.5",
+		"bcryptjs": "^2.4.3"
+	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/kit": "^2.57.0",
