@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { createUser, authenticateUser } from '$lib/server/auth.js';
+import { createUser, authenticateUser, getUserById } from '$lib/server/auth.js';
 import { isValidEmail, isValidPassword } from '$lib/server/validators.js';
 
 export async function POST({ request, url }) {
@@ -72,5 +72,6 @@ export async function GET({ cookies }) {
 		return json({ authenticated: false });
 	}
 
-	return json({ authenticated: true, userId });
+	const user = await getUserById(userId);
+	return json({ authenticated: true, userId, user });
 }
