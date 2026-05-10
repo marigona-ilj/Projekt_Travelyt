@@ -97,7 +97,7 @@ Fasst die technische Realisierung zusammen.
 Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 > **Hinweis:** Jede Erweiterung ist separat nach dem folgenden Schema zu beschreiben.
 
-### _[4.x Kurzbeschreibung / Titel]_  
+### _[4.x Kurzbeschreibung / Titel]_Budget-Aufteilung: Wer schuldet wem?  
 - **Beschreibung & Nutzen:** _[Was wurde erweitert? Warum?]_  
 - **Wo umgesetzt:** _[Wie und wo wurde es gemacht? Frontend, Backend, Datenbank?]_  
 - **Referenz:** _[Wo wird die Erweiterung auch noch beschrieben, z.B. Screenshot oder Beschreibung in einem anderen Kapitel]_  
