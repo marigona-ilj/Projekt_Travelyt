@@ -5,6 +5,7 @@
 	import ActivityList from '$lib/components/ActivityList.svelte';
 	import ExpenseList from '$lib/components/ExpenseList.svelte';
 	import PackingList from '$lib/components/PackingList.svelte';
+	import MemberList from '$lib/components/MemberList.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 
@@ -13,9 +14,14 @@
 	let loading = $state(true);
 	let error = $state('');
 	let activeTab = $state('activities');
+	let currentUserId = $state('');
+	let isOwner = $derived(trip !== null && trip.createdBy === currentUserId);
 
 	onMount(async () => {
 		tripId = $page.params.tripId;
+		const authRes = await fetch('/api/auth');
+		const authData = await authRes.json();
+		currentUserId = authData.userId || '';
 		await fetchTrip();
 	});
 
@@ -98,7 +104,7 @@
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300">
-				{#each ['activities', 'packing', 'expenses'] as tab}
+				{#each ['activities', 'packing', 'expenses', 'members'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
@@ -109,8 +115,10 @@
 							🎯 Activities
 						{:else if tab === 'packing'}
 							🎒 Packing
-						{:else}
+						{:else if tab === 'expenses'}
 							💰 Budget
+						{:else}
+							👥 Members
 						{/if}
 					</button>
 				{/each}
@@ -125,6 +133,8 @@
 				<PackingList {tripId} />
 			{:else if activeTab === 'expenses'}
 				<ExpenseList {tripId} />
+			{:else if activeTab === 'members'}
+				<MemberList {tripId} {isOwner} />
 			{/if}
 		</div>
 	{/if}
