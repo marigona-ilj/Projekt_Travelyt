@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/stores';
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 	import { onMount } from 'svelte';
@@ -14,7 +15,7 @@
 		isAuthenticated = data.authenticated;
 		loading = false;
 
-		if (!isAuthenticated && !window.location.pathname.includes('auth')) {
+		if (!isAuthenticated && !$page.url.pathname.includes('auth')) {
 			goto('/auth');
 		}
 	});
@@ -53,6 +54,6 @@
 			<p class="text-gray-600">Loading...</p>
 		</div>
 	</div>
-{:else if isAuthenticated}
+{:else if isAuthenticated || $page.url.pathname.includes('auth')}
 	{@render children()}
 {/if}
