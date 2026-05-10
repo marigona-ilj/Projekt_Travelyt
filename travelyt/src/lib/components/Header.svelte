@@ -16,10 +16,10 @@
 
 <header class="bg-white shadow-sm">
 	<div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-		<div class="flex items-center gap-2">
+		<a href="/trips" class="flex items-center gap-2 no-underline">
 			<div class="text-blue-600"><Plane size={28} /></div>
 			<span class="text-2xl font-bold text-gray-800">Travelyt</span>
-		</div>
+		</a>
 
 		<nav class="flex items-center gap-1">
 			{#each navLinks as link}
