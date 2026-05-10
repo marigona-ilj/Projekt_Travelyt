@@ -1,5 +1,6 @@
 <script>
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
+	import { Calendar, Clock, MapPin } from 'lucide-svelte';
 
 	let { trip, onclick } = $props();
 
@@ -34,8 +35,8 @@
 		</div>
 		<p class="text-gray-600 mb-3">{trip.destination}</p>
 		<div class="text-sm text-gray-500 mb-3">
-			<p>📅 {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
-			<p class="mt-1">⏱ {daysBetween(trip.startDate, trip.endDate)} days</p>
+			<p class="flex items-center gap-1"><Calendar size={14} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
+			<p class="flex items-center gap-1 mt-1"><Clock size={14} /> {daysBetween(trip.startDate, trip.endDate)} days</p>
 		</div>
 		{#if trip.description}
 			<p class="text-sm text-gray-600 line-clamp-2">{trip.description}</p>

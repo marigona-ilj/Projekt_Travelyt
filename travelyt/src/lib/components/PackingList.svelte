@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { Users, Lock } from 'lucide-svelte';
 
 	let { tripId, currentUserId } = $props();
 
@@ -201,7 +202,7 @@
 					<label class="flex items-center gap-2 cursor-pointer select-none">
 						<input type="checkbox" bind:checked={newItem.isPrivate} class="w-4 h-4" />
 						<span class="text-sm text-gray-700">
-							🔒 Keep private — only visible to me
+							<Lock size={14} /> Keep private — only visible to me
 						</span>
 					</label>
 				</div>
@@ -231,7 +232,7 @@
 		<!-- Shared packing list -->
 		<div class="mb-8">
 			<div class="flex items-center gap-2 mb-3">
-				<span class="text-lg">👥</span>
+				<Users size={20} class="text-gray-600" />
 				<h3 class="text-lg font-bold text-gray-700">Shared List</h3>
 				<span class="text-sm text-gray-400 ml-auto">{sharedPackedCount} of {sharedItems.length} packed</span>
 			</div>
@@ -287,7 +288,7 @@
 		<!-- Private packing list -->
 		<div class="border-t border-gray-200 pt-6">
 			<div class="flex items-center gap-2 mb-3">
-				<span class="text-lg">🔒</span>
+				<Lock size={20} class="text-gray-600" />
 				<h3 class="text-lg font-bold text-gray-700">My Private List</h3>
 				<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-1">Only visible to you</span>
 				<span class="text-sm text-gray-400 ml-auto">{privatePackedCount} of {privateItems.length} packed</span>

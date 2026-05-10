@@ -37,7 +37,9 @@ export async function GET({ params, cookies }) {
 				id: activity._id.toString(),
 				title: activity.title,
 				description: activity.description,
-				date: activity.date,
+				date: activity.date instanceof Date
+					? activity.date.toISOString().split('T')[0]
+					: String(activity.date).split('T')[0],
 				time: activity.time,
 				location: activity.location,
 				category: activity.category,

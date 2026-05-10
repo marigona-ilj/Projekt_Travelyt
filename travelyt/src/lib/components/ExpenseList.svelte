@@ -1,6 +1,7 @@
 <script>
 	import { formatCurrency } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
+	import { Wallet, ArrowRightLeft } from 'lucide-svelte';
 
 	let { tripId, currentUserId, currency = 'CHF' } = $props();
 
@@ -275,7 +276,7 @@
 		{#if settlement}
 			<div class="border-t border-gray-200 pt-6">
 				<!-- Who paid what -->
-				<h3 class="text-lg font-bold text-gray-700 mb-3">💰 Who paid what</h3>
+				<h3 class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2"><Wallet size={18} /> Who paid what</h3>
 				<div class="bg-gray-50 rounded-lg overflow-hidden mb-6">
 					<table class="w-full text-sm">
 						<thead>
@@ -304,7 +305,7 @@
 				</div>
 
 				<!-- Settlements -->
-				<h3 class="text-lg font-bold text-gray-700 mb-3">🤝 Who owes whom</h3>
+				<h3 class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2"><ArrowRightLeft size={18} /> Who owes whom</h3>
 				{#if settlement.settlements.length === 0}
 					<p class="text-green-600 text-sm font-medium">Everyone is even — nothing to settle!</p>
 				{:else}

@@ -8,6 +8,7 @@
 	import MemberList from '$lib/components/MemberList.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users } from 'lucide-svelte';
 
 	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
 
@@ -122,9 +123,9 @@
 			<div class="flex justify-between items-start mb-4">
 				<div>
 					<h1 class="text-4xl font-bold text-gray-800 mb-2">{trip.title}</h1>
-					<p class="text-lg text-gray-600 mb-2">📍 {trip.destination}</p>
-					<p class="text-gray-600">
-						📅 {formatDate(trip.startDate)} - {formatDate(trip.endDate)} ({daysBetween(
+					<p class="text-lg text-gray-600 mb-2 flex items-center gap-1"><MapPin size={18} /> {trip.destination}</p>
+					<p class="text-gray-600 flex items-center gap-1">
+						<Calendar size={16} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)} ({daysBetween(
 							trip.startDate,
 							trip.endDate
 						)} days)
@@ -258,13 +259,13 @@
 							: 'text-gray-600 hover:text-gray-800'}"
 					>
 						{#if tab === 'activities'}
-							🎯 Activities
+							<span class="flex items-center gap-1"><Target size={15} /> Activities</span>
 						{:else if tab === 'packing'}
-							🎒 Packing
+							<span class="flex items-center gap-1"><Package size={15} /> Packing</span>
 						{:else if tab === 'expenses'}
-							💰 Budget
+							<span class="flex items-center gap-1"><Wallet size={15} /> Budget</span>
 						{:else}
-							👥 Members
+							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
 						{/if}
 					</button>
 				{/each}
@@ -274,7 +275,7 @@
 		<!-- Tab Content -->
 		<div class="bg-white rounded-lg shadow-md p-6">
 			{#if activeTab === 'activities'}
-				<ActivityList {tripId} />
+				<ActivityList {tripId} startDate={trip.startDate} endDate={trip.endDate} />
 			{:else if activeTab === 'packing'}
 				<PackingList {tripId} {currentUserId} />
 			{:else if activeTab === 'expenses'}
