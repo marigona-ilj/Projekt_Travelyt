@@ -88,6 +88,7 @@ export async function PUT({ params, request, cookies }) {
 					description: updateData.description || '',
 					startDate: new Date(updateData.startDate),
 					endDate: new Date(updateData.endDate),
+					currency: updateData.currency || 'CHF',
 					updatedAt: new Date()
 				}
 			}

@@ -106,6 +106,40 @@
 		}
 	}
 
+	let editingId = $state(null);
+	let editingValue = $state('');
+	let editingCategory = $state('');
+
+	function startEdit(item) {
+		editingId = item.id;
+		editingValue = item.item;
+		editingCategory = item.category;
+	}
+
+	function cancelEdit() {
+		editingId = null;
+	}
+
+	async function saveEdit(id) {
+		if (!editingValue.trim()) return;
+		try {
+			const response = await fetch(`/api/trips/${tripId}/packing/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ item: editingValue.trim(), category: editingCategory })
+			});
+			const data = await response.json();
+			if (data.success) {
+				editingId = null;
+				await fetchItems();
+			} else {
+				error = data.error || 'Failed to update';
+			}
+		} catch (err) {
+			error = 'Network error';
+		}
+	}
+
 	async function deleteItem(id) {
 		if (confirm('Delete this item?')) {
 			try {
@@ -218,16 +252,28 @@
 											onchange={() => togglePacked(item.id, item.packed)}
 											class="w-4 h-4 cursor-pointer"
 										/>
-										<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
-											{item.item}
-										</span>
-										{#if item.createdBy === currentUserId || !item.createdBy}
-											<button
-												onclick={() => deleteItem(item.id)}
-												class="text-red-400 hover:text-red-600 text-sm"
-											>
-												✕
-											</button>
+										{#if editingId === item.id}
+											<input
+												type="text"
+												bind:value={editingValue}
+												onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') cancelEdit(); }}
+												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm"
+											/>
+											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 rounded text-xs">
+												{#each categories as cat}
+													<option value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+												{/each}
+											</select>
+											<button onclick={() => saveEdit(item.id)} class="text-green-600 hover:text-green-800 text-sm font-bold">✓</button>
+											<button onclick={cancelEdit} class="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+										{:else}
+											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+												{item.item}
+											</span>
+											{#if item.createdBy === currentUserId || !item.createdBy}
+												<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
+												<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+											{/if}
 										{/if}
 									</div>
 								{/each}
@@ -263,15 +309,27 @@
 											onchange={() => togglePacked(item.id, item.packed)}
 											class="w-4 h-4 cursor-pointer"
 										/>
-										<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
-											{item.item}
-										</span>
-										<button
-											onclick={() => deleteItem(item.id)}
-											class="text-red-400 hover:text-red-600 text-sm"
-										>
-											✕
-										</button>
+										{#if editingId === item.id}
+											<input
+												type="text"
+												bind:value={editingValue}
+												onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') cancelEdit(); }}
+												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm"
+											/>
+											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 rounded text-xs">
+												{#each categories as cat}
+													<option value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+												{/each}
+											</select>
+											<button onclick={() => saveEdit(item.id)} class="text-green-600 hover:text-green-800 text-sm font-bold">✓</button>
+											<button onclick={cancelEdit} class="text-gray-400 hover:text-gray-600 text-sm">✕</button>
+										{:else}
+											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+												{item.item}
+											</span>
+											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
+											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+										{/if}
 									</div>
 								{/each}
 							</div>

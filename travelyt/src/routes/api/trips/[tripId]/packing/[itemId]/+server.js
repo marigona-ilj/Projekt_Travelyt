@@ -25,11 +25,30 @@ export async function PUT({ params, request, cookies }) {
 			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
-		const { packed } = await request.json();
+		const body = await request.json();
+
+		// Only the creator can rename/recategorise; anyone can toggle packed
+		if (body.item !== undefined || body.category !== undefined) {
+			const item = await packingItems.findOne({
+				_id: new ObjectId(itemId),
+				tripId: new ObjectId(tripId)
+			});
+			if (!item) {
+				return json({ success: false, error: 'Item not found' }, { status: 404 });
+			}
+			if (item.createdBy && item.createdBy.toString() !== userId) {
+				return json({ success: false, error: 'You can only edit your own items' }, { status: 403 });
+			}
+		}
+
+		const $set = { updatedAt: new Date() };
+		if (body.packed !== undefined) $set.packed = body.packed;
+		if (body.item !== undefined) $set.item = body.item;
+		if (body.category !== undefined) $set.category = body.category;
 
 		const result = await packingItems.updateOne(
 			{ _id: new ObjectId(itemId), tripId: new ObjectId(tripId) },
-			{ $set: { packed: packed || false, updatedAt: new Date() } }
+			{ $set }
 		);
 
 		if (result.matchedCount === 0) {
