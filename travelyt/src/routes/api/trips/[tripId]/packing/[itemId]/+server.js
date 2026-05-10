@@ -2,7 +2,8 @@ import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 
-// Update packing item (mark as packed/unpacked)
+// Any trip member can toggle packed. Private items are invisible to non-owners so
+// they can only be toggled by the owner in practice.
 export async function PUT({ params, request, cookies }) {
 	const userId = cookies.get('userId');
 	const { tripId, itemId } = params;
@@ -15,7 +16,6 @@ export async function PUT({ params, request, cookies }) {
 		const tripMembers = await getCollection('tripMembers');
 		const packingItems = await getCollection('packingItems');
 
-		// Verify user is member of trip
 		const isMember = await tripMembers.findOne({
 			tripId: new ObjectId(tripId),
 			userId: new ObjectId(userId)
@@ -43,7 +43,7 @@ export async function PUT({ params, request, cookies }) {
 	}
 }
 
-// Delete packing item
+// Only the item creator can delete their item
 export async function DELETE({ params, cookies }) {
 	const userId = cookies.get('userId');
 	const { tripId, itemId } = params;
@@ -56,7 +56,6 @@ export async function DELETE({ params, cookies }) {
 		const tripMembers = await getCollection('tripMembers');
 		const packingItems = await getCollection('packingItems');
 
-		// Verify user is member of trip
 		const isMember = await tripMembers.findOne({
 			tripId: new ObjectId(tripId),
 			userId: new ObjectId(userId)
@@ -66,14 +65,21 @@ export async function DELETE({ params, cookies }) {
 			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
-		const result = await packingItems.deleteOne({
+		const item = await packingItems.findOne({
 			_id: new ObjectId(itemId),
 			tripId: new ObjectId(tripId)
 		});
 
-		if (result.deletedCount === 0) {
+		if (!item) {
 			return json({ success: false, error: 'Item not found' }, { status: 404 });
 		}
+
+		// If item has an owner, only they can delete it
+		if (item.createdBy && item.createdBy.toString() !== userId) {
+			return json({ success: false, error: 'You can only delete your own items' }, { status: 403 });
+		}
+
+		await packingItems.deleteOne({ _id: new ObjectId(itemId) });
 
 		return json({ success: true, message: 'Item deleted' });
 	} catch (error) {

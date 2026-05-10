@@ -3,7 +3,6 @@ import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validatePackingItem } from '$lib/server/validators.js';
 
-// Get all packing items for trip
 export async function GET({ params, cookies }) {
 	const userId = cookies.get('userId');
 	const { tripId } = params;
@@ -16,7 +15,6 @@ export async function GET({ params, cookies }) {
 		const tripMembers = await getCollection('tripMembers');
 		const packingItems = await getCollection('packingItems');
 
-		// Verify user is member of trip
 		const isMember = await tripMembers.findOne({
 			tripId: new ObjectId(tripId),
 			userId: new ObjectId(userId)
@@ -26,8 +24,15 @@ export async function GET({ params, cookies }) {
 			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
+		// Return shared items to everyone, private items only to their owner
 		const items = await packingItems
-			.find({ tripId: new ObjectId(tripId) })
+			.find({
+				tripId: new ObjectId(tripId),
+				$or: [
+					{ isPrivate: { $ne: true } },
+					{ isPrivate: true, createdBy: new ObjectId(userId) }
+				]
+			})
 			.sort({ category: 1, item: 1 })
 			.toArray();
 
@@ -38,6 +43,8 @@ export async function GET({ params, cookies }) {
 				item: item.item,
 				category: item.category,
 				packed: item.packed || false,
+				isPrivate: item.isPrivate || false,
+				createdBy: item.createdBy?.toString() || '',
 				createdAt: item.createdAt
 			}))
 		});
@@ -47,7 +54,6 @@ export async function GET({ params, cookies }) {
 	}
 }
 
-// Create packing item
 export async function POST({ params, request, cookies }) {
 	const userId = cookies.get('userId');
 	const { tripId } = params;
@@ -67,7 +73,6 @@ export async function POST({ params, request, cookies }) {
 		const tripMembers = await getCollection('tripMembers');
 		const packingItems = await getCollection('packingItems');
 
-		// Verify user is member of trip
 		const isMember = await tripMembers.findOne({
 			tripId: new ObjectId(tripId),
 			userId: new ObjectId(userId)
@@ -82,6 +87,8 @@ export async function POST({ params, request, cookies }) {
 			item: itemData.item,
 			category: itemData.category,
 			packed: false,
+			isPrivate: itemData.isPrivate === true,
+			createdBy: new ObjectId(userId),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
@@ -93,6 +100,8 @@ export async function POST({ params, request, cookies }) {
 					id: result.insertedId.toString(),
 					...itemData,
 					packed: false,
+					isPrivate: itemData.isPrivate === true,
+					createdBy: userId,
 					createdAt: new Date()
 				}
 			},

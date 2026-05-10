@@ -1,19 +1,38 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let { tripId } = $props();
+	let { tripId, currentUserId } = $props();
 
 	let items = $state([]);
 	let loading = $state(true);
 	let error = $state('');
 	let showNewItemForm = $state(false);
-	let newItem = $state({
-		item: '',
-		category: 'clothing'
-	});
+	let newItem = $state({ item: '', category: 'clothing', isPrivate: false });
 	let formLoading = $state(false);
 
 	const categories = ['clothing', 'toiletries', 'documents', 'electronics', 'sports', 'other'];
+
+	let sharedItems = $derived(items.filter((i) => !i.isPrivate));
+	let privateItems = $derived(items.filter((i) => i.isPrivate));
+
+	let groupedShared = $derived(
+		sharedItems.reduce((acc, item) => {
+			if (!acc[item.category]) acc[item.category] = [];
+			acc[item.category].push(item);
+			return acc;
+		}, {})
+	);
+
+	let groupedPrivate = $derived(
+		privateItems.reduce((acc, item) => {
+			if (!acc[item.category]) acc[item.category] = [];
+			acc[item.category].push(item);
+			return acc;
+		}, {})
+	);
+
+	let sharedPackedCount = $derived(sharedItems.filter((i) => i.packed).length);
+	let privatePackedCount = $derived(privateItems.filter((i) => i.packed).length);
 
 	onMount(async () => {
 		await fetchItems();
@@ -55,7 +74,7 @@
 			const data = await response.json();
 
 			if (data.success) {
-				newItem = { item: '', category: 'clothing' };
+				newItem = { item: '', category: 'clothing', isPrivate: false };
 				showNewItemForm = false;
 				await fetchItems();
 			} else {
@@ -105,21 +124,11 @@
 			}
 		}
 	}
-
-	let packedCount = $derived(items.filter((i) => i.packed).length);
-	let grouped = $derived(items.reduce((acc, item) => {
-		if (!acc[item.category]) acc[item.category] = [];
-		acc[item.category].push(item);
-		return acc;
-	}, {}));
 </script>
 
 <div>
 	<div class="flex justify-between items-center mb-4">
-		<div>
-			<h2 class="text-2xl font-bold text-gray-800">Packing List</h2>
-			<p class="text-sm text-gray-600">{packedCount} of {items.length} packed</p>
-		</div>
+		<h2 class="text-2xl font-bold text-gray-800">Packing List</h2>
 		<button
 			onclick={() => (showNewItemForm = !showNewItemForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
@@ -129,13 +138,11 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">
-			{error}
-		</div>
+		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	{#if showNewItemForm}
-		<div class="bg-gray-50 rounded-lg p-4 mb-4">
+		<div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
 			<form onsubmit={createItem}>
 				<div class="mb-3">
 					<input
@@ -156,11 +163,19 @@
 						{/each}
 					</select>
 				</div>
+				<div class="mb-3">
+					<label class="flex items-center gap-2 cursor-pointer select-none">
+						<input type="checkbox" bind:checked={newItem.isPrivate} class="w-4 h-4" />
+						<span class="text-sm text-gray-700">
+							🔒 Keep private — only visible to me
+						</span>
+					</label>
+				</div>
 				<div class="flex gap-2">
 					<button
 						type="submit"
 						disabled={formLoading}
-						class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
+						class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm"
 					>
 						{formLoading ? 'Adding...' : 'Add'}
 					</button>
@@ -178,36 +193,92 @@
 
 	{#if loading}
 		<p class="text-gray-600">Loading items...</p>
-	{:else if items.length === 0}
-		<p class="text-gray-600">No items yet. Start packing!</p>
 	{:else}
-		<div class="space-y-4">
-			{#each Object.entries(grouped) as [category, categoryItems]}
-				<div>
-					<h3 class="font-semibold text-gray-700 capitalize mb-2">{category}</h3>
-					<div class="space-y-1">
-						{#each categoryItems as item}
-							<div class="flex items-center gap-2 bg-gray-50 rounded p-2">
-								<input
-									type="checkbox"
-									checked={item.packed}
-									onchange={() => togglePacked(item.id, item.packed)}
-									class="w-4 h-4 cursor-pointer"
-								/>
-								<span class={item.packed ? 'line-through text-gray-500' : 'text-gray-800'}>
-									{item.item}
-								</span>
-								<button
-									onclick={() => deleteItem(item.id)}
-									class="ml-auto text-red-600 hover:text-red-800 text-sm"
-								>
-									✕
-								</button>
+		<!-- Shared packing list -->
+		<div class="mb-8">
+			<div class="flex items-center gap-2 mb-3">
+				<span class="text-lg">👥</span>
+				<h3 class="text-lg font-bold text-gray-700">Shared List</h3>
+				<span class="text-sm text-gray-400 ml-auto">{sharedPackedCount} of {sharedItems.length} packed</span>
+			</div>
+
+			{#if sharedItems.length === 0}
+				<p class="text-gray-400 text-sm pl-1">No shared items yet.</p>
+			{:else}
+				<div class="space-y-4">
+					{#each Object.entries(groupedShared) as [category, categoryItems]}
+						<div>
+							<h4 class="font-semibold text-gray-600 capitalize text-sm mb-1">{category}</h4>
+							<div class="space-y-1">
+								{#each categoryItems as item}
+									<div class="flex items-center gap-2 bg-gray-50 rounded p-2">
+										<input
+											type="checkbox"
+											checked={item.packed}
+											onchange={() => togglePacked(item.id, item.packed)}
+											class="w-4 h-4 cursor-pointer"
+										/>
+										<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+											{item.item}
+										</span>
+										{#if item.createdBy === currentUserId || !item.createdBy}
+											<button
+												onclick={() => deleteItem(item.id)}
+												class="text-red-400 hover:text-red-600 text-sm"
+											>
+												✕
+											</button>
+										{/if}
+									</div>
+								{/each}
 							</div>
-						{/each}
-					</div>
+						</div>
+					{/each}
 				</div>
-			{/each}
+			{/if}
+		</div>
+
+		<!-- Private packing list -->
+		<div class="border-t border-gray-200 pt-6">
+			<div class="flex items-center gap-2 mb-3">
+				<span class="text-lg">🔒</span>
+				<h3 class="text-lg font-bold text-gray-700">My Private List</h3>
+				<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-1">Only visible to you</span>
+				<span class="text-sm text-gray-400 ml-auto">{privatePackedCount} of {privateItems.length} packed</span>
+			</div>
+
+			{#if privateItems.length === 0}
+				<p class="text-gray-400 text-sm pl-1">No private items yet. Add items with "Keep private" checked.</p>
+			{:else}
+				<div class="space-y-4">
+					{#each Object.entries(groupedPrivate) as [category, categoryItems]}
+						<div>
+							<h4 class="font-semibold text-gray-600 capitalize text-sm mb-1">{category}</h4>
+							<div class="space-y-1">
+								{#each categoryItems as item}
+									<div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded p-2">
+										<input
+											type="checkbox"
+											checked={item.packed}
+											onchange={() => togglePacked(item.id, item.packed)}
+											class="w-4 h-4 cursor-pointer"
+										/>
+										<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+											{item.item}
+										</span>
+										<button
+											onclick={() => deleteItem(item.id)}
+											class="text-red-400 hover:text-red-600 text-sm"
+										>
+											✕
+										</button>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{/if}
 </div>
