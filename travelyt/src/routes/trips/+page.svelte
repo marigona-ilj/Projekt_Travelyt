@@ -4,18 +4,18 @@
 	import TripCard from '$lib/components/TripCard.svelte';
 	import { onMount } from 'svelte';
 
-	let trips = [];
-	let loading = true;
-	let error = '';
-	let showNewTripForm = false;
-	let newTrip = {
+	let trips = $state([]);
+	let loading = $state(true);
+	let error = $state('');
+	let showNewTripForm = $state(false);
+	let newTrip = $state({
 		title: '',
 		destination: '',
 		startDate: '',
 		endDate: '',
 		description: ''
-	};
-	let formLoading = false;
+	});
+	let formLoading = $state(false);
 
 	onMount(async () => {
 		await fetchTrips();
@@ -37,7 +37,8 @@
 		}
 	}
 
-	async function createTrip() {
+	async function createTrip(event) {
+		if (event?.preventDefault) event.preventDefault();
 		if (!newTrip.title || !newTrip.destination || !newTrip.startDate || !newTrip.endDate) {
 			error = 'Please fill in all required fields';
 			return;
@@ -89,7 +90,7 @@
 			<p class="text-gray-600 mt-2">Plan and manage your travel adventures</p>
 		</div>
 		<button
-			on:click={() => (showNewTripForm = !showNewTripForm)}
+			onclick={() => (showNewTripForm = !showNewTripForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition"
 		>
 			+ New Trip
@@ -105,7 +106,7 @@
 	{#if showNewTripForm}
 		<div class="bg-white rounded-lg shadow-md p-6 mb-8">
 			<h2 class="text-2xl font-bold mb-4 text-gray-800">Create New Trip</h2>
-			<form on:submit|preventDefault={createTrip}>
+			<form onsubmit={createTrip}>
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 					<div>
 						<label for="title" class="block text-sm font-medium text-gray-700 mb-1">Trip Title</label>
@@ -162,7 +163,7 @@
 						placeholder="Add notes about your trip..."
 						rows="3"
 						class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-					/>
+					></textarea>
 				</div>
 
 				<div class="flex gap-2">
@@ -175,7 +176,7 @@
 					</button>
 					<button
 						type="button"
-						on:click={() => (showNewTripForm = false)}
+						onclick={() => (showNewTripForm = false)}
 						class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg"
 					>
 						Cancel
@@ -197,7 +198,7 @@
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each trips as trip (trip.id)}
-				<TripCard {trip} on:click={() => openTrip(trip.id)} />
+				<TripCard {trip} onclick={() => openTrip(trip.id)}></TripCard>
 			{/each}
 		</div>
 	{/if}

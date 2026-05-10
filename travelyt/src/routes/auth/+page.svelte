@@ -1,16 +1,15 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { writable } from 'svelte/store';
 
-	let email = '';
-	let password = '';
-	let name = '';
-	let confirmPassword = '';
-	let isLogin = true;
-	let loading = false;
-	let error = '';
-
-	async function handleSubmit() {
+let email = $state('');
+let password = $state('');
+let name = $state('');
+let confirmPassword = $state('');
+let isLogin = $state(true);
+let loading = $state(false);
+let error = $state('');
+	async function handleSubmit(event) {
+		event?.preventDefault?.();
 		error = '';
 		loading = true;
 
@@ -65,7 +64,7 @@
 			{/if}
 		</p>
 
-		<form on:submit|preventDefault={handleSubmit}>
+		<form onsubmit={handleSubmit}>
 			{#if error}
 				<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
 					{error}
@@ -125,7 +124,7 @@
 					/>
 				</div>
 			{:else}
-				<div class="mb-6" />
+				<div class="mb-6"></div>
 			{/if}
 
 			<button
@@ -140,12 +139,12 @@
 		<p class="text-center text-gray-600 mt-6">
 			{#if isLogin}
 				Don't have an account?
-				<button on:click={toggleMode} class="text-blue-600 hover:underline font-semibold">
+				<button onclick={toggleMode} class="text-blue-600 hover:underline font-semibold">
 					Sign up
 				</button>
 			{:else}
 				Already have an account?
-				<button on:click={toggleMode} class="text-blue-600 hover:underline font-semibold">
+				<button onclick={toggleMode} class="text-blue-600 hover:underline font-semibold">
 					Sign in
 				</button>
 			{/if}

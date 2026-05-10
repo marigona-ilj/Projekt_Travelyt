@@ -16,7 +16,7 @@
 			<h1 class="text-2xl font-bold text-gray-800">Travelyt</h1>
 		</div>
 		<button
-			on:click={logout}
+			onclick={logout}
 			class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition"
 		>
 			Logout

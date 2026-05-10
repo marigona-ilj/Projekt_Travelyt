@@ -1,7 +1,7 @@
 <script>
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 
-	export let trip;
+	let { trip } = $props();
 </script>
 
 <div

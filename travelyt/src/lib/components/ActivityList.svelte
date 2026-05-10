@@ -2,21 +2,21 @@
 	import { formatDateTime, groupBy } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 
-	export let tripId;
+	let { tripId } = $props();
 
-	let activities = [];
-	let loading = true;
-	let error = '';
-	let showNewActivityForm = false;
-	let newActivity = {
+	let activities = $state([]);
+	let loading = $state(true);
+	let error = $state('');
+	let showNewActivityForm = $state(false);
+	let newActivity = $state({
 		title: '',
 		description: '',
 		date: '',
 		time: '',
 		location: '',
 		category: 'other'
-	};
-	let formLoading = false;
+	});
+	let formLoading = $state(false);
 
 	onMount(async () => {
 		await fetchActivities();
@@ -38,7 +38,8 @@
 		}
 	}
 
-	async function createActivity() {
+	async function createActivity(event) {
+		if (event?.preventDefault) event.preventDefault();
 		if (!newActivity.title || !newActivity.date) {
 			error = 'Please fill in title and date';
 			return;
@@ -96,14 +97,14 @@
 		}
 	}
 
-	const grouped = $derived(groupBy(activities, 'date'));
+	let grouped = $derived(groupBy(activities, 'date'));
 </script>
 
 <div>
 	<div class="flex justify-between items-center mb-4">
 		<h2 class="text-2xl font-bold text-gray-800">Activities</h2>
 		<button
-			on:click={() => (showNewActivityForm = !showNewActivityForm)}
+			onclick={() => (showNewActivityForm = !showNewActivityForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
 		>
 			+ Add Activity
@@ -118,7 +119,7 @@
 
 	{#if showNewActivityForm}
 		<div class="bg-gray-50 rounded-lg p-4 mb-4">
-			<form on:submit|preventDefault={createActivity}>
+			<form onsubmit={createActivity}>
 				<div class="mb-3">
 					<input
 						type="text"
@@ -152,7 +153,7 @@
 					placeholder="Description"
 					rows="2"
 					class="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-3"
-				/>
+				></textarea>
 				<div class="flex gap-2">
 					<button
 						type="submit"
@@ -163,7 +164,7 @@
 					</button>
 					<button
 						type="button"
-						on:click={() => (showNewActivityForm = false)}
+						onclick={() => (showNewActivityForm = false)}
 						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
 					>
 						Cancel
@@ -204,7 +205,7 @@
 									{/if}
 								</div>
 								<button
-									on:click={() => deleteActivity(activity.id)}
+									onclick={() => deleteActivity(activity.id)}
 									class="text-red-600 hover:text-red-800 text-sm"
 								>
 									✕

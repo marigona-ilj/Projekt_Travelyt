@@ -2,21 +2,21 @@
 	import { formatCurrency } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 
-	export let tripId;
+	let { tripId } = $props();
 
-	let expenses = [];
-	let total = 0;
-	let loading = true;
-	let error = '';
-	let showNewExpenseForm = false;
-	let newExpense = {
+	let expenses = $state([]);
+	let total = $state(0);
+	let loading = $state(true);
+	let error = $state('');
+	let showNewExpenseForm = $state(false);
+	let newExpense = $state({
 		description: '',
 		amount: '',
 		category: 'other',
 		date: '',
 		paidBy: ''
-	};
-	let formLoading = false;
+	});
+	let formLoading = $state(false);
 
 	onMount(async () => {
 		await fetchExpenses();
@@ -39,7 +39,8 @@
 		}
 	}
 
-	async function createExpense() {
+	async function createExpense(event) {
+		if (event?.preventDefault) event.preventDefault();
 		if (!newExpense.description || !newExpense.amount || !newExpense.date) {
 			error = 'Please fill in all required fields';
 			return;
@@ -104,7 +105,7 @@
 			<p class="text-lg font-semibold text-blue-600">Total: {formatCurrency(total)}</p>
 		</div>
 		<button
-			on:click={() => (showNewExpenseForm = !showNewExpenseForm)}
+			onclick={() => (showNewExpenseForm = !showNewExpenseForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
 		>
 			+ Add Expense
@@ -119,7 +120,7 @@
 
 	{#if showNewExpenseForm}
 		<div class="bg-gray-50 rounded-lg p-4 mb-4">
-			<form on:submit|preventDefault={createExpense}>
+			<form onsubmit={createExpense}>
 				<div class="mb-3">
 					<input
 						type="text"
@@ -155,7 +156,7 @@
 					</button>
 					<button
 						type="button"
-						on:click={() => (showNewExpenseForm = false)}
+						onclick={() => (showNewExpenseForm = false)}
 						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
 					>
 						Cancel
@@ -185,7 +186,7 @@
 					<div class="text-right">
 						<p class="font-semibold text-gray-800">{formatCurrency(expense.amount)}</p>
 						<button
-							on:click={() => deleteExpense(expense.id)}
+							onclick={() => deleteExpense(expense.id)}
 							class="text-red-600 hover:text-red-800 text-sm"
 						>
 							✕

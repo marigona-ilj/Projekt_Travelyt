@@ -1,17 +1,17 @@
 <script>
 	import { onMount } from 'svelte';
 
-	export let tripId;
+	let { tripId } = $props();
 
-	let items = [];
-	let loading = true;
-	let error = '';
-	let showNewItemForm = false;
-	let newItem = {
+	let items = $state([]);
+	let loading = $state(true);
+	let error = $state('');
+	let showNewItemForm = $state(false);
+	let newItem = $state({
 		item: '',
 		category: 'clothing'
-	};
-	let formLoading = false;
+	});
+	let formLoading = $state(false);
 
 	const categories = ['clothing', 'toiletries', 'documents', 'electronics', 'sports', 'other'];
 
@@ -35,7 +35,8 @@
 		}
 	}
 
-	async function createItem() {
+	async function createItem(event) {
+		if (event?.preventDefault) event.preventDefault();
 		if (!newItem.item || !newItem.category) {
 			error = 'Please fill in all fields';
 			return;
@@ -105,14 +106,12 @@
 		}
 	}
 
-	const packedCount = $derived(items.filter((i) => i.packed).length);
-	const grouped = $derived(
-		items.reduce((acc, item) => {
-			if (!acc[item.category]) acc[item.category] = [];
-			acc[item.category].push(item);
-			return acc;
-		}, {})
-	);
+	let packedCount = $derived(items.filter((i) => i.packed).length);
+	let grouped = $derived(items.reduce((acc, item) => {
+		if (!acc[item.category]) acc[item.category] = [];
+		acc[item.category].push(item);
+		return acc;
+	}, {}));
 </script>
 
 <div>
@@ -122,7 +121,7 @@
 			<p class="text-sm text-gray-600">{packedCount} of {items.length} packed</p>
 		</div>
 		<button
-			on:click={() => (showNewItemForm = !showNewItemForm)}
+			onclick={() => (showNewItemForm = !showNewItemForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
 		>
 			+ Add Item
@@ -137,7 +136,7 @@
 
 	{#if showNewItemForm}
 		<div class="bg-gray-50 rounded-lg p-4 mb-4">
-			<form on:submit|preventDefault={createItem}>
+			<form onsubmit={createItem}>
 				<div class="mb-3">
 					<input
 						type="text"
@@ -167,7 +166,7 @@
 					</button>
 					<button
 						type="button"
-						on:click={() => (showNewItemForm = false)}
+						onclick={() => (showNewItemForm = false)}
 						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
 					>
 						Cancel
@@ -192,14 +191,14 @@
 								<input
 									type="checkbox"
 									checked={item.packed}
-									on:change={() => togglePacked(item.id, item.packed)}
+									onchange={() => togglePacked(item.id, item.packed)}
 									class="w-4 h-4 cursor-pointer"
 								/>
 								<span class={item.packed ? 'line-through text-gray-500' : 'text-gray-800'}>
 									{item.item}
 								</span>
 								<button
-									on:click={() => deleteItem(item.id)}
+									onclick={() => deleteItem(item.id)}
 									class="ml-auto text-red-600 hover:text-red-800 text-sm"
 								>
 									✕

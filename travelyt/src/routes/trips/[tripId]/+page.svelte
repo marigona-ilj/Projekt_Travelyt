@@ -1,5 +1,6 @@
 <script>
-	import { goto, page } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Header from '$lib/components/Header.svelte';
 	import ActivityList from '$lib/components/ActivityList.svelte';
 	import ExpenseList from '$lib/components/ExpenseList.svelte';
@@ -7,11 +8,11 @@
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 
-	let tripId = '';
-	let trip = null;
-	let loading = true;
-	let error = '';
-	let activeTab = 'activities';
+	let tripId = $state('');
+	let trip = $state(null);
+	let loading = $state(true);
+	let error = $state('');
+	let activeTab = $state('activities');
 
 	onMount(async () => {
 		tripId = $page.params.tripId;
@@ -82,7 +83,7 @@
 					</p>
 				</div>
 				<button
-					on:click={deleteTrip}
+					onclick={deleteTrip}
 					class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
 				>
 					Delete Trip
@@ -99,7 +100,7 @@
 			<div class="flex border-b border-gray-300">
 				{#each ['activities', 'packing', 'expenses'] as tab}
 					<button
-						on:click={() => (activeTab = tab)}
+						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
 							? 'text-blue-600 border-b-2 border-blue-600'
 							: 'text-gray-600 hover:text-gray-800'}"

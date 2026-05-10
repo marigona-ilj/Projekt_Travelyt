@@ -5,8 +5,8 @@
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();
-	let isAuthenticated = false;
-	let loading = true;
+	let isAuthenticated = $state(false);
+	let loading = $state(true);
 
 	onMount(async () => {
 		const response = await fetch('/api/auth');
