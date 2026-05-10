@@ -1,10 +1,11 @@
 <script>
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 
-	let { trip } = $props();
+	let { trip, onclick } = $props();
 </script>
 
 <div
+	{onclick}
 	class="bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer overflow-hidden"
 >
 	<div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-32"></div>

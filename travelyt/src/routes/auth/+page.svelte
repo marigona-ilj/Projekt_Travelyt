@@ -1,5 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
 
 let email = $state('');
 let password = $state('');
@@ -26,7 +25,7 @@ let error = $state('');
 			const data = await response.json();
 
 			if (data.success) {
-				goto('/trips');
+				window.location.href = '/trips';
 			} else {
 				error = data.error || 'An error occurred';
 			}
