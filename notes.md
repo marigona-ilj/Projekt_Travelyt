@@ -60,3 +60,23 @@ Travelyt is a SvelteKit 5 + MongoDB Atlas travel planning prototype. The app is 
 4. **Accessibility** – some `<label>` elements in ExpenseList/profile missing `for` attributes
 5. **No email invite** – member invite is by username only; no email flow
 6. **No trip editing** – PUT endpoint exists in the API but no UI to edit a trip after creation
+
+## Ideas to implement
+Here are some ideas that would fit naturally into what you've already built:
+
+Useful / practical:
+
+Trip status — mark a trip as "upcoming", "ongoing", or "past" (can be auto-derived from dates)
+Activity scheduling — add a date/time to activities so they show up in a day-by-day itinerary view
+Expense categories — tag expenses (food, transport, accommodation) and show a breakdown chart or summary by category
+Packing list templates — save a set of items as a reusable template (e.g. "Beach Trip", "Business Trip") so you don't start from scratch every time
+Social / collaboration:
+5. Trip notes / journal — a shared text area per day where members can write what they did
+6. Notifications / activity feed — show recent changes like "Anna added an expense" or "Tom packed sunscreen"
+
+Polish:
+7. Search/filter trips — useful once you have many trips
+8. Trip cover image — upload or link a photo that shows on the trip card
+9. Export to PDF — print the packing list or expense summary
+
+The ones that would add the most value with the least effort are probably 1 (trip status, mostly frontend), 2 (date on activities), and 4 (packing templates). Which direction interests you?
