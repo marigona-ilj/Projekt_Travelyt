@@ -1,0 +1,19 @@
+[build]
+command = "npm run build"
+functions = "build/server"
+publish = "build/client"
+
+[context.production.environment]
+NODE_ENV = "production"
+
+[context.preview]
+NODE_ENV = "preview"
+
+[context.deploy-preview]
+NODE_ENV = "preview"
+
+# Redirect all paths to index for SPA routing
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

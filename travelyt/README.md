@@ -1,53 +1,171 @@
-# Projektdokumentation - [Projekttitel]
+# Travelyt - Travel Planning Web Application
 
-## Inhaltsverzeichnis
+A collaborative travel planning application built with SvelteKit, MongoDB, and deployed on Netlify.
 
-1. [Ausgangslage](#1-ausgangslage)
-2. [Lösungsidee](#2-lösungsidee)
-3. [Vorgehen & Artefakte](#3-vorgehen--artefakte)
-    1. [Understand & Define](#31-understand--define)
-    2. [Sketch](#32-sketch)
-    3. [Decide](#33-decide)
-    4. [Prototype](#34-prototype)
-    5. [Validate](#35-validate)
-4. [Erweiterungen [Optional]](#4-erweiterungen-optional)
-5. [Projektorganisation [Optional]](#5-projektorganisation-optional)
-6. [KI-Deklaration](#6-ki-deklaration)
-7. [Anhang [Optional]](#7-anhang-optional)
+## Features
 
-> **Hinweis:** Massgeblich sind die im **Unterricht** und auf **Moodle** kommunizierten Anforderungen.
+### Core Workflow
+- **Trip Management**: Create, edit, and delete trips with destination and date information
+- **Activities**: Plan and organize activities by date within trips
+- **Collaborative Planning**: Invite other users to collaborate on trips
+- **Packing List**: Create category-based packing checklists with progress tracking
+- **Budget Tracking**: Track expenses and monitor total trip budget
 
-<!-- WICHTIG: DIE KAPITELSTRUKTUR DARF NICHT VERÄNDERT WERDEN! -->
+### Technical Stack
+- **Frontend**: SvelteKit 5 with Svelte runes and Tailwind CSS
+- **Backend**: SvelteKit API routes (`+server.js`)
+- **Database**: MongoDB with authentication and multi-user support
+- **Authentication**: Session-based email/password login
+- **Styling**: Tailwind CSS for responsive design
+- **Deployment**: Netlify
 
-<!-- Diese Vorlage ist für eine README.md im Repository gedacht. Abschnitte mit [Optional] können weggelassen werden, wenn in den Übungen nichts anderes verlangt wird. -->
+## Getting Started
 
-## 1. Ausgangslage
-Kurz beschreiben, welches Problem adressiert wird und welches Ergebnis angestrebt ist. Wem nützt die Lösung, wer ist beteiligt oder betroffen?
-- **Problem:** _[Das Problem ist identifiziert, verständlich beschrieben und optional mit Beispielen illustriert]_  
-- **Ziele:** _[stichwortartig oder einige Sätze]_  
-- **Primäre Zielgruppe:** _[kurz beschreiben]_  
-- **Weitere Stakeholder [Optional]:** _[z. B. Verwaltung, Geschäftsleitung]_  
+### Prerequisites
+- Node.js 18+
+- MongoDB (local or MongoDB Atlas cloud account)
+- npm or yarn
 
+### Installation
 
-## 2. Lösungsidee
-Beschreibt die Lösungsidee.
-- **Kernfunktionalität:** _[Workflows kurz nennen und optional illustrieren]_  
-- **Annahmen [Optional]:** _[welche Hypothesen werden geprüft?]_
-- **Abgrenzung [Optional]:** _[Was gehört explizit nicht zum Umfang?]_
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd travelyt
+   ```
 
-## 3. Vorgehen & Artefakte
-Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergebnisse je Phase.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### 3.1 Understand & Define
-- **Zielgruppenverständnis:** _[Problemraumanalyse, Recherche, (Proto-)Personas]_
-- **Wesentliche Erkenntnisse:** _[Stichpunkte]_
+3. **Set up MongoDB**
+   - See [MONGODB_SETUP.md](MONGODB_SETUP.md) for detailed instructions
+   - Update `.env.local` with your MongoDB connection string
 
-### 3.2 Sketch
-- **Variantenüberblick:** _[kurz]_
-- **Skizzen:** _[Mehrere Varianten; Unterschiede kurz dokumentieren.]_
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+   - Visit http://localhost:5173
 
-### 3.3 Decide
-- **Gewählte Variante & Begründung:** _[Entscheidkriterien nennen]_  
+5. **Create an account and start planning!**
+
+## Project Structure
+
+```
+src/
+├── lib/
+│   ├── components/         # Reusable Svelte components
+│   ├── server/             # Backend utilities (auth, db, validators)
+│   ├── stores/             # Svelte stores for state management
+│   └── utils/              # Client-side utilities
+├── routes/
+│   ├── api/                # API endpoints
+│   ├── auth/               # Authentication pages
+│   └── trips/              # Trip management pages
+└── app.css                 # Global styles with Tailwind
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth?action=register` - Register new user
+- `POST /api/auth?action=login` - Login user
+- `GET /api/auth` - Check authentication status
+
+### Trips
+- `GET /api/trips` - List user's trips
+- `POST /api/trips` - Create new trip
+- `GET /api/trips/[tripId]` - Get trip details
+- `PUT /api/trips/[tripId]` - Update trip
+- `DELETE /api/trips/[tripId]` - Delete trip
+
+### Activities
+- `GET /api/trips/[tripId]/activities` - List activities
+- `POST /api/trips/[tripId]/activities` - Create activity
+- `PUT /api/trips/[tripId]/activities/[activityId]` - Update activity
+- `DELETE /api/trips/[tripId]/activities/[activityId]` - Delete activity
+
+### Expenses
+- `GET /api/trips/[tripId]/expenses` - List expenses
+- `POST /api/trips/[tripId]/expenses` - Create expense
+- `DELETE /api/trips/[tripId]/expenses/[expenseId]` - Delete expense
+
+### Packing
+- `GET /api/trips/[tripId]/packing` - List packing items
+- `POST /api/trips/[tripId]/packing` - Add packing item
+- `PUT /api/trips/[tripId]/packing/[itemId]` - Mark item as packed
+- `DELETE /api/trips/[tripId]/packing/[itemId]` - Delete packing item
+
+### Members
+- `GET /api/trips/[tripId]/members` - List trip members
+- `POST /api/trips/[tripId]/members` - Invite member by email
+- `DELETE /api/trips/[tripId]/members/[memberId]` - Remove member
+
+## Database Schema
+
+### Collections
+- **users**: User accounts with email, password hash, and profile
+- **trips**: Trip records with dates, destination, and creator
+- **tripMembers**: Join table for user-trip relationships and roles
+- **activities**: Trip activities with date, time, location
+- **expenses**: Trip expenses with amount, category, and payer
+- **packingItems**: Packing list items with category and packed status
+
+## Development Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+```
+
+## Deployment (Netlify)
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "feat: Initialize Travelyt"
+   git push origin main
+   ```
+
+2. **Connect to Netlify**
+   - Log in to Netlify
+   - Click "New site from Git"
+   - Select your repository
+   - Set build command: `npm run build`
+   - Set publish directory: `build`
+
+3. **Configure environment variables**
+   - Go to Site Settings → Build & Deploy → Environment
+   - Add `MONGODB_URI` with your production MongoDB connection string
+   - Add `SESSION_SECRET` with a secure random string
+
+4. **Deploy**
+   - Netlify will automatically deploy on every push to main
+
+## Future Enhancements
+
+- [ ] Weather API integration for destinations
+- [ ] Real-time collaboration with WebSockets
+- [ ] Email notifications and reminders
+- [ ] Trip photos and gallery
+- [ ] Expense splitting and settlements
+- [ ] Mobile app
+- [ ] Multi-language support
+
+## Contributing
+
+1. Create a feature branch: `git checkout -b feature/my-feature`
+2. Commit changes: `git commit -m "feat: description"`
+3. Push to branch: `git push origin feature/my-feature`
+4. Open a pull request
+
+## License
+
+MIT License - feel free to use this project for personal or commercial purposes.
+
 - **End-to-End-Ablauf:** _[Beschreibung inkl. User Journey Map]_  
 - **Mockup:** _[URL, z. B. Figma; Screenshots mit kurzen Beschreibungen]_  
 
