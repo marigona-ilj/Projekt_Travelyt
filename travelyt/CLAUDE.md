@@ -16,6 +16,9 @@ Travelyt is a SvelteKit 5 travel planning web app with MongoDB.
 - For forms, use `onsubmit={handleSubmit}` and call `event.preventDefault()` inside the function.
 - Do not use self-closing tags for non-void HTML elements such as `<div>`, `<textarea>`, `<button>`, or `<form>`.
 
+## Files
+- Do not modify `README.md` unless explicitly told to do so.
+
 ## Project Behavior
 - Trips are collaborative.
 - A trip can have multiple members.
