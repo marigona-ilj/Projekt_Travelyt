@@ -81,6 +81,15 @@ Fasst die technische Realisierung zusammen.
 - **Struktur & Komponenten:** _[Seiten, Routen, State/Stores, wichtige Komponenten]_
 - **Daten & Schnittstellen:** _[Wie werden Daten gespeichert, verwaltet, abgerufen?]_
 - **Deployment:** _[URL]_  
+- **Test-Zugänge:** Für das Testen stehen folgende Benutzerkonten zur Verfügung:
+
+  | E-Mail | Passwort | Rolle |
+  |--------|----------|-------|
+  | marigona@test.com | 12345678 | Trip-Besitzerin (erstellt Trips, kann Members hinzufügen) |
+  | andrea@test.com | 12345678 | Mitglied (wurde einem Trip hinzugefügt) |
+
+  > Hinweis: Um beide Accounts gleichzeitig zu testen, müssen zwei verschiedene Browser verwendet werden (z. B. Chrome und Edge), da jeder Browser seinen eigenen Cookie-Speicher hat.
+
 - **Besondere Entscheidungen:** _[z. B. Trade-offs, Vereinfachungen]_  
 
 ### 3.5 Validate
