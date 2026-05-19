@@ -98,6 +98,31 @@
 	function openTrip(tripId) {
 		goto(`/trips/${tripId}`);
 	}
+
+	let searchQuery = $state('');
+	let statusFilter = $state('all');
+
+	function getTripStatus(trip) {
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		const start = new Date(trip.startDate);
+		const end = new Date(trip.endDate);
+		if (now > end) return 'past';
+		if (now >= start) return 'ongoing';
+		return 'upcoming';
+	}
+
+	let filteredTrips = $derived(
+		trips.filter((trip) => {
+			const q = searchQuery.trim().toLowerCase();
+			const matchesSearch =
+				!q ||
+				trip.title.toLowerCase().includes(q) ||
+				trip.destination.toLowerCase().includes(q);
+			const matchesStatus = statusFilter === 'all' || getTripStatus(trip) === statusFilter;
+			return matchesSearch && matchesStatus;
+		})
+	);
 </script>
 
 <Header />
@@ -115,6 +140,29 @@
 			+ New Trip
 		</button>
 	</div>
+
+	{#if !showNewTripForm && trips.length > 0}
+		<div class="flex flex-col sm:flex-row gap-3 mb-6">
+			<input
+				type="text"
+				bind:value={searchQuery}
+				placeholder="Search by title or destination..."
+				class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+			/>
+			<div class="flex gap-1">
+				{#each [['all', 'All'], ['upcoming', 'Upcoming'], ['ongoing', 'Ongoing'], ['past', 'Past']] as [value, label]}
+					<button
+						onclick={() => (statusFilter = value)}
+						class="px-3 py-2 rounded-lg text-sm font-semibold transition {statusFilter === value
+							? 'bg-blue-600 text-white'
+							: 'bg-gray-100 text-gray-600 hover:bg-gray-200'}"
+					>
+						{label}
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
 
 	{#if error}
 		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
@@ -242,9 +290,19 @@
 		<div class="text-center py-12 bg-white rounded-lg shadow">
 			<p class="text-gray-600 text-lg">No trips yet. Create your first trip to get started!</p>
 		</div>
+	{:else if filteredTrips.length === 0}
+		<div class="text-center py-12 bg-white rounded-lg shadow">
+			<p class="text-gray-600 text-lg">No trips match your search.</p>
+			<button
+				onclick={() => { searchQuery = ''; statusFilter = 'all'; }}
+				class="mt-3 text-blue-600 hover:underline text-sm"
+			>
+				Clear filters
+			</button>
+		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each trips as trip (trip.id)}
+			{#each filteredTrips as trip (trip.id)}
 				<TripCard {trip} onclick={() => openTrip(trip.id)}></TripCard>
 			{/each}
 		</div>
