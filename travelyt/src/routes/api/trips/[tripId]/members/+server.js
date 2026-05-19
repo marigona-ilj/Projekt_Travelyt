@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { getUserById } from '$lib/server/auth.js';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Get trip members
 export async function GET({ params, cookies }) {
@@ -101,6 +102,9 @@ export async function POST({ params, request, cookies }) {
 			role: 'member',
 			joinedAt: new Date()
 		});
+
+		const inviterName = await getUserName(userId);
+		await logActivity(tripId, userId, inviterName, 'member_added', `invited ${invitedUser.name} to the trip`);
 
 		return json(
 			{

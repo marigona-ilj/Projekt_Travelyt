@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Any trip member can toggle packed. Private items are invisible to non-owners so
 // they can only be toggled by the owner in practice.
@@ -99,6 +100,9 @@ export async function DELETE({ params, cookies }) {
 		}
 
 		await packingItems.deleteOne({ _id: new ObjectId(itemId) });
+
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'packing_deleted', `removed ${item.item} from the packing list`);
 
 		return json({ success: true, message: 'Item deleted' });
 	} catch (error) {

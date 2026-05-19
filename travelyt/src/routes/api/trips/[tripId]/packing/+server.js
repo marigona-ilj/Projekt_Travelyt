@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validatePackingItem } from '$lib/server/validators.js';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 export async function GET({ params, cookies }) {
 	const userId = cookies.get('userId');
@@ -92,6 +93,9 @@ export async function POST({ params, request, cookies }) {
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
+
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'packing_added', `added ${itemData.item} to the packing list`);
 
 		return json(
 			{

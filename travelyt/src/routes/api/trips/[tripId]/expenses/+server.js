@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validateExpense } from '$lib/server/validators.js';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Get all expenses for trip
 export async function GET({ params, cookies }) {
@@ -92,6 +93,15 @@ export async function POST({ params, request, cookies }) {
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
+
+		const userName = await getUserName(userId);
+		await logActivity(
+			tripId,
+			userId,
+			userName,
+			'expense_added',
+			`added an expense: ${expenseData.description} (${parseFloat(expenseData.amount).toFixed(2)})`
+		);
 
 		return json(
 			{

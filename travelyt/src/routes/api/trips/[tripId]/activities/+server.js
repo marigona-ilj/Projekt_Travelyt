@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validateActivity } from '$lib/server/validators.js';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Get all activities for trip
 export async function GET({ params, cookies }) {
@@ -95,6 +96,9 @@ export async function POST({ params, request, cookies }) {
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
+
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'activity_added', `added activity: ${activityData.title}`);
 
 		return json(
 			{

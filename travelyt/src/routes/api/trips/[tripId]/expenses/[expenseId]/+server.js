@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Delete expense
 export async function DELETE({ params, cookies }) {
@@ -25,14 +26,19 @@ export async function DELETE({ params, cookies }) {
 			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
-		const result = await expenses.deleteOne({
+		const expense = await expenses.findOne({
 			_id: new ObjectId(expenseId),
 			tripId: new ObjectId(tripId)
 		});
 
-		if (result.deletedCount === 0) {
+		if (!expense) {
 			return json({ success: false, error: 'Expense not found' }, { status: 404 });
 		}
+
+		await expenses.deleteOne({ _id: new ObjectId(expenseId) });
+
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'expense_deleted', `deleted an expense: ${expense.description}`);
 
 		return json({ success: true, message: 'Expense deleted' });
 	} catch (error) {

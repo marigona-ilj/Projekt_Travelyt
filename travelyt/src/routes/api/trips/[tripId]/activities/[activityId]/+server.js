@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
+import { logActivity, getUserName } from '$lib/server/activityLog.js';
 
 // Get activity
 export async function GET({ params, cookies }) {
@@ -97,6 +98,9 @@ export async function PUT({ params, request, cookies }) {
 			return json({ success: false, error: 'Activity not found' }, { status: 404 });
 		}
 
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'activity_updated', `updated activity: ${updateData.title}`);
+
 		return json({ success: true, message: 'Activity updated' });
 	} catch (error) {
 		console.error('Error updating activity:', error);
@@ -127,14 +131,19 @@ export async function DELETE({ params, cookies }) {
 			return json({ success: false, error: 'Access denied' }, { status: 403 });
 		}
 
-		const result = await activities.deleteOne({
+		const activity = await activities.findOne({
 			_id: new ObjectId(activityId),
 			tripId: new ObjectId(tripId)
 		});
 
-		if (result.deletedCount === 0) {
+		if (!activity) {
 			return json({ success: false, error: 'Activity not found' }, { status: 404 });
 		}
+
+		await activities.deleteOne({ _id: new ObjectId(activityId) });
+
+		const userName = await getUserName(userId);
+		await logActivity(tripId, userId, userName, 'activity_deleted', `deleted activity: ${activity.title}`);
 
 		return json({ success: true, message: 'Activity deleted' });
 	} catch (error) {

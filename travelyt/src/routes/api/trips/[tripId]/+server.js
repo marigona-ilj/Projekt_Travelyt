@@ -124,12 +124,14 @@ export async function DELETE({ params, cookies }) {
 		}
 
 		const tripObjectId = new ObjectId(tripId);
+		const activityLogs = await getCollection('tripActivityLog');
 
 		// Delete all related data
 		await tripMembers.deleteMany({ tripId: tripObjectId });
 		await activities.deleteMany({ tripId: tripObjectId });
 		await expenses.deleteMany({ tripId: tripObjectId });
 		await packingItems.deleteMany({ tripId: tripObjectId });
+		await activityLogs.deleteMany({ tripId: tripObjectId });
 		await trips.deleteOne({ _id: tripObjectId });
 
 		return json({ success: true, message: 'Trip deleted' });
