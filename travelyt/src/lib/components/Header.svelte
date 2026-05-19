@@ -16,6 +16,62 @@
 
 	let feedOpen = $state(false);
 	let tripId = $derived($page.params.tripId ?? null);
+	let entries = $state([]);
+	let feedLoading = $state(false);
+	let feedError = $state('');
+	let lastSeen = $state(null);
+	let intervalId;
+
+	let unreadCount = $derived(
+		!lastSeen ? 0 : entries.filter((e) => new Date(e.createdAt) > new Date(lastSeen)).length
+	);
+
+	async function fetchFeed() {
+		if (!tripId) return;
+		try {
+			const res = await fetch(`/api/trips/${tripId}/feed`);
+			const data = await res.json();
+			if (data.success) {
+				entries = data.entries;
+				feedError = '';
+			} else {
+				feedError = data.error || 'Failed to load feed';
+			}
+		} catch {
+			feedError = 'Network error';
+		} finally {
+			feedLoading = false;
+		}
+	}
+
+	$effect(() => {
+		clearInterval(intervalId);
+		if (!tripId) {
+			entries = [];
+			return;
+		}
+		feedLoading = true;
+		const stored = localStorage.getItem(`feed_seen_${tripId}`);
+		if (!stored) {
+			const now = new Date().toISOString();
+			localStorage.setItem(`feed_seen_${tripId}`, now);
+			lastSeen = now;
+		} else {
+			lastSeen = stored;
+		}
+		fetchFeed();
+		intervalId = setInterval(fetchFeed, 30000);
+		return () => clearInterval(intervalId);
+	});
+
+	function toggleFeed() {
+		feedOpen = !feedOpen;
+		if (feedOpen && tripId) {
+			const now = new Date().toISOString();
+			localStorage.setItem(`feed_seen_${tripId}`, now);
+			lastSeen = now;
+		}
+	}
 </script>
 
 <header class="bg-white shadow-sm relative z-50">
@@ -40,16 +96,21 @@
 			{#if tripId}
 				<div class="relative">
 					<button
-						onclick={() => (feedOpen = !feedOpen)}
-						class="p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
+						onclick={toggleFeed}
+						class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
 						title="Activity Feed"
 					>
 						<Bell size={20} />
+						{#if unreadCount > 0}
+							<span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+								{unreadCount > 9 ? '9+' : unreadCount}
+							</span>
+						{/if}
 					</button>
 
 					{#if feedOpen}
-						<div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-h-96 overflow-y-auto">
-							<ActivityFeed {tripId} />
+						<div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-h-96 overflow-y-auto z-50">
+							<ActivityFeed {entries} loading={feedLoading} error={feedError} onRefresh={fetchFeed} />
 						</div>
 					{/if}
 				</div>

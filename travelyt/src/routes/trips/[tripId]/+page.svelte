@@ -245,7 +245,16 @@
 					<div class="mb-4">
 						<label for="edit-cover" class="block text-sm font-medium text-gray-700 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
 						{#if editTrip.coverImage}
-							<img src={editTrip.coverImage} alt="Current cover" class="mb-2 h-28 w-full object-cover rounded-lg" />
+							<div class="relative mb-2">
+								<img src={editTrip.coverImage} alt="Current cover" class="h-28 w-full object-cover rounded-lg" />
+								<button
+									type="button"
+									onclick={() => (editTrip.coverImage = '')}
+									class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
+								>
+									Remove
+								</button>
+							</div>
 						{/if}
 						<input
 							type="file"

@@ -1,20 +1,12 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { Wallet, Package, Target, UserPlus, UserMinus, RefreshCw } from 'lucide-svelte';
 
-	let { tripId } = $props();
-
-	let entries = $state([]);
-	let loading = $state(true);
-	let error = $state('');
-	let intervalId;
+	let { entries = [], loading = false, error = '', onRefresh } = $props();
 
 	const iconMap = {
 		expense_added: Wallet,
 		expense_deleted: Wallet,
 		packing_added: Package,
-		packing_packed: Package,
-		packing_unpacked: Package,
 		packing_deleted: Package,
 		activity_added: Target,
 		activity_updated: Target,
@@ -27,8 +19,6 @@
 		expense_added: 'text-green-600 bg-green-50',
 		expense_deleted: 'text-red-500 bg-red-50',
 		packing_added: 'text-blue-600 bg-blue-50',
-		packing_packed: 'text-emerald-600 bg-emerald-50',
-		packing_unpacked: 'text-orange-500 bg-orange-50',
 		packing_deleted: 'text-red-500 bg-red-50',
 		activity_added: 'text-purple-600 bg-purple-50',
 		activity_updated: 'text-purple-500 bg-purple-50',
@@ -45,39 +35,13 @@
 		if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
 		return new Date(date).toLocaleDateString();
 	}
-
-	async function fetchFeed() {
-		try {
-			const res = await fetch(`/api/trips/${tripId}/feed`);
-			const data = await res.json();
-			if (data.success) {
-				entries = data.entries;
-				error = '';
-			} else {
-				error = data.error || 'Failed to load feed';
-			}
-		} catch {
-			error = 'Network error';
-		} finally {
-			loading = false;
-		}
-	}
-
-	onMount(() => {
-		fetchFeed();
-		intervalId = setInterval(fetchFeed, 30000);
-	});
-
-	onDestroy(() => {
-		clearInterval(intervalId);
-	});
 </script>
 
 <div>
 	<div class="flex items-center justify-between mb-4">
 		<h2 class="text-lg font-semibold text-gray-800">Recent Activity</h2>
 		<button
-			onclick={fetchFeed}
+			onclick={onRefresh}
 			class="text-gray-500 hover:text-gray-700 p-1 rounded"
 			title="Refresh"
 		>
