@@ -42,6 +42,7 @@ export async function GET({ params, cookies }) {
 				startDate: trip.startDate,
 				endDate: trip.endDate,
 				currency: trip.currency || 'CHF',
+				coverImage: trip.coverImage || '',
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt,
 				updatedAt: trip.updatedAt
@@ -89,6 +90,7 @@ export async function PUT({ params, request, cookies }) {
 					startDate: new Date(updateData.startDate),
 					endDate: new Date(updateData.endDate),
 					currency: updateData.currency || 'CHF',
+					coverImage: updateData.coverImage || '',
 					updatedAt: new Date()
 				}
 			}

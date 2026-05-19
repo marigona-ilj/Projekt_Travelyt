@@ -21,8 +21,21 @@
 	let isOwner = $derived(trip !== null && trip.createdBy === currentUserId);
 
 	let showEditForm = $state(false);
-	let editTrip = $state({ title: '', destination: '', startDate: '', endDate: '', description: '', currency: 'CHF' });
+	let editTrip = $state({ title: '', destination: '', startDate: '', endDate: '', description: '', currency: 'CHF', coverImage: '' });
 	let editLoading = $state(false);
+
+	function handleEditCoverImage(event) {
+		const file = event.target.files[0];
+		if (!file) return;
+		if (file.size > 2 * 1024 * 1024) {
+			error = 'Image must be under 2 MB';
+			event.target.value = '';
+			return;
+		}
+		const reader = new FileReader();
+		reader.onload = (e) => { editTrip.coverImage = e.target.result; };
+		reader.readAsDataURL(file);
+	}
 
 	onMount(async () => {
 		tripId = $page.params.tripId;
@@ -55,7 +68,8 @@
 			startDate: trip.startDate ? new Date(trip.startDate).toISOString().split('T')[0] : '',
 			endDate: trip.endDate ? new Date(trip.endDate).toISOString().split('T')[0] : '',
 			description: trip.description || '',
-			currency: trip.currency || 'CHF'
+			currency: trip.currency || 'CHF',
+			coverImage: trip.coverImage || ''
 		};
 		showEditForm = true;
 	}
@@ -228,6 +242,20 @@
 							</select>
 						</div>
 					</div>
+					<div class="mb-4">
+						<label for="edit-cover" class="block text-sm font-medium text-gray-700 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
+						{#if editTrip.coverImage}
+							<img src={editTrip.coverImage} alt="Current cover" class="mb-2 h-28 w-full object-cover rounded-lg" />
+						{/if}
+						<input
+							type="file"
+							id="edit-cover"
+							accept="image/*"
+							onchange={handleEditCoverImage}
+							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+						/>
+					</div>
+
 					<div class="flex gap-2">
 						<button
 							type="submit"
