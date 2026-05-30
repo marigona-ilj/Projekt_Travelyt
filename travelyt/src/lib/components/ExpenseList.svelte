@@ -219,21 +219,35 @@
 					/>
 				</div>
 				<div class="grid grid-cols-2 gap-2 mb-3">
-					<input
-						type="number"
-						bind:value={newExpense.amount}
-						placeholder="Amount ({currency})"
-						step="0.01"
-						min="0"
-						class="px-3 py-2 border border-gray-300 rounded text-sm"
-						required
-					/>
-					<input
+					<div>
+						<label class="block text-xs text-gray-500 mb-1">Amount ({currency})</label>
+						<input
+							type="number"
+							bind:value={newExpense.amount}
+							placeholder="0.00"
+							step="0.01"
+							min="0"
+							class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+							required
+						/>
+					</div>
+					<div>
+						<div class="flex items-center gap-1 mb-1">
+							<label class="text-xs text-gray-500">Date</label>
+							<div class="relative group">
+								<span class="text-xs text-gray-400 cursor-help border border-gray-300 rounded-full w-4 h-4 flex items-center justify-center font-bold leading-none">?</span>
+								<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+									Date of payment or purchase
+								</div>
+							</div>
+						</div>
+						<input
 						type="date"
 						bind:value={newExpense.date}
-						class="px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
 						required
-					/>
+						/>
+					</div>
 				</div>
 				{#if members.length > 1}
 					<div class="mb-3">
