@@ -28,6 +28,19 @@
 				: 'bg-gradient-to-r from-blue-500 to-indigo-600'
 	);
 
+	let daysUntil = $derived.by(() => {
+		if (status !== 'upcoming') return null;
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		const [y, m, d] = String(trip.startDate).split('T')[0].split('-').map(Number);
+		const start = new Date(y, m - 1, d);
+		return Math.round((start - now) / (1000 * 60 * 60 * 24));
+	});
+
+	let countdownLabel = $derived(
+		daysUntil === 1 ? 'Tomorrow' : daysUntil === 0 ? 'Today' : `In ${daysUntil} days`
+	);
+
 	let imageError = $state(false);
 </script>
 
@@ -59,6 +72,9 @@
 			<p class="flex items-center gap-1"><Calendar size={14} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
 			<p class="flex items-center gap-1 mt-1"><Clock size={14} /> {daysBetween(trip.startDate, trip.endDate)} days</p>
 		</div>
+		{#if daysUntil !== null}
+			<p class="text-sm font-semibold text-blue-600">{countdownLabel}</p>
+		{/if}
 		{#if trip.description}
 			<p class="text-sm text-gray-600 line-clamp-2">{trip.description}</p>
 		{/if}
