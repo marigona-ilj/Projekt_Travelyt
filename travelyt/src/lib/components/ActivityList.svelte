@@ -93,12 +93,15 @@
 	let allDays = $derived.by(() => {
 		if (!startDate || !endDate) return [];
 		const days = [];
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-		start.setHours(0, 0, 0, 0);
-		end.setHours(0, 0, 0, 0);
+		const [sy, sm, sd] = String(startDate).split('T')[0].split('-').map(Number);
+		const [ey, em, ed] = String(endDate).split('T')[0].split('-').map(Number);
+		const start = new Date(sy, sm - 1, sd);
+		const end = new Date(ey, em - 1, ed);
 		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-			days.push(d.toISOString().split('T')[0]);
+			const yyyy = d.getFullYear();
+			const mm = String(d.getMonth() + 1).padStart(2, '0');
+			const dd = String(d.getDate()).padStart(2, '0');
+			days.push(`${yyyy}-${mm}-${dd}`);
 		}
 		return days;
 	});
