@@ -1,7 +1,31 @@
 <script>
-	import { Wallet, Package, Target, UserPlus, UserMinus, RefreshCw } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
+	import { Wallet, Package, Target, UserPlus, UserMinus, RefreshCw, Images } from 'lucide-svelte';
 
-	let { entries = [], loading = false, error = '', onRefresh } = $props();
+	let { entries = [], loading = false, error = '', onRefresh, onNavigate = null } = $props();
+
+	const tabMap = {
+		expense_added: 'expenses',
+		expense_updated: 'expenses',
+		expense_deleted: 'expenses',
+		packing_added: 'packing',
+		packing_deleted: 'packing',
+		activity_added: 'activities',
+		activity_updated: 'activities',
+		activity_deleted: 'activities',
+		member_added: 'members',
+		member_removed: 'members',
+		photo_added: 'gallery',
+		photo_deleted: 'gallery'
+	};
+
+	function handleEntryClick(entry) {
+		if (!entry.tripId) return;
+		const tab = tabMap[entry.actionType];
+		if (!tab) return;
+		if (onNavigate) onNavigate();
+		goto(`/trips/${entry.tripId}?tab=${tab}`);
+	}
 
 	const iconMap = {
 		expense_added: Wallet,
@@ -62,7 +86,10 @@
 			{#each entries as entry (entry.id)}
 				{@const Icon = iconMap[entry.actionType] ?? Target}
 				{@const colors = colorMap[entry.actionType] ?? 'text-gray-500 bg-gray-100'}
-				<li class="flex items-start gap-3">
+				<li
+					class="flex items-start gap-3 rounded-lg p-1 -mx-1 {entry.tripId && tabMap[entry.actionType] ? 'cursor-pointer hover:bg-gray-50 transition' : ''}"
+					onclick={() => handleEntryClick(entry)}
+				>
 					<span class="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center {colors}">
 						<Icon size={15} />
 					</span>
@@ -71,7 +98,12 @@
 							<span class="font-semibold">{entry.userName}</span>
 							{' '}{entry.message}
 						</p>
-						<p class="text-xs text-gray-400 mt-0.5">{timeAgo(entry.createdAt)}</p>
+						<p class="text-xs text-gray-400 mt-0.5">
+							{timeAgo(entry.createdAt)}
+							{#if entry.tripName}
+								· <span class="text-blue-400">{entry.tripName}</span>
+							{/if}
+						</p>
 					</div>
 				</li>
 			{/each}

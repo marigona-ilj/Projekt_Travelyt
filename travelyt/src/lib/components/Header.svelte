@@ -27,9 +27,8 @@
 	);
 
 	async function fetchFeed() {
-		if (!tripId) return;
 		try {
-			const res = await fetch(`/api/trips/${tripId}/feed`);
+			const res = await fetch('/api/feed');
 			const data = await res.json();
 			if (data.success) {
 				entries = data.entries;
@@ -45,16 +44,11 @@
 	}
 
 	$effect(() => {
-		clearInterval(intervalId);
-		if (!tripId) {
-			entries = [];
-			return;
-		}
 		feedLoading = true;
-		const stored = localStorage.getItem(`feed_seen_${tripId}`);
+		const stored = localStorage.getItem('feed_seen_global');
 		if (!stored) {
 			const now = new Date().toISOString();
-			localStorage.setItem(`feed_seen_${tripId}`, now);
+			localStorage.setItem('feed_seen_global', now);
 			lastSeen = now;
 		} else {
 			lastSeen = stored;
@@ -66,9 +60,9 @@
 
 	function toggleFeed() {
 		feedOpen = !feedOpen;
-		if (feedOpen && tripId) {
+		if (feedOpen) {
 			const now = new Date().toISOString();
-			localStorage.setItem(`feed_seen_${tripId}`, now);
+			localStorage.setItem('feed_seen_global', now);
 			lastSeen = now;
 		}
 	}
@@ -93,28 +87,31 @@
 				</a>
 			{/each}
 
-			{#if tripId}
-				<div class="relative">
-					<button
-						onclick={toggleFeed}
-						class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
-						title="Activity Feed"
-					>
-						<Bell size={20} />
-						{#if unreadCount > 0}
-							<span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-								{unreadCount > 9 ? '9+' : unreadCount}
-							</span>
-						{/if}
-					</button>
-
-					{#if feedOpen}
-						<div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-h-96 overflow-y-auto z-50">
-							<ActivityFeed {entries} loading={feedLoading} error={feedError} onRefresh={fetchFeed} />
-						</div>
+			<div class="relative">
+				<button
+					onclick={toggleFeed}
+					class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
+					title="Activity Feed"
+				>
+					<Bell size={22} />
+					{#if unreadCount > 0}
+						<span class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+							{unreadCount > 9 ? '9+' : unreadCount}
+						</span>
 					{/if}
-				</div>
-			{/if}
+				</button>
+
+				{#if feedOpen}
+					<div class="absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
+						<div class="px-4 py-3 border-b border-gray-100">
+							<h3 class="font-semibold text-gray-800">Activity Feed</h3>
+						</div>
+						<div class="p-4 max-h-[480px] overflow-y-auto">
+							<ActivityFeed {entries} loading={feedLoading} error={feedError} onRefresh={fetchFeed} onNavigate={() => (feedOpen = false)} />
+						</div>
+					</div>
+				{/if}
+			</div>
 		</nav>
 
 		<button

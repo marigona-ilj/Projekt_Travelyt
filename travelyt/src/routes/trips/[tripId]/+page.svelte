@@ -42,6 +42,9 @@ let tripId = $state('');
 		const authData = await authRes.json();
 		currentUserId = authData.userId || '';
 		await fetchTrip();
+		const tabParam = $page.url.searchParams.get('tab');
+		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'members'];
+		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
 	});
 
 	async function fetchTrip() {
