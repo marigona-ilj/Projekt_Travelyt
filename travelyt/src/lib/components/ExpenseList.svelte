@@ -19,6 +19,9 @@
 	let showNewExpenseForm = $state(false);
 	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '' });
 	let formLoading = $state(false);
+	let editingId = $state(null);
+	let editingExpense = $state({ description: '', amount: '', date: '', paidBy: '' });
+	let editLoading = $state(false);
 
 	const fmt = (n) => formatCurrency(n, currency);
 
@@ -145,6 +148,44 @@
 			error = 'Network error';
 		} finally {
 			formLoading = false;
+		}
+	}
+
+	function startEditExpense(expense) {
+		editingId = expense.id;
+		editingExpense = {
+			description: expense.description,
+			amount: expense.amount,
+			date: expense.date?.split('T')[0] ?? expense.date,
+			paidBy: expense.paidBy
+		};
+	}
+
+	function cancelEditExpense() {
+		editingId = null;
+	}
+
+	async function saveEditExpense(event) {
+		if (event?.preventDefault) event.preventDefault();
+		if (!editingExpense.description || !editingExpense.amount || !editingExpense.date) return;
+		editLoading = true;
+		try {
+			const response = await fetch(`/api/trips/${tripId}/expenses/${editingId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(editingExpense)
+			});
+			const data = await response.json();
+			if (data.success) {
+				editingId = null;
+				await fetchExpenses();
+			} else {
+				error = data.error || 'Failed to update';
+			}
+		} catch {
+			error = 'Network error';
+		} finally {
+			editLoading = false;
 		}
 	}
 
@@ -292,21 +333,72 @@
 		<!-- Expense list -->
 		<div class="space-y-2 mb-8">
 			{#each expenses as expense}
-				<div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
-					<div>
-						<p class="font-semibold text-gray-800">{expense.description}</p>
-						<p class="text-xs text-gray-500">
-							{new Date(expense.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })}
-							· paid by <span class="font-medium text-gray-700">
-								{memberMap[expense.paidBy] ?? 'Unknown'}
-								{expense.paidBy === currentUserId ? ' (you)' : ''}
-							</span>
-						</p>
-					</div>
-					<div class="flex items-center gap-3">
-						<span class="font-semibold text-gray-800">{fmt(expense.amount)}</span>
-						<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
-					</div>
+				<div class="bg-gray-50 rounded-lg p-3">
+					{#if editingId === expense.id}
+						<form onsubmit={saveEditExpense}>
+							<div class="mb-2">
+								<input
+									type="text"
+									bind:value={editingExpense.description}
+									class="w-full px-3 py-2 border border-blue-400 rounded text-sm"
+									required
+								/>
+							</div>
+							<div class="grid grid-cols-2 gap-2 mb-2">
+								<input
+									type="number"
+									bind:value={editingExpense.amount}
+									step="0.01"
+									min="0"
+									class="px-3 py-2 border border-gray-300 rounded text-sm"
+									required
+								/>
+								<input
+									type="date"
+									bind:value={editingExpense.date}
+									class="px-3 py-2 border border-gray-300 rounded text-sm"
+									required
+								/>
+							</div>
+							{#if members.length > 1}
+								<div class="mb-2">
+									<select bind:value={editingExpense.paidBy} class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+										{#each members as member}
+											<option value={member.userId}>
+												{member.name}{member.userId === currentUserId ? ' (you)' : ''}
+											</option>
+										{/each}
+									</select>
+								</div>
+							{/if}
+							<div class="flex gap-2">
+								<button type="submit" disabled={editLoading} class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm">
+									{editLoading ? 'Saving...' : '✓ Save'}
+								</button>
+								<button type="button" onclick={cancelEditExpense} class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm">
+									Cancel
+								</button>
+							</div>
+						</form>
+					{:else}
+						<div class="flex justify-between items-center">
+							<div>
+								<p class="font-semibold text-gray-800">{expense.description}</p>
+								<p class="text-xs text-gray-500">
+									{new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+									· paid by <span class="font-medium text-gray-700">
+										{memberMap[expense.paidBy] ?? 'Unknown'}
+										{expense.paidBy === currentUserId ? ' (you)' : ''}
+									</span>
+								</p>
+							</div>
+							<div class="flex items-center gap-3">
+								<span class="font-semibold text-gray-800">{fmt(expense.amount)}</span>
+								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
+								<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+							</div>
+						</div>
+					{/if}
 				</div>
 			{/each}
 		</div>
