@@ -101,8 +101,10 @@ export async function DELETE({ params, cookies }) {
 
 		await packingItems.deleteOne({ _id: new ObjectId(itemId) });
 
-		const userName = await getUserName(userId);
-		await logActivity(tripId, userId, userName, 'packing_deleted', `removed ${item.item} from the packing list`);
+		if (!item.isPrivate) {
+			const userName = await getUserName(userId);
+			await logActivity(tripId, userId, userName, 'packing_deleted', `removed ${item.item} from the packing list`);
+		}
 
 		return json({ success: true, message: 'Item deleted' });
 	} catch (error) {

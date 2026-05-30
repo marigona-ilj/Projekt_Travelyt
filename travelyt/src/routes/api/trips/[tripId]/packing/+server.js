@@ -94,8 +94,10 @@ export async function POST({ params, request, cookies }) {
 			updatedAt: new Date()
 		});
 
-		const userName = await getUserName(userId);
-		await logActivity(tripId, userId, userName, 'packing_added', `added ${itemData.item} to the packing list`);
+		if (!itemData.isPrivate) {
+			const userName = await getUserName(userId);
+			await logActivity(tripId, userId, userName, 'packing_added', `added ${itemData.item} to the packing list`);
+		}
 
 		return json(
 			{
