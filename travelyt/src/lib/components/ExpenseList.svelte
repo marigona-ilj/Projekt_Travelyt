@@ -3,7 +3,13 @@
 	import { onMount } from 'svelte';
 	import { Wallet, ArrowRightLeft } from 'lucide-svelte';
 
-	let { tripId, currentUserId, currency = 'CHF' } = $props();
+	let { tripId, currentUserId, currency = 'CHF', oncurrencychange = null } = $props();
+
+	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
+
+	function handleCurrencyChange(event) {
+		if (oncurrencychange) oncurrencychange(event.target.value);
+	}
 
 	let expenses = $state([]);
 	let members = $state([]);
@@ -166,7 +172,26 @@
 	<div class="flex justify-between items-center mb-6">
 		<div>
 			<h2 class="text-2xl font-bold text-gray-800">Budget</h2>
-			<p class="text-lg font-semibold text-blue-600">Total: {fmt(total)}</p>
+			<div class="flex items-center gap-2 mt-1">
+				<p class="text-lg font-semibold text-blue-600">Total: {fmt(total)}</p>
+				<div class="relative group">
+					<select
+						value={currency}
+						onchange={handleCurrencyChange}
+						disabled={expenses.length > 0}
+						class="text-sm border border-gray-300 rounded px-2 py-0.5 text-gray-600 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						{#each currencies as c}
+							<option value={c}>{c}</option>
+						{/each}
+					</select>
+					{#if expenses.length > 0}
+						<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+							Currency cannot be changed once expenses have been added
+						</div>
+					{/if}
+				</div>
+			</div>
 		</div>
 		<button
 			onclick={openForm}

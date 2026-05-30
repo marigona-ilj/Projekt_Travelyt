@@ -8,7 +8,6 @@
 	let loading = $state(true);
 	let error = $state('');
 	let showNewTripForm = $state(false);
-	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
 
 	let newTrip = $state({
 		title: '',
@@ -222,29 +221,15 @@
 					</div>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-					<div>
-						<label for="desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-						<textarea
-							id="desc"
-							bind:value={newTrip.description}
-							placeholder="Add notes about your trip..."
-							rows="3"
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-						></textarea>
-					</div>
-					<div>
-						<label for="currency" class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-						<select
-							id="currency"
-							bind:value={newTrip.currency}
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-						>
-							{#each currencies as c}
-								<option value={c}>{c}</option>
-							{/each}
-						</select>
-					</div>
+				<div class="mb-4">
+					<label for="desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+					<textarea
+						id="desc"
+						bind:value={newTrip.description}
+						placeholder="Add notes about your trip..."
+						rows="3"
+						class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+					></textarea>
 				</div>
 
 				<div class="mb-4">

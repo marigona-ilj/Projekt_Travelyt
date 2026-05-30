@@ -6,13 +6,12 @@
 	import ExpenseList from '$lib/components/ExpenseList.svelte';
 	import PackingList from '$lib/components/PackingList.svelte';
 	import MemberList from '$lib/components/MemberList.svelte';
+	import Gallery from '$lib/components/Gallery.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images } from 'lucide-svelte';
 
-	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
-
-	let tripId = $state('');
+let tripId = $state('');
 	let trip = $state(null);
 	let loading = $state(true);
 	let error = $state('');
@@ -95,6 +94,28 @@
 			error = 'Network error';
 		} finally {
 			editLoading = false;
+		}
+	}
+
+	async function updateCurrency(newCurrency) {
+		try {
+			const response = await fetch(`/api/trips/${tripId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					title: trip.title,
+					destination: trip.destination,
+					startDate: new Date(trip.startDate).toISOString().split('T')[0],
+					endDate: new Date(trip.endDate).toISOString().split('T')[0],
+					description: trip.description || '',
+					currency: newCurrency,
+					coverImage: trip.coverImage || ''
+				})
+			});
+			const data = await response.json();
+			if (data.success) trip = { ...trip, currency: newCurrency };
+		} catch {
+			// non-critical
 		}
 	}
 
@@ -219,28 +240,14 @@
 							/>
 						</div>
 					</div>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-						<div>
-							<label for="edit-desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-							<textarea
-								id="edit-desc"
-								bind:value={editTrip.description}
-								rows="3"
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-							></textarea>
-						</div>
-						<div>
-							<label for="edit-currency" class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-							<select
-								id="edit-currency"
-								bind:value={editTrip.currency}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-							>
-								{#each currencies as c}
-									<option value={c}>{c}</option>
-								{/each}
-							</select>
-						</div>
+					<div class="mb-4">
+						<label for="edit-desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+						<textarea
+							id="edit-desc"
+							bind:value={editTrip.description}
+							rows="3"
+							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+						></textarea>
 					</div>
 					<div class="mb-4">
 						<label for="edit-cover" class="block text-sm font-medium text-gray-700 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
@@ -288,7 +295,7 @@
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300">
-				{#each ['activities', 'packing', 'expenses', 'members'] as tab}
+				{#each ['activities', 'packing', 'expenses', 'gallery', 'members'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
@@ -301,6 +308,8 @@
 							<span class="flex items-center gap-1"><Package size={15} /> Packing</span>
 						{:else if tab === 'expenses'}
 							<span class="flex items-center gap-1"><Wallet size={15} /> Budget</span>
+						{:else if tab === 'gallery'}
+							<span class="flex items-center gap-1"><Images size={15} /> Gallery</span>
 						{:else}
 							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
 						{/if}
@@ -316,7 +325,9 @@
 			{:else if activeTab === 'packing'}
 				<PackingList {tripId} {currentUserId} />
 			{:else if activeTab === 'expenses'}
-				<ExpenseList {tripId} {currentUserId} currency={trip.currency || 'CHF'} />
+				<ExpenseList {tripId} {currentUserId} currency={trip.currency || 'CHF'} oncurrencychange={updateCurrency} />
+			{:else if activeTab === 'gallery'}
+				<Gallery {tripId} {currentUserId} />
 			{:else if activeTab === 'members'}
 				<MemberList {tripId} {isOwner} />
 			{/if}
