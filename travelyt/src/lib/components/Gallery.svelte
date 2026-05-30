@@ -66,7 +66,7 @@
 	}
 
 	async function deletePhoto(id) {
-		if (!confirm('Dieses Foto wirklich löschen?')) return;
+		if (!confirm('Delete this photo?')) return;
 		try {
 			const res = await fetch(`/api/trips/${tripId}/gallery/${id}`, { method: 'DELETE' });
 			const data = await res.json();
@@ -108,7 +108,7 @@
 	async function deleteSelected() {
 		const toDelete = photos.filter((p) => selectedIds.has(p.id) && p.uploadedBy === currentUserId);
 		if (toDelete.length === 0) return;
-		if (!confirm(`${toDelete.length} Foto${toDelete.length > 1 ? 's' : ''} wirklich löschen?`)) return;
+		if (!confirm(`Delete ${toDelete.length} photo${toDelete.length > 1 ? 's' : ''}?`)) return;
 		for (const photo of toDelete) {
 			try {
 				const res = await fetch(`/api/trips/${tripId}/gallery/${photo.id}`, { method: 'DELETE' });
