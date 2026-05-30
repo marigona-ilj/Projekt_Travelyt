@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Users, Lock } from 'lucide-svelte';
 
-	let { tripId, currentUserId } = $props();
+	let { tripId } = $props();
 
 	let items = $state([]);
 	let loading = $state(true);
@@ -10,6 +10,7 @@
 	let showNewItemForm = $state(false);
 	let newItem = $state({ item: '', category: 'clothing', isPrivate: false });
 	let formLoading = $state(false);
+	let currentUserId = $state('');
 
 	const categories = ['clothing', 'toiletries', 'documents', 'electronics', 'sports', 'other'];
 
@@ -36,6 +37,9 @@
 	let privatePackedCount = $derived(privateItems.filter((i) => i.packed).length);
 
 	onMount(async () => {
+		const authRes = await fetch('/api/auth');
+		const authData = await authRes.json();
+		currentUserId = authData.userId || '';
 		await fetchItems();
 	});
 
@@ -271,10 +275,8 @@
 											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
 												{item.item}
 											</span>
-											{#if item.createdBy === currentUserId || !item.createdBy}
-												<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
-												<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
-											{/if}
+											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
+											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
 										{/if}
 									</div>
 								{/each}

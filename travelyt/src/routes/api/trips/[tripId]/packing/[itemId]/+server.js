@@ -28,7 +28,7 @@ export async function PUT({ params, request, cookies }) {
 
 		const body = await request.json();
 
-		// Only the creator can rename/recategorise; anyone can toggle packed
+		// For private items, only the creator can edit
 		if (body.item !== undefined || body.category !== undefined) {
 			const item = await packingItems.findOne({
 				_id: new ObjectId(itemId),
@@ -37,8 +37,8 @@ export async function PUT({ params, request, cookies }) {
 			if (!item) {
 				return json({ success: false, error: 'Item not found' }, { status: 404 });
 			}
-			if (item.createdBy && item.createdBy.toString() !== userId) {
-				return json({ success: false, error: 'You can only edit your own items' }, { status: 403 });
+			if (item.isPrivate && item.createdBy && item.createdBy.toString() !== userId) {
+				return json({ success: false, error: 'You can only edit your own private items' }, { status: 403 });
 			}
 		}
 
@@ -94,9 +94,9 @@ export async function DELETE({ params, cookies }) {
 			return json({ success: false, error: 'Item not found' }, { status: 404 });
 		}
 
-		// If item has an owner, only they can delete it
-		if (item.createdBy && item.createdBy.toString() !== userId) {
-			return json({ success: false, error: 'You can only delete your own items' }, { status: 403 });
+		// For private items, only the creator can delete
+		if (item.isPrivate && item.createdBy && item.createdBy.toString() !== userId) {
+			return json({ success: false, error: 'You can only delete your own private items' }, { status: 403 });
 		}
 
 		await packingItems.deleteOne({ _id: new ObjectId(itemId) });

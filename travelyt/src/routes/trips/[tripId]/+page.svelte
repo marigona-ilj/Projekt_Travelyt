@@ -326,7 +326,7 @@ let tripId = $state('');
 			{#if activeTab === 'activities'}
 				<ActivityList {tripId} startDate={trip.startDate} endDate={trip.endDate} />
 			{:else if activeTab === 'packing'}
-				<PackingList {tripId} {currentUserId} />
+				<PackingList {tripId} />
 			{:else if activeTab === 'expenses'}
 				<ExpenseList {tripId} {currentUserId} currency={trip.currency || 'CHF'} oncurrencychange={updateCurrency} />
 			{:else if activeTab === 'gallery'}
