@@ -78,6 +78,10 @@ let tripId = $state('');
 
 	async function updateTrip(event) {
 		if (event?.preventDefault) event.preventDefault();
+		if (new Date(editTrip.endDate) < new Date(editTrip.startDate)) {
+			error = 'End date cannot be before start date';
+			return;
+		}
 		editLoading = true;
 		error = '';
 		try {
@@ -238,6 +242,7 @@ let tripId = $state('');
 								type="date"
 								id="edit-end"
 								bind:value={editTrip.endDate}
+								min={editTrip.startDate || ''}
 								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
 								required
 							/>
