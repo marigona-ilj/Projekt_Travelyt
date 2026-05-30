@@ -17,10 +17,10 @@
 	let loading = $state(true);
 	let error = $state('');
 	let showNewExpenseForm = $state(false);
-	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '' });
+	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [] });
 	let formLoading = $state(false);
 	let editingId = $state(null);
-	let editingExpense = $state({ description: '', amount: '', date: '', paidBy: '' });
+	let editingExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [] });
 	let editLoading = $state(false);
 
 	const fmt = (n) => formatCurrency(n, currency);
@@ -34,22 +34,26 @@
 	function calculateSettlement(exps, mbrs) {
 		if (mbrs.length <= 1 || exps.length === 0) return null;
 
-		const tot = exps.reduce((sum, e) => sum + e.amount, 0);
-		const fairShare = tot / mbrs.length;
-
 		const paid = Object.fromEntries(mbrs.map((m) => [m.userId, 0]));
+		const owes = Object.fromEntries(mbrs.map((m) => [m.userId, 0]));
+
 		exps.forEach((e) => {
 			if (paid[e.paidBy] !== undefined) paid[e.paidBy] += e.amount;
+			const parts = e.participants?.length > 0 ? e.participants : mbrs.map((m) => m.userId);
+			const share = e.amount / parts.length;
+			parts.forEach((uid) => {
+				if (owes[uid] !== undefined) owes[uid] += share;
+			});
 		});
 
 		const balances = mbrs.map((m) => ({
 			userId: m.userId,
 			name: m.name,
-			paid: paid[m.userId] || 0,
-			balance: Math.round(((paid[m.userId] || 0) - fairShare) * 100) / 100
+			paid: Math.round((paid[m.userId] || 0) * 100) / 100,
+			owes: Math.round((owes[m.userId] || 0) * 100) / 100,
+			balance: Math.round(((paid[m.userId] || 0) - (owes[m.userId] || 0)) * 100) / 100
 		}));
 
-		// Greedy settlement: match biggest creditor with biggest debtor
 		const creditors = balances
 			.filter((b) => b.balance > 0.01)
 			.map((b) => ({ ...b, remaining: b.balance }))
@@ -60,8 +64,7 @@
 			.sort((a, b) => b.remaining - a.remaining);
 
 		const settlements = [];
-		let ci = 0,
-			di = 0;
+		let ci = 0, di = 0;
 		while (ci < creditors.length && di < debtors.length) {
 			const amount = Math.min(creditors[ci].remaining, debtors[di].remaining);
 			if (amount > 0.01) {
@@ -77,7 +80,7 @@
 			if (debtors[di].remaining < 0.01) di++;
 		}
 
-		return { balances, settlements, fairShare, total: tot };
+		return { balances, settlements };
 	}
 
 	onMount(async () => {
@@ -115,7 +118,7 @@
 	}
 
 	function openForm() {
-		newExpense = { description: '', amount: '', date: '', paidBy: currentUserId };
+		newExpense = { description: '', amount: '', date: '', paidBy: currentUserId, participants: members.map((m) => m.userId) };
 		showNewExpenseForm = true;
 	}
 
@@ -157,7 +160,8 @@
 			description: expense.description,
 			amount: expense.amount,
 			date: expense.date?.split('T')[0] ?? expense.date,
-			paidBy: expense.paidBy
+			paidBy: expense.paidBy,
+			participants: expense.participants?.length > 0 ? expense.participants : members.map((m) => m.userId)
 		};
 	}
 
@@ -304,6 +308,28 @@
 							{/each}
 						</select>
 					</div>
+					<div class="mb-3">
+						<label class="block text-xs text-gray-500 mb-1">Split between</label>
+						<div class="flex flex-wrap gap-3">
+							{#each members as member}
+								<label class="flex items-center gap-1.5 text-sm cursor-pointer">
+									<input
+										type="checkbox"
+										checked={newExpense.participants.includes(member.userId)}
+										onchange={(e) => {
+											if (e.target.checked) {
+												newExpense.participants = [...newExpense.participants, member.userId];
+											} else {
+												newExpense.participants = newExpense.participants.filter((id) => id !== member.userId);
+											}
+										}}
+										class="w-3.5 h-3.5"
+									/>
+									{member.name}{member.userId === currentUserId ? ' (you)' : ''}
+								</label>
+							{/each}
+						</div>
+					</div>
 				{/if}
 				<div class="flex gap-2">
 					<button
@@ -370,6 +396,28 @@
 										{/each}
 									</select>
 								</div>
+								<div class="mb-2">
+									<label class="block text-xs text-gray-500 mb-1">Split between</label>
+									<div class="flex flex-wrap gap-3">
+										{#each members as member}
+											<label class="flex items-center gap-1.5 text-sm cursor-pointer">
+												<input
+													type="checkbox"
+													checked={editingExpense.participants.includes(member.userId)}
+													onchange={(e) => {
+														if (e.target.checked) {
+															editingExpense.participants = [...editingExpense.participants, member.userId];
+														} else {
+															editingExpense.participants = editingExpense.participants.filter((id) => id !== member.userId);
+														}
+													}}
+													class="w-3.5 h-3.5"
+												/>
+												{member.name}{member.userId === currentUserId ? ' (you)' : ''}
+											</label>
+										{/each}
+									</div>
+								</div>
 							{/if}
 							<div class="flex gap-2">
 								<button type="submit" disabled={editLoading} class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm">
@@ -391,6 +439,11 @@
 										{expense.paidBy === currentUserId ? ' (you)' : ''}
 									</span>
 								</p>
+								{#if expense.participants?.length > 0 && expense.participants.length < members.length}
+									<p class="text-xs text-gray-400 mt-0.5">
+										Split with: {expense.participants.map((uid) => memberMap[uid] ?? 'Unknown').join(', ')}
+									</p>
+								{/if}
 							</div>
 							<div class="flex items-center gap-3">
 								<span class="font-semibold text-gray-800">{fmt(expense.amount)}</span>
@@ -414,7 +467,7 @@
 							<tr class="bg-gray-100 text-gray-600 text-xs uppercase">
 								<th class="text-left px-4 py-2">Member</th>
 								<th class="text-right px-4 py-2">Paid</th>
-								<th class="text-right px-4 py-2">Fair share</th>
+								<th class="text-right px-4 py-2">Owes</th>
 								<th class="text-right px-4 py-2">Balance</th>
 							</tr>
 						</thead>
@@ -425,7 +478,7 @@
 										{row.name}{row.userId === currentUserId ? ' (you)' : ''}
 									</td>
 									<td class="px-4 py-2 text-right text-gray-700">{fmt(row.paid)}</td>
-									<td class="px-4 py-2 text-right text-gray-500">{fmt(settlement.fairShare)}</td>
+									<td class="px-4 py-2 text-right text-gray-500">{fmt(row.owes)}</td>
 									<td class="px-4 py-2 text-right font-semibold {row.balance > 0 ? 'text-green-600' : row.balance < 0 ? 'text-red-500' : 'text-gray-400'}">
 										{row.balance > 0 ? '+' : ''}{fmt(row.balance)}
 									</td>

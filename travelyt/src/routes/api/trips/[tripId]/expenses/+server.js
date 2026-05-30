@@ -43,6 +43,7 @@ export async function GET({ params, cookies }) {
 				category: expense.category,
 				paidBy: expense.paidBy.toString(),
 				date: expense.date,
+				participants: (expense.participants || []).map((p) => p.toString()),
 				createdAt: expense.createdAt
 			})),
 			total
@@ -90,6 +91,7 @@ export async function POST({ params, request, cookies }) {
 			category: expenseData.category || 'other',
 			paidBy: new ObjectId(expenseData.paidBy || userId),
 			date: new Date(expenseData.date),
+			participants: (expenseData.participants || []).map((id) => new ObjectId(id)),
 			createdAt: new Date(),
 			updatedAt: new Date()
 		});
