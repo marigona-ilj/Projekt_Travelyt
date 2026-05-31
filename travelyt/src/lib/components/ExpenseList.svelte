@@ -1,7 +1,7 @@
 <script>
 	import { formatCurrency } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { Wallet, ArrowRightLeft } from 'lucide-svelte';
+	import { Wallet, ArrowRightLeft, Pencil, Trash2 } from 'lucide-svelte';
 
 	let { tripId, currentUserId, currency = 'CHF', oncurrencychange = null } = $props();
 
@@ -490,8 +490,8 @@
 							</div>
 							<div class="flex items-center gap-3">
 								<span class="font-semibold text-gray-800">{fmt(expense.amount)}</span>
-								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
-								<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
+								<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 							</div>
 						</div>
 					{/if}

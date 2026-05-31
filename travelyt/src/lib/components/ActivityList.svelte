@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Clock, MapPin } from 'lucide-svelte';
+	import { Clock, MapPin, Pencil, Trash2 } from 'lucide-svelte';
 
 	let { tripId, startDate, endDate } = $props();
 
@@ -328,7 +328,7 @@
 							{#if activity.location}<p class="text-sm text-gray-500 flex items-center gap-1"><MapPin size={13} /> {activity.location}</p>{/if}
 							{#if activity.description}<p class="text-sm text-gray-600 mt-1">{activity.description}</p>{/if}
 						</div>
-						<button onclick={() => deleteActivity(activity.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+						<button onclick={() => deleteActivity(activity.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 					</div>
 				{/each}
 			</div>
@@ -429,8 +429,8 @@
 												{/if}
 											</div>
 											<div class="flex gap-1 ml-2">
-												<button onclick={() => startEdit(activity)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
-												<button onclick={() => deleteActivity(activity.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+												<button onclick={() => startEdit(activity)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
+												<button onclick={() => deleteActivity(activity.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 											</div>
 										</div>
 									{/if}

@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Users, Lock } from 'lucide-svelte';
+	import { Users, Lock, Pencil, Trash2 } from 'lucide-svelte';
 
 	let { tripId } = $props();
 
@@ -275,8 +275,8 @@
 											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
 												{item.item}
 											</span>
-											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
-											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
+											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 										{/if}
 									</div>
 								{/each}
@@ -330,8 +330,8 @@
 											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
 												{item.item}
 											</span>
-											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500 text-sm">✏</button>
-											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600 text-sm">✕</button>
+											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
+											<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 										{/if}
 									</div>
 								{/each}
