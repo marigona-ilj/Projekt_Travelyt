@@ -9,10 +9,11 @@
 	import Gallery from '$lib/components/Gallery.svelte';
 	import TripChecklist from '$lib/components/TripChecklist.svelte';
 	import TripWeather from '$lib/components/TripWeather.svelte';
+	import TripMap from '$lib/components/TripMap.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map } from 'lucide-svelte';
 
 let tripId = $state('');
 	let trip = $state(null);
@@ -47,7 +48,7 @@ let tripId = $state('');
 		currentUserId = authData.userId || '';
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
-		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather'];
+		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'];
 		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
 	});
 
@@ -316,7 +317,7 @@ let tripId = $state('');
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300">
-				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather'] as tab}
+				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
@@ -335,6 +336,8 @@ let tripId = $state('');
 							<span class="flex items-center gap-1"><ClipboardList size={15} /> Checklist</span>
 						{:else if tab === 'weather'}
 							<span class="flex items-center gap-1"><Cloud size={15} /> Weather</span>
+						{:else if tab === 'map'}
+							<span class="flex items-center gap-1"><Map size={15} /> Map</span>
 						{:else}
 							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
 						{/if}
@@ -359,6 +362,8 @@ let tripId = $state('');
 				<MemberList {tripId} {isOwner} />
 			{:else if activeTab === 'weather'}
 				<TripWeather latitude={trip.latitude} longitude={trip.longitude} resolvedLocation={trip.resolvedLocation} startDate={trip.startDate} endDate={trip.endDate} />
+			{:else if activeTab === 'map'}
+				<TripMap {tripId} centerLat={trip.latitude} centerLon={trip.longitude} />
 			{/if}
 		</div>
 	{/if}
