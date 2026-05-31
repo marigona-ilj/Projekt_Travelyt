@@ -7,9 +7,10 @@
 	import PackingList from '$lib/components/PackingList.svelte';
 	import MemberList from '$lib/components/MemberList.svelte';
 	import Gallery from '$lib/components/Gallery.svelte';
+	import TripChecklist from '$lib/components/TripChecklist.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList } from 'lucide-svelte';
 
 let tripId = $state('');
 	let trip = $state(null);
@@ -43,7 +44,7 @@ let tripId = $state('');
 		currentUserId = authData.userId || '';
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
-		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'members'];
+		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members'];
 		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
 	});
 
@@ -303,7 +304,7 @@ let tripId = $state('');
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300">
-				{#each ['activities', 'packing', 'expenses', 'gallery', 'members'] as tab}
+				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
@@ -318,6 +319,8 @@ let tripId = $state('');
 							<span class="flex items-center gap-1"><Wallet size={15} /> Budget</span>
 						{:else if tab === 'gallery'}
 							<span class="flex items-center gap-1"><Images size={15} /> Gallery</span>
+						{:else if tab === 'checklist'}
+							<span class="flex items-center gap-1"><ClipboardList size={15} /> Checklist</span>
 						{:else}
 							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
 						{/if}
@@ -336,6 +339,8 @@ let tripId = $state('');
 				<ExpenseList {tripId} {currentUserId} currency={trip.currency || 'CHF'} oncurrencychange={updateCurrency} />
 			{:else if activeTab === 'gallery'}
 				<Gallery {tripId} {currentUserId} />
+			{:else if activeTab === 'checklist'}
+				<TripChecklist {tripId} />
 			{:else if activeTab === 'members'}
 				<MemberList {tripId} {isOwner} />
 			{/if}
