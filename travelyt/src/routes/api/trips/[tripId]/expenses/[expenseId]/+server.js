@@ -35,6 +35,7 @@ export async function PUT({ params, request, cookies }) {
 					amount: parseFloat(updateData.amount),
 					date: new Date(updateData.date),
 					paidBy: new ObjectId(updateData.paidBy),
+					category: updateData.category || 'other',
 					participants: (updateData.participants || []).map((id) => new ObjectId(id)),
 					updatedAt: new Date()
 				}

@@ -7,6 +7,15 @@
 
 	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
 
+	const categoryConfig = {
+		accommodation: { label: 'Accommodation', color: 'bg-blue-500' },
+		food:          { label: 'Food & Drink',   color: 'bg-orange-400' },
+		transport:     { label: 'Transport',       color: 'bg-purple-500' },
+		activities:    { label: 'Activities',      color: 'bg-green-500' },
+		other:         { label: 'Other',           color: 'bg-gray-400' }
+	};
+	const categoryKeys = Object.keys(categoryConfig);
+
 	function handleCurrencyChange(event) {
 		if (oncurrencychange) oncurrencychange(event.target.value);
 	}
@@ -17,10 +26,10 @@
 	let loading = $state(true);
 	let error = $state('');
 	let showNewExpenseForm = $state(false);
-	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [] });
+	let newExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [], category: '' });
 	let formLoading = $state(false);
 	let editingId = $state(null);
-	let editingExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [] });
+	let editingExpense = $state({ description: '', amount: '', date: '', paidBy: '', participants: [], category: 'other' });
 	let editLoading = $state(false);
 
 	const fmt = (n) => formatCurrency(n, currency);
@@ -30,6 +39,18 @@
 	);
 
 	let settlement = $derived(calculateSettlement(expenses, members));
+
+	let categoryBreakdown = $derived.by(() => {
+		if (expenses.length === 0) return [];
+		const totals = {};
+		for (const e of expenses) {
+			const cat = e.category || 'other';
+			totals[cat] = (totals[cat] || 0) + e.amount;
+		}
+		return categoryKeys
+			.filter((k) => totals[k])
+			.map((k) => ({ key: k, ...categoryConfig[k], amount: Math.round(totals[k] * 100) / 100, pct: Math.round((totals[k] / total) * 100) }));
+	});
 
 	function calculateSettlement(exps, mbrs) {
 		if (mbrs.length <= 1 || exps.length === 0) return null;
@@ -118,7 +139,7 @@
 	}
 
 	function openForm() {
-		newExpense = { description: '', amount: '', date: '', paidBy: currentUserId, participants: members.map((m) => m.userId) };
+		newExpense = { description: '', amount: '', date: '', paidBy: currentUserId, participants: members.map((m) => m.userId), category: '' };
 		showNewExpenseForm = true;
 	}
 
@@ -161,7 +182,8 @@
 			amount: expense.amount,
 			date: expense.date?.split('T')[0] ?? expense.date,
 			paidBy: expense.paidBy,
-			participants: expense.participants?.length > 0 ? expense.participants : members.map((m) => m.userId)
+			participants: expense.participants?.length > 0 ? expense.participants : members.map((m) => m.userId),
+			category: expense.category || 'other'
 		};
 	}
 
@@ -331,6 +353,15 @@
 						</div>
 					</div>
 				{/if}
+				<div class="mb-3">
+					<label class="block text-xs text-gray-500 mb-1">Category</label>
+					<select bind:value={newExpense.category} required class="w-full px-3 py-2 border border-gray-300 rounded text-sm {newExpense.category === '' ? 'text-gray-400' : 'text-gray-800'}">
+						<option value="" disabled>Select a category...</option>
+						{#each categoryKeys as key}
+							<option value={key}>{categoryConfig[key].label}</option>
+						{/each}
+					</select>
+				</div>
 				<div class="flex gap-2">
 					<button
 						type="submit"
@@ -419,6 +450,13 @@
 									</div>
 								</div>
 							{/if}
+							<div class="mb-2">
+								<select bind:value={editingExpense.category} class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+									{#each categoryKeys as key}
+										<option value={key}>{categoryConfig[key].label}</option>
+									{/each}
+								</select>
+							</div>
 							<div class="flex gap-2">
 								<button type="submit" disabled={editLoading} class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm">
 									{editLoading ? 'Saving...' : '✓ Save'}
@@ -431,7 +469,12 @@
 					{:else}
 						<div class="flex justify-between items-center">
 							<div>
-								<p class="font-semibold text-gray-800">{expense.description}</p>
+								<div class="flex items-center gap-2 mb-0.5">
+									<p class="font-semibold text-gray-800">{expense.description}</p>
+									<span class="text-xs px-1.5 py-0.5 rounded-full text-white {categoryConfig[expense.category || 'other'].color}">
+										{categoryConfig[expense.category || 'other'].label}
+									</span>
+								</div>
 								<p class="text-xs text-gray-500">
 									{new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
 									· paid by <span class="font-medium text-gray-700">
@@ -455,6 +498,25 @@
 				</div>
 			{/each}
 		</div>
+
+		<!-- Category breakdown -->
+		{#if categoryBreakdown.length > 0}
+			<div class="border-t border-gray-200 pt-6 mb-6">
+				<h3 class="text-lg font-bold text-gray-700 mb-3">By Category</h3>
+				<div class="space-y-2">
+					{#each categoryBreakdown as cat}
+						<div class="flex items-center gap-3">
+							<span class="w-28 text-sm text-gray-600 shrink-0">{cat.label}</span>
+							<div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+								<div class="h-2 rounded-full {cat.color}" style="width: {cat.pct}%"></div>
+							</div>
+							<span class="text-sm font-semibold text-gray-700 w-24 text-right shrink-0">{fmt(cat.amount)}</span>
+							<span class="text-xs text-gray-400 w-8 text-right shrink-0">{cat.pct}%</span>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
 
 		<!-- Group settlement (only for group trips) -->
 		{#if settlement}
