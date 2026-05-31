@@ -10,7 +10,7 @@
 	import TripChecklist from '$lib/components/TripChecklist.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown } from 'lucide-svelte';
 
 let tripId = $state('');
 	let trip = $state(null);
@@ -174,7 +174,15 @@ let tripId = $state('');
 						)} days)
 					</p>
 				</div>
-			<div class="flex gap-2">
+			<div class="flex gap-2 flex-wrap">
+					<a
+						href="/trips/{tripId}/print"
+						target="_blank"
+						class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm"
+					>
+						<FileDown size={15} />
+						Export PDF
+					</a>
 					{#if isOwner}
 						<button
 							onclick={openEditForm}
