@@ -43,6 +43,9 @@ export async function GET({ params, cookies }) {
 				endDate: trip.endDate,
 				currency: trip.currency || 'CHF',
 				coverImage: trip.coverImage || '',
+				latitude: trip.latitude ?? null,
+				longitude: trip.longitude ?? null,
+				resolvedLocation: trip.resolvedLocation || '',
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt,
 				updatedAt: trip.updatedAt
@@ -91,6 +94,7 @@ export async function PUT({ params, request, cookies }) {
 					endDate: new Date(updateData.endDate),
 					currency: updateData.currency || 'CHF',
 					coverImage: updateData.coverImage || '',
+					...(updateData.latitude != null ? { latitude: updateData.latitude, longitude: updateData.longitude, resolvedLocation: updateData.resolvedLocation || '' } : {}),
 					updatedAt: new Date()
 				}
 			}

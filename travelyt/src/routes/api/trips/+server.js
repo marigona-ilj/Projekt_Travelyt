@@ -77,6 +77,7 @@ export async function POST({ request, cookies }) {
 			endDate: new Date(tripData.endDate),
 			currency: tripData.currency || 'CHF',
 			coverImage: tripData.coverImage || '',
+			...(tripData.latitude != null ? { latitude: tripData.latitude, longitude: tripData.longitude, resolvedLocation: tripData.resolvedLocation || '' } : {}),
 			createdBy: new ObjectId(userId),
 			createdAt: new Date(),
 			updatedAt: new Date()

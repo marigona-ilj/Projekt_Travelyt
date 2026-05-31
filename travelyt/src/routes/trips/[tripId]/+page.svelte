@@ -8,9 +8,11 @@
 	import MemberList from '$lib/components/MemberList.svelte';
 	import Gallery from '$lib/components/Gallery.svelte';
 	import TripChecklist from '$lib/components/TripChecklist.svelte';
+	import TripWeather from '$lib/components/TripWeather.svelte';
+	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud } from 'lucide-svelte';
 
 let tripId = $state('');
 	let trip = $state(null);
@@ -22,6 +24,7 @@ let tripId = $state('');
 
 	let showEditForm = $state(false);
 	let editTrip = $state({ title: '', destination: '', startDate: '', endDate: '', description: '', currency: 'CHF', coverImage: '' });
+	let editGeoData = $state(null);
 	let editLoading = $state(false);
 
 	function handleEditCoverImage(event) {
@@ -44,7 +47,7 @@ let tripId = $state('');
 		currentUserId = authData.userId || '';
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
-		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members'];
+		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather'];
 		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
 	});
 
@@ -74,6 +77,9 @@ let tripId = $state('');
 			currency: trip.currency || 'CHF',
 			coverImage: trip.coverImage || ''
 		};
+		editGeoData = trip.latitude != null
+			? { latitude: trip.latitude, longitude: trip.longitude, resolvedLocation: trip.resolvedLocation }
+			: null;
 		showEditForm = true;
 	}
 
@@ -89,7 +95,7 @@ let tripId = $state('');
 			const response = await fetch(`/api/trips/${tripId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(editTrip)
+				body: JSON.stringify({ ...editTrip, ...editGeoData })
 			});
 			const data = await response.json();
 			if (data.success) {
@@ -225,12 +231,10 @@ let tripId = $state('');
 						</div>
 						<div>
 							<label for="edit-dest" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-							<input
-								type="text"
-								id="edit-dest"
+							<DestinationInput
 								bind:value={editTrip.destination}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-								required
+								onlocationselect={(loc) => (editGeoData = loc)}
+								inputClass="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
 							/>
 						</div>
 					</div>
@@ -312,7 +316,7 @@ let tripId = $state('');
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300">
-				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members'] as tab}
+				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
@@ -329,6 +333,8 @@ let tripId = $state('');
 							<span class="flex items-center gap-1"><Images size={15} /> Gallery</span>
 						{:else if tab === 'checklist'}
 							<span class="flex items-center gap-1"><ClipboardList size={15} /> Checklist</span>
+						{:else if tab === 'weather'}
+							<span class="flex items-center gap-1"><Cloud size={15} /> Weather</span>
 						{:else}
 							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
 						{/if}
@@ -351,6 +357,8 @@ let tripId = $state('');
 				<TripChecklist {tripId} />
 			{:else if activeTab === 'members'}
 				<MemberList {tripId} {isOwner} />
+			{:else if activeTab === 'weather'}
+				<TripWeather latitude={trip.latitude} longitude={trip.longitude} resolvedLocation={trip.resolvedLocation} startDate={trip.startDate} endDate={trip.endDate} />
 			{/if}
 		</div>
 	{/if}

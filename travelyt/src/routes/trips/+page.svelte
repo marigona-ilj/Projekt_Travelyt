@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Header from '$lib/components/Header.svelte';
 	import TripCard from '$lib/components/TripCard.svelte';
+	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
 
 	let trips = $state([]);
@@ -18,6 +19,7 @@
 		currency: 'CHF',
 		coverImage: ''
 	});
+	let newTripGeoData = $state(null);
 	let formLoading = $state(false);
 
 	function handleCoverImage(event) {
@@ -71,7 +73,7 @@
 			const response = await fetch('/api/trips', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(newTrip)
+				body: JSON.stringify({ ...newTrip, ...newTripGeoData })
 			});
 
 			const data = await response.json();
@@ -86,6 +88,7 @@
 					currency: 'CHF',
 					coverImage: ''
 				};
+				newTripGeoData = null;
 				showNewTripForm = false;
 				await fetchTrips();
 			} else {
@@ -191,13 +194,10 @@
 					</div>
 					<div>
 						<label for="dest" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-						<input
-							type="text"
-							id="dest"
+						<DestinationInput
 							bind:value={newTrip.destination}
-							placeholder="e.g., Paris, France"
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-							required
+							onlocationselect={(loc) => (newTripGeoData = loc)}
+							inputClass="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
 						/>
 					</div>
 				</div>
