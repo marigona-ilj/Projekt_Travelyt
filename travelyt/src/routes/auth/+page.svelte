@@ -1,5 +1,7 @@
 <script>
 
+import { page } from '$app/stores';
+
 let email = $state('');
 let password = $state('');
 let name = $state('');
@@ -25,7 +27,8 @@ let error = $state('');
 			const data = await response.json();
 
 			if (data.success) {
-				window.location.href = '/trips';
+				const redirect = $page.url.searchParams.get('redirect');
+				window.location.href = redirect || '/trips';
 			} else {
 				error = data.error || 'An error occurred';
 			}

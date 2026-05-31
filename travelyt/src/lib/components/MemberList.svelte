@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { Copy, Link, Trash2 } from 'lucide-svelte';
 
 	let { tripId, isOwner } = $props();
 
@@ -10,6 +11,11 @@
 	let inviteLoading = $state(false);
 	let inviteError = $state('');
 	let inviteSuccess = $state('');
+	let inviteCode = $state('');
+	let inviteLinkLoading = $state(false);
+	let copied = $state(false);
+
+	let inviteLink = $derived(inviteCode ? `${window?.location?.origin}/trips/join/${inviteCode}` : '');
 
 	onMount(async () => {
 		await fetchMembers();
@@ -60,6 +66,35 @@
 		} finally {
 			inviteLoading = false;
 		}
+	}
+
+	async function generateInviteLink() {
+		inviteLinkLoading = true;
+		try {
+			const res = await fetch(`/api/trips/${tripId}/invite`);
+			const data = await res.json();
+			if (data.success) inviteCode = data.code;
+		} catch {
+			// silently ignore
+		} finally {
+			inviteLinkLoading = false;
+		}
+	}
+
+	async function revokeInviteLink() {
+		if (!confirm('Revoke the invite link? Existing links will no longer work.')) return;
+		try {
+			await fetch(`/api/trips/${tripId}/invite`, { method: 'DELETE' });
+			inviteCode = '';
+		} catch {
+			// silently ignore
+		}
+	}
+
+	async function copyLink() {
+		await navigator.clipboard.writeText(inviteLink);
+		copied = true;
+		setTimeout(() => (copied = false), 2000);
 	}
 
 	async function removeMember(memberId) {
@@ -116,6 +151,41 @@
 				<p class="text-green-600 text-sm mt-2">✓ {inviteSuccess}</p>
 			{/if}
 		</div>
+
+	<!-- Invite link -->
+	<div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+		<h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><Link size={14} /> Invite via link</h3>
+		{#if inviteCode}
+			<div class="flex gap-2 mb-2">
+				<input
+					type="text"
+					value={inviteLink}
+					readonly
+					class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 bg-white"
+				/>
+				<button
+					onclick={copyLink}
+					class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition {copied ? 'bg-green-100 text-green-700' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}"
+				>
+					<Copy size={14} />
+					{copied ? 'Copied!' : 'Copy'}
+				</button>
+			</div>
+			{#if isOwner}
+				<button onclick={revokeInviteLink} class="flex items-center gap-1 text-xs text-red-400 hover:text-red-600 transition">
+					<Trash2 size={12} /> Revoke link
+				</button>
+			{/if}
+		{:else}
+			<button
+				onclick={generateInviteLink}
+				disabled={inviteLinkLoading}
+				class="bg-gray-200 hover:bg-gray-300 disabled:opacity-50 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition"
+			>
+				{inviteLinkLoading ? 'Generating...' : 'Generate invite link'}
+			</button>
+		{/if}
+	</div>
 
 	{#if loading}
 		<div class="text-center py-8">
