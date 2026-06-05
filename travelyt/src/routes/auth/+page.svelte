@@ -28,7 +28,7 @@ let error = $state('');
 
 			if (data.success) {
 				const redirect = $page.url.searchParams.get('redirect');
-				window.location.href = redirect || '/trips';
+				window.location.href = redirect || '/';
 			} else {
 				error = data.error || 'An error occurred';
 			}

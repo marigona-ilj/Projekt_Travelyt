@@ -9,6 +9,7 @@
 	}
 
 	const navLinks = [
+		{ href: '/', label: 'Dashboard', exact: true },
 		{ href: '/trips', label: 'My Trips' },
 		{ href: '/profile', label: 'Profile' },
 		{ href: '/settings', label: 'Settings' }
@@ -70,7 +71,7 @@
 
 <header class="bg-white shadow-sm relative z-50 dark:!bg-gray-900 dark:border-b dark:border-gray-700">
 	<div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-		<a href="/trips" class="flex items-center gap-2 no-underline">
+		<a href="/" class="flex items-center gap-2 no-underline">
 			<div class="text-blue-600"><Plane size={28} /></div>
 			<span class="text-2xl font-bold text-gray-800 dark:text-gray-100">Travelyt</span>
 		</a>
@@ -79,7 +80,7 @@
 			{#each navLinks as link}
 				<a
 					href={link.href}
-					class="px-4 py-2 rounded-lg font-semibold transition {$page.url.pathname === link.href || ($page.url.pathname.startsWith(link.href) && link.href !== '/')
+					class="px-4 py-2 rounded-lg font-semibold transition {link.exact ? $page.url.pathname === link.href : ($page.url.pathname === link.href || $page.url.pathname.startsWith(link.href + '/'))
 						? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
 						: 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
 				>
