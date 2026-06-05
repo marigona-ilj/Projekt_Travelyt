@@ -9,6 +9,9 @@ let confirmPassword = $state('');
 let isLogin = $state(true);
 let loading = $state(false);
 let error = $state('');
+
+let redirect = $derived($page.url.searchParams.get('redirect') ?? '');
+let isTripInvite = $derived(redirect.includes('/trips/join/'));
 	async function handleSubmit(event) {
 		event?.preventDefault?.();
 		error = '';
@@ -28,7 +31,12 @@ let error = $state('');
 
 			if (data.success) {
 				const redirect = $page.url.searchParams.get('redirect');
-				window.location.href = redirect || '/';
+				// After registration: go to pending invites page first if there are any
+				if (!isLogin && data.pendingInviteCount > 0) {
+					window.location.href = `/join/pending${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
+				} else {
+					window.location.href = redirect || '/';
+				}
 			} else {
 				error = data.error || 'An error occurred';
 			}
@@ -51,6 +59,15 @@ let error = $state('');
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
 	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+		{#if isTripInvite}
+			<div class="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg px-4 py-3 mb-6">
+				<span class="text-2xl">✈️</span>
+				<div>
+					<p class="text-sm font-semibold text-blue-800 dark:text-blue-300">You've been invited to a trip!</p>
+					<p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">Sign in or create an account to join.</p>
+				</div>
+			</div>
+		{/if}
 		<h1 class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-gray-100">
 			{#if isLogin}
 				Welcome Back

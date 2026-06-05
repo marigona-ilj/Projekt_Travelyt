@@ -1,6 +1,8 @@
 import { json } from '@sveltejs/kit';
 import { createUser, authenticateUser, getUserById } from '$lib/server/auth.js';
 import { isValidEmail, isValidPassword } from '$lib/server/validators.js';
+import { getCollection } from '$lib/server/db.js';
+import { ObjectId } from 'mongodb';
 
 export async function POST({ request, url }) {
 	const action = url.searchParams.get('action');
@@ -31,7 +33,16 @@ export async function POST({ request, url }) {
 			return json({ success: false, error: result.error }, { status: 400 });
 		}
 
-		const response = json({ success: true, message: 'Registration successful' });
+		// Check for pending invites (don't auto-join — user will confirm on next page)
+		let pendingInviteCount = 0;
+		try {
+			const tripInvites = await getCollection('tripInvites');
+			pendingInviteCount = await tripInvites.countDocuments({ email: email.trim().toLowerCase() });
+		} catch {
+			// non-critical
+		}
+
+		const response = json({ success: true, message: 'Registration successful', pendingInviteCount });
 		response.headers.set(
 			'Set-Cookie',
 			`userId=${result.userId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${60 * 60 * 24 * 30}`
