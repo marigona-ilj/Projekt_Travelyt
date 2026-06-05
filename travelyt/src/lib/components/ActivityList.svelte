@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Clock, MapPin, Pencil, Trash2 } from 'lucide-svelte';
+	import Toast from '$lib/components/Toast.svelte';
 
 	let { tripId, startDate, endDate } = $props();
 
@@ -16,6 +17,21 @@
 	let editLoading = $state(false);
 	let draggingId = $state(null);
 	let dragOverDay = $state(null);
+
+	let toastKey = $state(0);
+	let toastVisible = $state(false);
+	let toastMessage = $state('');
+	let pendingDelete = $state(null);
+	let deleteTimer = null;
+	const UNDO_DURATION = 5000;
+
+	function flushPendingDelete() {
+		if (!pendingDelete) return;
+		clearTimeout(deleteTimer);
+		const id = pendingDelete.id;
+		pendingDelete = null;
+		fetch(`/api/trips/${tripId}/activities/${id}`, { method: 'DELETE' });
+	}
 
 	onMount(async () => {
 		await fetchActivities();
@@ -71,22 +87,31 @@
 		}
 	}
 
-	async function deleteActivity(id) {
-		if (confirm('Delete this activity?')) {
-			try {
-				const response = await fetch(`/api/trips/${tripId}/activities/${id}`, {
-					method: 'DELETE'
-				});
-				const data = await response.json();
-				if (data.success) {
-					await fetchActivities();
-				} else {
-					error = data.error || 'Failed to delete';
-				}
-			} catch (err) {
-				error = 'Network error';
-			}
-		}
+	function deleteActivity(id) {
+		flushPendingDelete();
+		const index = activities.findIndex((a) => a.id === id);
+		if (index === -1) return;
+		const data = activities[index];
+		pendingDelete = { id, data, index };
+		activities = activities.filter((a) => a.id !== id);
+		toastMessage = `"${data.title}" deleted`;
+		toastVisible = true;
+		toastKey++;
+		deleteTimer = setTimeout(() => {
+			toastVisible = false;
+			fetch(`/api/trips/${tripId}/activities/${id}`, { method: 'DELETE' });
+			pendingDelete = null;
+		}, UNDO_DURATION);
+	}
+
+	function undoDeleteActivity() {
+		if (!pendingDelete) return;
+		clearTimeout(deleteTimer);
+		const restored = [...activities];
+		restored.splice(pendingDelete.index, 0, pendingDelete.data);
+		activities = restored;
+		pendingDelete = null;
+		toastVisible = false;
 	}
 
 	// All trip days as YYYY-MM-DD strings
@@ -237,6 +262,10 @@
 		});
 	}
 </script>
+
+{#key toastKey}
+	<Toast message={toastMessage} visible={toastVisible} onUndo={undoDeleteActivity} duration={UNDO_DURATION} />
+{/key}
 
 <div>
 	<div class="flex justify-between items-center mb-6">

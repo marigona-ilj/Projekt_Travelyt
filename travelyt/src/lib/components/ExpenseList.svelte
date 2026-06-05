@@ -2,6 +2,7 @@
 	import { formatCurrency } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 	import { Wallet, ArrowRightLeft, Pencil, Trash2 } from 'lucide-svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let { tripId, currentUserId, currency = 'CHF', oncurrencychange = null, startDate = '', endDate = '' } = $props();
 
@@ -235,24 +236,47 @@
 		}
 	}
 
-	async function deleteExpense(id) {
-		if (confirm('Delete this expense?')) {
-			try {
-				const response = await fetch(`/api/trips/${tripId}/expenses/${id}`, {
-					method: 'DELETE'
-				});
-				const data = await response.json();
-				if (data.success) {
-					await fetchExpenses();
-				} else {
-					error = data.error || 'Failed to delete';
-				}
-			} catch (err) {
-				error = 'Network error';
+	let deleteDialogOpen = $state(false);
+	let deleteTargetId = $state(null);
+	let deleteTargetLabel = $state('');
+
+	function requestDeleteExpense(expense) {
+		deleteTargetId = expense.id;
+		deleteTargetLabel = expense.description;
+		deleteDialogOpen = true;
+	}
+
+	function cancelDeleteExpense() {
+		deleteDialogOpen = false;
+		deleteTargetId = null;
+		deleteTargetLabel = '';
+	}
+
+	async function confirmDeleteExpense() {
+		const id = deleteTargetId;
+		cancelDeleteExpense();
+		try {
+			const response = await fetch(`/api/trips/${tripId}/expenses/${id}`, { method: 'DELETE' });
+			const data = await response.json();
+			if (data.success) {
+				await fetchExpenses();
+			} else {
+				error = data.error || 'Failed to delete';
 			}
+		} catch (err) {
+			error = 'Network error';
 		}
 	}
 </script>
+
+<ConfirmDialog
+	open={deleteDialogOpen}
+	title="Delete expense?"
+	message={deleteTargetLabel}
+	confirmLabel="Delete"
+	onconfirm={confirmDeleteExpense}
+	oncancel={cancelDeleteExpense}
+/>
 
 <div>
 	<!-- Header -->
@@ -541,7 +565,7 @@
 							<div class="flex items-center gap-3">
 								<span class="font-semibold text-gray-800 dark:text-gray-100">{fmt(expense.amount)}</span>
 								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
-								<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+								<button onclick={() => requestDeleteExpense(expense)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 							</div>
 						</div>
 					{/if}

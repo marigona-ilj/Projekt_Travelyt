@@ -15,6 +15,7 @@
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map } from 'lucide-svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 let tripId = $state('');
 	let trip = $state(null);
@@ -137,27 +138,34 @@ let tripId = $state('');
 		}
 	}
 
-	async function deleteTrip() {
-		if (confirm('Are you sure you want to delete this trip? This cannot be undone.')) {
-			try {
-				const response = await fetch(`/api/trips/${tripId}`, {
-					method: 'DELETE'
-				});
+	let deleteTripDialogOpen = $state(false);
 
-				const data = await response.json();
-				if (data.success) {
-					goto('/trips');
-				} else {
-					error = data.error || 'Failed to delete trip';
-				}
-			} catch (err) {
-				error = 'Network error';
+	async function confirmDeleteTrip() {
+		deleteTripDialogOpen = false;
+		try {
+			const response = await fetch(`/api/trips/${tripId}`, { method: 'DELETE' });
+			const data = await response.json();
+			if (data.success) {
+				goto('/trips');
+			} else {
+				error = data.error || 'Failed to delete trip';
 			}
+		} catch (err) {
+			error = 'Network error';
 		}
 	}
 </script>
 
 <Header />
+
+<ConfirmDialog
+	open={deleteTripDialogOpen}
+	title="Delete trip?"
+	message="This will permanently delete the trip and all its data."
+	confirmLabel="Delete"
+	onconfirm={confirmDeleteTrip}
+	oncancel={() => (deleteTripDialogOpen = false)}
+/>
 
 <main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	{#if error}
@@ -203,7 +211,7 @@ let tripId = $state('');
 					{/if}
 					{#if isOwner}
 						<button
-							onclick={deleteTrip}
+							onclick={() => (deleteTripDialogOpen = true)}
 							class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
 						>
 							Delete Trip

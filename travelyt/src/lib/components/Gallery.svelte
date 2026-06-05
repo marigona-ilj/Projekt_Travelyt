@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { ImagePlus, Trash2, X, Download, CheckSquare, Square } from 'lucide-svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let { tripId, currentUserId } = $props();
 
@@ -65,22 +66,50 @@
 		}
 	}
 
-	async function deletePhoto(id) {
-		if (!confirm('Delete this photo?')) return;
-		try {
-			const res = await fetch(`/api/trips/${tripId}/gallery/${id}`, { method: 'DELETE' });
-			const data = await res.json();
-			if (data.success) {
-				if (lightboxPhoto?.id === id) lightboxPhoto = null;
-				selectedIds.delete(id);
-				selectedIds = new Set(selectedIds);
-				await fetchPhotos();
-			} else {
-				error = data.error || 'Failed to delete';
+	let deleteDialogOpen = $state(false);
+	let deleteDialogMessage = $state('');
+	let deletePendingIds = $state([]);
+
+	function requestDeletePhoto(id) {
+		deletePendingIds = [id];
+		deleteDialogMessage = '';
+		deleteDialogOpen = true;
+	}
+
+	function requestDeleteSelected() {
+		const toDelete = photos.filter((p) => selectedIds.has(p.id) && p.uploadedBy === currentUserId);
+		if (toDelete.length === 0) return;
+		deletePendingIds = toDelete.map((p) => p.id);
+		deleteDialogMessage = `${toDelete.length} photo${toDelete.length > 1 ? 's' : ''} will be permanently deleted.`;
+		deleteDialogOpen = true;
+	}
+
+	function cancelDelete() {
+		deleteDialogOpen = false;
+		deletePendingIds = [];
+		deleteDialogMessage = '';
+	}
+
+	async function confirmDelete() {
+		const ids = [...deletePendingIds];
+		cancelDelete();
+		for (const id of ids) {
+			try {
+				const res = await fetch(`/api/trips/${tripId}/gallery/${id}`, { method: 'DELETE' });
+				const data = await res.json();
+				if (data.success) {
+					if (lightboxPhoto?.id === id) lightboxPhoto = null;
+					selectedIds.delete(id);
+				} else {
+					error = data.error || 'Failed to delete';
+				}
+			} catch {
+				error = 'Network error';
 			}
-		} catch {
-			error = 'Network error';
 		}
+		selectedIds = new Set(selectedIds);
+		await fetchPhotos();
+		if (photos.length === 0) exitSelectMode();
 	}
 
 	function getExtension(base64) {
@@ -105,23 +134,6 @@
 		}
 	}
 
-	async function deleteSelected() {
-		const toDelete = photos.filter((p) => selectedIds.has(p.id) && p.uploadedBy === currentUserId);
-		if (toDelete.length === 0) return;
-		if (!confirm(`Delete ${toDelete.length} photo${toDelete.length > 1 ? 's' : ''}?`)) return;
-		for (const photo of toDelete) {
-			try {
-				const res = await fetch(`/api/trips/${tripId}/gallery/${photo.id}`, { method: 'DELETE' });
-				const data = await res.json();
-				if (!data.success) error = data.error || 'Failed to delete';
-			} catch {
-				error = 'Network error';
-			}
-		}
-		selectedIds = new Set();
-		await fetchPhotos();
-		if (photos.length === 0) exitSelectMode();
-	}
 
 	function toggleSelect(id) {
 		const next = new Set(selectedIds);
@@ -150,6 +162,15 @@
 	}
 </script>
 
+<ConfirmDialog
+	open={deleteDialogOpen}
+	title={deletePendingIds.length > 1 ? `Delete ${deletePendingIds.length} photos?` : 'Delete photo?'}
+	message={deleteDialogMessage}
+	confirmLabel="Delete"
+	onconfirm={confirmDelete}
+	oncancel={cancelDelete}
+/>
+
 <div>
 	<!-- Header -->
 	<div class="flex justify-between items-center mb-6">
@@ -175,7 +196,7 @@
 				</button>
 				{#if selectedOwnCount > 0}
 					<button
-						onclick={deleteSelected}
+						onclick={requestDeleteSelected}
 						class="flex items-center gap-1 text-sm px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white"
 					>
 						<Trash2 size={15} /> Delete ({selectedOwnCount})
@@ -246,7 +267,7 @@
 					{:else}
 						{#if photo.uploadedBy === currentUserId}
 							<button
-								onclick={(e) => { e.stopPropagation(); deletePhoto(photo.id); }}
+								onclick={(e) => { e.stopPropagation(); requestDeletePhoto(photo.id); }}
 								class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
 							>
 								<Trash2 size={13} />
@@ -288,7 +309,7 @@
 					</button>
 					{#if lightboxPhoto.uploadedBy === currentUserId}
 						<button
-							onclick={() => deletePhoto(lightboxPhoto.id)}
+							onclick={() => requestDeletePhoto(lightboxPhoto.id)}
 							class="bg-red-500 hover:bg-red-600 text-white text-sm py-1 px-3 rounded flex items-center gap-1"
 						>
 							<Trash2 size={14} /> Delete

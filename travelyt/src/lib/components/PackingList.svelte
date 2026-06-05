@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Users, Lock, Pencil, Trash2 } from 'lucide-svelte';
+	import Toast from '$lib/components/Toast.svelte';
 
 	let { tripId } = $props();
 
@@ -115,6 +116,21 @@
 	let editingValue = $state('');
 	let editingCategory = $state('');
 
+	let toastKey = $state(0);
+	let toastVisible = $state(false);
+	let toastMessage = $state('');
+	let pendingDelete = $state(null);
+	let deleteTimer = null;
+	const UNDO_DURATION = 5000;
+
+	function flushPendingDelete() {
+		if (!pendingDelete) return;
+		clearTimeout(deleteTimer);
+		const id = pendingDelete.id;
+		pendingDelete = null;
+		fetch(`/api/trips/${tripId}/packing/${id}`, { method: 'DELETE' });
+	}
+
 	function startEdit(item) {
 		editingId = item.id;
 		editingValue = item.item;
@@ -145,25 +161,37 @@
 		}
 	}
 
-	async function deleteItem(id) {
-		if (confirm('Delete this item?')) {
-			try {
-				const response = await fetch(`/api/trips/${tripId}/packing/${id}`, {
-					method: 'DELETE'
-				});
+	function deleteItem(id) {
+		flushPendingDelete();
+		const index = items.findIndex((i) => i.id === id);
+		if (index === -1) return;
+		const data = items[index];
+		pendingDelete = { id, data, index };
+		items = items.filter((i) => i.id !== id);
+		toastMessage = `"${data.item}" deleted`;
+		toastVisible = true;
+		toastKey++;
+		deleteTimer = setTimeout(() => {
+			toastVisible = false;
+			fetch(`/api/trips/${tripId}/packing/${id}`, { method: 'DELETE' });
+			pendingDelete = null;
+		}, UNDO_DURATION);
+	}
 
-				const data = await response.json();
-				if (data.success) {
-					await fetchItems();
-				} else {
-					error = data.error || 'Failed to delete';
-				}
-			} catch (err) {
-				error = 'Network error';
-			}
-		}
+	function undoDeleteItem() {
+		if (!pendingDelete) return;
+		clearTimeout(deleteTimer);
+		const restored = [...items];
+		restored.splice(pendingDelete.index, 0, pendingDelete.data);
+		items = restored;
+		pendingDelete = null;
+		toastVisible = false;
 	}
 </script>
+
+{#key toastKey}
+	<Toast message={toastMessage} visible={toastVisible} onUndo={undoDeleteItem} duration={UNDO_DURATION} />
+{/key}
 
 <div>
 	<div class="flex justify-between items-center mb-4">
