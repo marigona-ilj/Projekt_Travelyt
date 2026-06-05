@@ -14,10 +14,10 @@
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map, Plus, X } from 'lucide-svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
-let tripId = $state('');
+	let tripId = $state('');
 	let trip = $state(null);
 	let loading = $state(true);
 	let error = $state('');
@@ -26,10 +26,31 @@ let tripId = $state('');
 	let currentUserName = $state('');
 	let isOwner = $derived(trip !== null && trip.createdBy === currentUserId);
 
+	let tripDestinationLabel = $derived(
+		trip?.legs?.length > 1
+			? trip.legs.map((l) => l.destination).join(' → ')
+			: trip?.destination ?? ''
+	);
+
 	let showEditForm = $state(false);
-	let editTrip = $state({ title: '', destination: '', startDate: '', endDate: '', description: '', currency: 'CHF', coverImage: '' });
-	let editGeoData = $state(null);
+	let editTitle = $state('');
+	let editDescription = $state('');
+	let editCurrency = $state('CHF');
+	let editCoverImage = $state('');
+	let editLegs = $state([]);
 	let editLoading = $state(false);
+
+	function emptyLeg() {
+		return { destination: '', startDate: '', endDate: '', latitude: null, longitude: null, resolvedLocation: '' };
+	}
+
+	function addEditLeg() {
+		editLegs = [...editLegs, emptyLeg()];
+	}
+
+	function removeEditLeg(i) {
+		editLegs = editLegs.filter((_, idx) => idx !== i);
+	}
 
 	function handleEditCoverImage(event) {
 		const file = event.target.files[0];
@@ -40,7 +61,7 @@ let tripId = $state('');
 			return;
 		}
 		const reader = new FileReader();
-		reader.onload = (e) => { editTrip.coverImage = e.target.result; };
+		reader.onload = (e) => { editCoverImage = e.target.result; };
 		reader.readAsDataURL(file);
 	}
 
@@ -73,26 +94,34 @@ let tripId = $state('');
 	}
 
 	function openEditForm() {
-		editTrip = {
-			title: trip.title,
-			destination: trip.destination,
-			startDate: trip.startDate ? new Date(trip.startDate).toISOString().split('T')[0] : '',
-			endDate: trip.endDate ? new Date(trip.endDate).toISOString().split('T')[0] : '',
-			description: trip.description || '',
-			currency: trip.currency || 'CHF',
-			coverImage: trip.coverImage || ''
-		};
-		editGeoData = trip.latitude != null
-			? { latitude: trip.latitude, longitude: trip.longitude, resolvedLocation: trip.resolvedLocation }
-			: null;
+		editTitle = trip.title;
+		editDescription = trip.description || '';
+		editCurrency = trip.currency || 'CHF';
+		editCoverImage = trip.coverImage || '';
+		editLegs = (trip.legs ?? []).map((leg) => ({
+			destination: leg.destination,
+			startDate: String(leg.startDate).split('T')[0],
+			endDate: String(leg.endDate).split('T')[0],
+			latitude: leg.latitude ?? null,
+			longitude: leg.longitude ?? null,
+			resolvedLocation: leg.resolvedLocation || ''
+		}));
+		if (editLegs.length === 0) editLegs = [emptyLeg()];
 		showEditForm = true;
 	}
 
 	async function updateTrip(event) {
 		if (event?.preventDefault) event.preventDefault();
-		if (new Date(editTrip.endDate) < new Date(editTrip.startDate)) {
-			error = 'End date cannot be before start date';
-			return;
+		for (let i = 0; i < editLegs.length; i++) {
+			const leg = editLegs[i];
+			if (!leg.destination || !leg.startDate || !leg.endDate) {
+				error = `Please fill in all fields for destination ${i + 1}`;
+				return;
+			}
+			if (new Date(leg.endDate) < new Date(leg.startDate)) {
+				error = `Destination ${i + 1}: end date cannot be before start date`;
+				return;
+			}
 		}
 		editLoading = true;
 		error = '';
@@ -100,7 +129,13 @@ let tripId = $state('');
 			const response = await fetch(`/api/trips/${tripId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...editTrip, ...editGeoData })
+				body: JSON.stringify({
+					title: editTitle,
+					description: editDescription,
+					currency: editCurrency,
+					coverImage: editCoverImage,
+					legs: editLegs
+				})
 			});
 			const data = await response.json();
 			if (data.success) {
@@ -123,12 +158,10 @@ let tripId = $state('');
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					title: trip.title,
-					destination: trip.destination,
-					startDate: new Date(trip.startDate).toISOString().split('T')[0],
-					endDate: new Date(trip.endDate).toISOString().split('T')[0],
 					description: trip.description || '',
 					currency: newCurrency,
-					coverImage: trip.coverImage || ''
+					coverImage: trip.coverImage || '',
+					legs: trip.legs ?? []
 				})
 			});
 			const data = await response.json();
@@ -184,7 +217,7 @@ let tripId = $state('');
 			<div class="flex justify-between items-start mb-4">
 				<div>
 					<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">{trip.title}</h1>
-					<p class="text-lg text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1"><MapPin size={18} /> {trip.destination}</p>
+					<p class="text-lg text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1"><MapPin size={18} /> {tripDestinationLabel}</p>
 					<p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
 						<Calendar size={16} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)} ({daysBetween(
 							trip.startDate,
@@ -229,67 +262,94 @@ let tripId = $state('');
 		{#if showEditForm}
 			<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6 mb-8 border border-blue-200 dark:border-blue-800">
 				<h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Edit Trip</h2>
-				<form onsubmit={updateTrip}>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-						<div>
-							<label for="edit-title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Trip Title</label>
-							<input
-								type="text"
-								id="edit-title"
-								bind:value={editTrip.title}
-								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-								required
-							/>
-						</div>
-						<div>
-							<label for="edit-dest" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Destination</label>
-							<DestinationInput
-								bind:value={editTrip.destination}
-								onlocationselect={(loc) => (editGeoData = loc)}
-								inputClass="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-							/>
-						</div>
-					</div>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-						<div>
-							<label for="edit-start" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date</label>
-							<input
-								type="date"
-								id="edit-start"
-								bind:value={editTrip.startDate}
-								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-								required
-							/>
-						</div>
-						<div>
-							<label for="edit-end" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">End Date</label>
-							<input
-								type="date"
-								id="edit-end"
-								bind:value={editTrip.endDate}
-								min={editTrip.startDate || ''}
-								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-								required
-							/>
-						</div>
-					</div>
+				<form onsubmit={updateTrip} novalidate>
 					<div class="mb-4">
-						<label for="edit-desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
+						<label for="edit-title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Trip Title <span class="text-red-500">*</span></label>
+						<input
+							type="text"
+							id="edit-title"
+							bind:value={editTitle}
+							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+						/>
+					</div>
+
+					<div class="mb-4">
+						<div class="flex items-center justify-between mb-2">
+							<label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Destinations <span class="text-red-500">*</span></label>
+							{#if editLegs.length > 1}
+								<span class="text-xs text-gray-400 dark:text-gray-500">{editLegs.length} destinations</span>
+							{/if}
+						</div>
+						<div class="space-y-2">
+							{#each editLegs as leg, i}
+								<div class="flex gap-2 items-start bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+									{#if editLegs.length > 1}
+										<div class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-2">{i + 1}</div>
+									{/if}
+									<div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+										<div class="sm:col-span-1">
+											<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Destination</p>
+											<DestinationInput
+												bind:value={leg.destination}
+												onlocationselect={(loc) => {
+													if (loc) { leg.latitude = loc.latitude; leg.longitude = loc.longitude; leg.resolvedLocation = loc.resolvedLocation; }
+													else { leg.latitude = null; leg.longitude = null; leg.resolvedLocation = ''; }
+												}}
+												inputClass="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+											/>
+										</div>
+										<div>
+											<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">From</p>
+											<input
+												type="date"
+												bind:value={leg.startDate}
+												class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+											/>
+										</div>
+										<div>
+											<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">To</p>
+											<input
+												type="date"
+												bind:value={leg.endDate}
+												min={leg.startDate || ''}
+												class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+											/>
+										</div>
+									</div>
+									{#if editLegs.length > 1}
+										<button type="button" onclick={() => removeEditLeg(i)} class="text-gray-400 hover:text-red-500 mt-2 shrink-0 transition">
+											<X size={16} />
+										</button>
+									{/if}
+								</div>
+							{/each}
+							<button
+								type="button"
+								onclick={addEditLeg}
+								class="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium px-1 py-1 transition"
+							>
+								<Plus size={15} /> Add destination
+							</button>
+						</div>
+					</div>
+
+					<div class="mb-4">
+						<label for="edit-desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description <span class="text-gray-400 font-normal">(optional)</span></label>
 						<textarea
 							id="edit-desc"
-							bind:value={editTrip.description}
+							bind:value={editDescription}
 							rows="3"
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 						></textarea>
 					</div>
 					<div class="mb-4">
 						<label for="edit-cover" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
-						{#if editTrip.coverImage}
+						{#if editCoverImage}
 							<div class="relative mb-2">
-								<img src={editTrip.coverImage} alt="Current cover" class="h-28 w-full object-cover rounded-lg" />
+								<img src={editCoverImage} alt="Current cover" class="h-28 w-full object-cover rounded-lg" />
 								<button
 									type="button"
-									onclick={() => (editTrip.coverImage = '')}
+									onclick={() => (editCoverImage = '')}
 									class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
 								>
 									Remove
@@ -372,9 +432,9 @@ let tripId = $state('');
 			{:else if activeTab === 'members'}
 				<MemberList {tripId} {isOwner} {currentUserId} />
 			{:else if activeTab === 'weather'}
-				<TripWeather latitude={trip.latitude} longitude={trip.longitude} resolvedLocation={trip.resolvedLocation} startDate={trip.startDate} endDate={trip.endDate} />
+				<TripWeather legs={trip.legs ?? []} />
 			{:else if activeTab === 'map'}
-				<TripMap {tripId} centerLat={trip.latitude} centerLon={trip.longitude} />
+				<TripMap {tripId} centerLat={trip.latitude} centerLon={trip.longitude} legs={trip.legs ?? []} />
 			{/if}
 		</div>
 	{/if}

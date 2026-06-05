@@ -3,6 +3,18 @@ import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validateTrip } from '$lib/server/validators.js';
 
+function normLegs(trip) {
+	if (trip.legs?.length > 0) return trip.legs;
+	return [{
+		destination: trip.destination,
+		resolvedLocation: trip.resolvedLocation || '',
+		latitude: trip.latitude ?? null,
+		longitude: trip.longitude ?? null,
+		startDate: trip.startDate,
+		endDate: trip.endDate
+	}];
+}
+
 // Get trip details
 export async function GET({ params, cookies }) {
 	const userId = cookies.get('userId');
@@ -48,7 +60,8 @@ export async function GET({ params, cookies }) {
 				resolvedLocation: trip.resolvedLocation || '',
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt,
-				updatedAt: trip.updatedAt
+				updatedAt: trip.updatedAt,
+				legs: normLegs(trip)
 			}
 		});
 	} catch (error) {
@@ -83,18 +96,47 @@ export async function PUT({ params, request, cookies }) {
 			return json({ success: false, errors: validation.errors }, { status: 400 });
 		}
 
-		const result = await trips.updateOne(
+		let updStart, updEnd, updDest, updLat, updLon, updResolved, updLegs;
+		if (updateData.legs?.length > 0) {
+			const first = updateData.legs[0];
+			const last = updateData.legs[updateData.legs.length - 1];
+			updStart = new Date(first.startDate);
+			updEnd = new Date(last.endDate);
+			updDest = first.destination;
+			updLat = first.latitude ?? null;
+			updLon = first.longitude ?? null;
+			updResolved = first.resolvedLocation || '';
+			updLegs = updateData.legs.map((leg) => ({
+				destination: leg.destination,
+				resolvedLocation: leg.resolvedLocation || '',
+				latitude: leg.latitude ?? null,
+				longitude: leg.longitude ?? null,
+				startDate: new Date(leg.startDate),
+				endDate: new Date(leg.endDate)
+			}));
+		} else {
+			updStart = new Date(updateData.startDate);
+			updEnd = new Date(updateData.endDate);
+			updDest = updateData.destination;
+			updLat = updateData.latitude ?? null;
+			updLon = updateData.longitude ?? null;
+			updResolved = updateData.resolvedLocation || '';
+			updLegs = [];
+		}
+
+		await trips.updateOne(
 			{ _id: new ObjectId(tripId) },
 			{
 				$set: {
 					title: updateData.title,
-					destination: updateData.destination,
+					destination: updDest,
 					description: updateData.description || '',
-					startDate: new Date(updateData.startDate),
-					endDate: new Date(updateData.endDate),
+					startDate: updStart,
+					endDate: updEnd,
 					currency: updateData.currency || 'CHF',
 					coverImage: updateData.coverImage || '',
-					...(updateData.latitude != null ? { latitude: updateData.latitude, longitude: updateData.longitude, resolvedLocation: updateData.resolvedLocation || '' } : {}),
+					...(updLat != null ? { latitude: updLat, longitude: updLon, resolvedLocation: updResolved } : {}),
+					legs: updLegs,
 					updatedAt: new Date()
 				}
 			}

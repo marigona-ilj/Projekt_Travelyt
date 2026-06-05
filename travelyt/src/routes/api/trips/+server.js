@@ -3,6 +3,18 @@ import { getCollection } from '$lib/server/db.js';
 import { ObjectId } from 'mongodb';
 import { validateTrip } from '$lib/server/validators.js';
 
+function normLegs(trip) {
+	if (trip.legs?.length > 0) return trip.legs;
+	return [{
+		destination: trip.destination,
+		resolvedLocation: trip.resolvedLocation || '',
+		latitude: trip.latitude ?? null,
+		longitude: trip.longitude ?? null,
+		startDate: trip.startDate,
+		endDate: trip.endDate
+	}];
+}
+
 // Get all trips for authenticated user
 export async function GET({ cookies }) {
 	const userId = cookies.get('userId');
@@ -40,7 +52,8 @@ export async function GET({ cookies }) {
 				currency: trip.currency || 'CHF',
 				coverImage: trip.coverImage || '',
 				createdBy: trip.createdBy.toString(),
-				createdAt: trip.createdAt
+				createdAt: trip.createdAt,
+				legs: normLegs(trip)
 			}))
 		});
 	} catch (error) {
@@ -68,16 +81,46 @@ export async function POST({ request, cookies }) {
 		const trips = await getCollection('trips');
 		const tripMembers = await getCollection('tripMembers');
 
+		// Derive top-level fields from legs if provided
+		let tripStart, tripEnd, tripDest, tripLat, tripLon, tripResolved, storedLegs;
+		if (tripData.legs?.length > 0) {
+			const first = tripData.legs[0];
+			const last = tripData.legs[tripData.legs.length - 1];
+			tripStart = new Date(first.startDate);
+			tripEnd = new Date(last.endDate);
+			tripDest = first.destination;
+			tripLat = first.latitude ?? null;
+			tripLon = first.longitude ?? null;
+			tripResolved = first.resolvedLocation || '';
+			storedLegs = tripData.legs.map((leg) => ({
+				destination: leg.destination,
+				resolvedLocation: leg.resolvedLocation || '',
+				latitude: leg.latitude ?? null,
+				longitude: leg.longitude ?? null,
+				startDate: new Date(leg.startDate),
+				endDate: new Date(leg.endDate)
+			}));
+		} else {
+			tripStart = new Date(tripData.startDate);
+			tripEnd = new Date(tripData.endDate);
+			tripDest = tripData.destination;
+			tripLat = tripData.latitude ?? null;
+			tripLon = tripData.longitude ?? null;
+			tripResolved = tripData.resolvedLocation || '';
+			storedLegs = [];
+		}
+
 		// Create trip
 		const tripResult = await trips.insertOne({
 			title: tripData.title,
-			destination: tripData.destination,
+			destination: tripDest,
 			description: tripData.description || '',
-			startDate: new Date(tripData.startDate),
-			endDate: new Date(tripData.endDate),
+			startDate: tripStart,
+			endDate: tripEnd,
 			currency: tripData.currency || 'CHF',
 			coverImage: tripData.coverImage || '',
-			...(tripData.latitude != null ? { latitude: tripData.latitude, longitude: tripData.longitude, resolvedLocation: tripData.resolvedLocation || '' } : {}),
+			...(tripLat != null ? { latitude: tripLat, longitude: tripLon, resolvedLocation: tripResolved } : {}),
+			legs: storedLegs,
 			createdBy: new ObjectId(userId),
 			createdAt: new Date(),
 			updatedAt: new Date()

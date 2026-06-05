@@ -4,6 +4,12 @@
 
 	let { trip, onclick } = $props();
 
+	let destinationLabel = $derived(
+		trip.legs?.length > 1
+			? trip.legs.map((l) => l.destination).join(' → ')
+			: trip.destination
+	);
+
 	const statusConfig = {
 		ongoing:  { label: 'Ongoing',  classes: 'bg-green-100 text-green-700' },
 		upcoming: { label: 'Upcoming', classes: 'bg-blue-100 text-blue-700' },
@@ -67,7 +73,7 @@
 				{statusConfig[status].label}
 			</span>
 		</div>
-		<p class="text-gray-600 dark:text-gray-300 mb-3">{trip.destination}</p>
+		<p class="text-gray-600 dark:text-gray-300 mb-3 text-sm leading-snug">{destinationLabel}</p>
 		<div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
 			<p class="flex items-center gap-1"><Calendar size={14} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
 			<p class="flex items-center gap-1 mt-1"><Clock size={14} /> {daysBetween(trip.startDate, trip.endDate)} days</p>

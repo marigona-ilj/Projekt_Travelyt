@@ -1,7 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 
-	let { tripId, centerLat, centerLon } = $props();
+	let { tripId, centerLat, centerLon, legs = [] } = $props();
 
 	let mapContainer = $state(null);
 	let status = $state('loading'); // 'loading' | 'geocoding' | 'done' | 'empty' | 'error'
@@ -22,6 +22,11 @@
 		} catch {
 			return null;
 		}
+	}
+
+	function parseLocalDate(str) {
+		const [y, m, d] = String(str).split('T')[0].split('-').map(Number);
+		return new Date(y, m - 1, d);
 	}
 
 	function delay(ms) {
@@ -66,8 +71,9 @@
 			const res = await fetch(`/api/trips/${tripId}/activities`);
 			const data = await res.json();
 			const withLocation = (data.activities || []).filter((a) => a.location?.trim());
+			const hasGeoLegs = legs.some((l) => l.latitude != null);
 
-			if (withLocation.length === 0) {
+			if (withLocation.length === 0 && !hasGeoLegs) {
 				status = 'empty';
 				return;
 			}
@@ -76,11 +82,16 @@
 			await injectScript('https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js', 'maplibre-js');
 			const maplibregl = window.maplibregl;
 
+			const firstGeoLeg = legs.find((l) => l.longitude != null);
+			const initCenter = firstGeoLeg ? [firstGeoLeg.longitude, firstGeoLeg.latitude]
+				: centerLon != null ? [centerLon, centerLat] : [0, 20];
+			const initZoom = (firstGeoLeg || centerLon != null) ? (legs.length > 1 ? 4 : 9) : 2;
+
 			map = new maplibregl.Map({
 				container: mapContainer,
 				style: 'https://tiles.openfreemap.org/styles/bright',
-				center: centerLon != null ? [centerLon, centerLat] : [0, 20],
-				zoom: centerLon != null ? 9 : 2,
+				center: initCenter,
+				zoom: initZoom,
 				attributionControl: false
 			});
 
@@ -95,9 +106,72 @@
 				new Promise((_, reject) => setTimeout(() => reject(new Error('Map load timeout')), 15000))
 			]);
 
+			// Add leg destination markers and route line first
+			const legPoints = [];
+			const geoLegs = legs.filter((l) => l.latitude != null && l.longitude != null);
+			for (let i = 0; i < geoLegs.length; i++) {
+				const leg = geoLegs[i];
+				const coords = [leg.longitude, leg.latitude];
+				legPoints.push(coords);
+
+				const el = document.createElement('div');
+				el.style.cssText = 'display:flex;flex-direction:column;align-items:center;cursor:pointer';
+				el.innerHTML = `
+					<div style="background:#1d4ed8;color:white;font-family:system-ui,sans-serif;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;box-shadow:0 3px 12px rgba(29,78,216,0.5);white-space:nowrap;letter-spacing:0.01em">${geoLegs.length > 1 ? (i + 1) + '. ' : ''}${leg.destination}</div>
+					<div style="width:2px;height:8px;background:#1d4ed8"></div>
+					<div style="width:11px;height:11px;background:#1d4ed8;border-radius:50%;box-shadow:0 0 0 3px white,0 2px 8px rgba(0,0,0,0.25)"></div>
+				`;
+
+				const start = parseLocalDate(leg.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+				const end = parseLocalDate(leg.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+				new maplibregl.Marker({ element: el, anchor: 'bottom' })
+					.setLngLat(coords)
+					.setPopup(new maplibregl.Popup({ offset: 12, closeButton: false }).setHTML(`
+						<div style="font-family:system-ui,sans-serif;min-width:140px">
+							<strong style="font-size:13px">${leg.destination}</strong><br>
+							<span style="font-size:11px;color:#6b7280">${start} – ${end}</span>
+							${leg.resolvedLocation ? `<div style="font-size:11px;color:#9ca3af;margin-top:2px">${leg.resolvedLocation}</div>` : ''}
+						</div>
+					`))
+					.addTo(map);
+			}
+
+			if (legPoints.length > 1) {
+				map.addSource('legs-route', {
+					type: 'geojson',
+					data: { type: 'Feature', geometry: { type: 'LineString', coordinates: legPoints } }
+				});
+				map.addLayer({
+					id: 'legs-route',
+					type: 'line',
+					source: 'legs-route',
+					paint: { 'line-color': '#2563eb', 'line-width': 2, 'line-dasharray': [4, 4] }
+				});
+			}
+
+			if (withLocation.length === 0 && legPoints.length > 0) {
+				if (legPoints.length > 1) {
+					const bounds = legPoints.reduce(
+						(b, p) => b.extend(p),
+						new maplibregl.LngLatBounds(legPoints[0], legPoints[0])
+					);
+					map.fitBounds(bounds, { padding: 80, maxZoom: 10 });
+				} else {
+					map.flyTo({ center: legPoints[0], zoom: 10 });
+				}
+				status = 'done';
+				return;
+			}
+
+			if (withLocation.length === 0) {
+				status = 'empty';
+				return;
+			}
+
 			total = withLocation.length;
 			status = 'geocoding';
-			const points = [];
+			const points = [...legPoints];
 
 			for (const activity of withLocation) {
 				const coords = await geocode(activity.location);

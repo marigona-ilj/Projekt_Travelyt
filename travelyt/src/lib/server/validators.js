@@ -31,17 +31,36 @@ export function validateTrip(trip) {
 	if (!trip.title || trip.title.trim().length === 0) {
 		errors.push('Trip title is required');
 	}
-	if (!trip.destination || trip.destination.trim().length === 0) {
-		errors.push('Destination is required');
-	}
-	if (!trip.startDate || isNaN(new Date(trip.startDate))) {
-		errors.push('Valid start date is required');
-	}
-	if (!trip.endDate || isNaN(new Date(trip.endDate))) {
-		errors.push('Valid end date is required');
-	}
-	if (new Date(trip.startDate) > new Date(trip.endDate)) {
-		errors.push('Start date must be before end date');
+
+	if (trip.legs?.length > 0) {
+		for (let i = 0; i < trip.legs.length; i++) {
+			const leg = trip.legs[i];
+			if (!leg.destination || leg.destination.trim().length === 0) {
+				errors.push(`Destination ${i + 1} is required`);
+			}
+			if (!leg.startDate || isNaN(new Date(leg.startDate))) {
+				errors.push(`Destination ${i + 1}: valid start date is required`);
+			}
+			if (!leg.endDate || isNaN(new Date(leg.endDate))) {
+				errors.push(`Destination ${i + 1}: valid end date is required`);
+			}
+			if (leg.startDate && leg.endDate && new Date(leg.startDate) > new Date(leg.endDate)) {
+				errors.push(`Destination ${i + 1}: start date must be before end date`);
+			}
+		}
+	} else {
+		if (!trip.destination || trip.destination.trim().length === 0) {
+			errors.push('Destination is required');
+		}
+		if (!trip.startDate || isNaN(new Date(trip.startDate))) {
+			errors.push('Valid start date is required');
+		}
+		if (!trip.endDate || isNaN(new Date(trip.endDate))) {
+			errors.push('Valid end date is required');
+		}
+		if (new Date(trip.startDate) > new Date(trip.endDate)) {
+			errors.push('Start date must be before end date');
+		}
 	}
 
 	return { valid: errors.length === 0, errors };

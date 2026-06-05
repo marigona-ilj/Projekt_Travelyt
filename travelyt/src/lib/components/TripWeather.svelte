@@ -1,13 +1,13 @@
 <script>
-	import { onMount } from 'svelte';
 	import { Cloud } from 'lucide-svelte';
 
-	let { latitude, longitude, resolvedLocation, startDate, endDate } = $props();
+	let { legs = [] } = $props();
 
+	let selectedIndex = $state(0);
 	let forecast = $state([]);
 	let loading = $state(true);
 	let error = $state('');
-	let mode = $state(''); // 'forecast' | 'archive' | 'future' | 'partial'
+	let mode = $state('');
 	let partialNote = $state('');
 
 	function parseLocalDate(str) {
@@ -16,10 +16,7 @@
 	}
 
 	function toDateString(d) {
-		const yyyy = d.getFullYear();
-		const mm = String(d.getMonth() + 1).padStart(2, '0');
-		const dd = String(d.getDate()).padStart(2, '0');
-		return `${yyyy}-${mm}-${dd}`;
+		return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 	}
 
 	function getWeatherInfo(code) {
@@ -43,10 +40,16 @@
 		today.setHours(0, 0, 0, 0);
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
-
 		if (d.getTime() === today.getTime()) return 'Today';
 		if (d.getTime() === tomorrow.getTime()) return 'Tomorrow';
 		return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+	}
+
+	function formatLegDateRange(leg) {
+		const opts = { month: 'short', day: 'numeric' };
+		const s = parseLocalDate(leg.startDate).toLocaleDateString('en-US', opts);
+		const e = parseLocalDate(leg.endDate).toLocaleDateString('en-US', opts);
+		return `${s} – ${e}`;
 	}
 
 	async function fetchWeather(lat, lon, start, end, useArchive) {
@@ -54,23 +57,25 @@
 			? 'https://archive-api.open-meteo.com/v1/archive'
 			: 'https://api.open-meteo.com/v1/forecast';
 		const params = new URLSearchParams({
-			latitude: lat,
-			longitude: lon,
+			latitude: lat, longitude: lon,
 			daily: 'weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max',
-			timezone: 'auto',
-			start_date: start,
-			end_date: end
+			timezone: 'auto', start_date: start, end_date: end
 		});
 		const res = await fetch(`${base}?${params}`);
 		if (!res.ok) throw new Error('Weather data unavailable');
-		const data = await res.json();
-		return data.daily;
+		return (await res.json()).daily;
 	}
 
-	onMount(async () => {
-		if (latitude == null || longitude == null) {
+	async function loadWeather(leg) {
+		loading = true;
+		forecast = [];
+		error = '';
+		mode = '';
+		partialNote = '';
+
+		if (leg.latitude == null || leg.longitude == null) {
+			error = 'No location saved for this destination. Edit the trip to enable weather.';
 			loading = false;
-			error = 'No location saved for this trip. Edit the trip and save it again to enable weather.';
 			return;
 		}
 
@@ -80,10 +85,8 @@
 			const forecastLimit = new Date(today);
 			forecastLimit.setDate(forecastLimit.getDate() + 16);
 
-			const tripStart = parseLocalDate(startDate);
-			const tripEnd = parseLocalDate(endDate);
-
-			let fetchStart, fetchEnd, useArchive;
+			const tripStart = parseLocalDate(leg.startDate);
+			const tripEnd = parseLocalDate(leg.endDate);
 
 			if (tripStart > forecastLimit) {
 				mode = 'future';
@@ -91,6 +94,7 @@
 				return;
 			}
 
+			let fetchStart, fetchEnd, useArchive;
 			if (tripEnd < today) {
 				mode = 'archive';
 				fetchStart = toDateString(tripStart);
@@ -109,8 +113,7 @@
 				useArchive = false;
 			}
 
-			const daily = await fetchWeather(latitude, longitude, fetchStart, fetchEnd, useArchive);
-
+			const daily = await fetchWeather(leg.latitude, leg.longitude, fetchStart, fetchEnd, useArchive);
 			forecast = daily.time.map((date, i) => ({
 				date,
 				code: daily.weathercode[i],
@@ -124,19 +127,49 @@
 		} finally {
 			loading = false;
 		}
+	}
+
+	// Default to current/upcoming leg
+	$effect(() => {
+		if (legs.length === 0) return;
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const idx = legs.findIndex((leg) => parseLocalDate(leg.endDate) >= today);
+		selectedIndex = idx >= 0 ? idx : legs.length - 1;
+	});
+
+	$effect(() => {
+		const leg = legs[selectedIndex];
+		if (leg) loadWeather(leg);
 	});
 </script>
 
 <div>
-	<div class="flex justify-between items-center mb-5">
+	<div class="flex justify-between items-start mb-5">
 		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
 			<Cloud size={22} />
 			Weather
 		</h2>
-		{#if resolvedLocation}
-			<span class="text-sm text-gray-500 dark:text-gray-400">{resolvedLocation}</span>
+		{#if legs[selectedIndex]?.resolvedLocation}
+			<span class="text-sm text-gray-500 dark:text-gray-400 text-right">{legs[selectedIndex].resolvedLocation}</span>
 		{/if}
 	</div>
+
+	{#if legs.length > 1}
+		<div class="flex flex-wrap gap-2 mb-5">
+			{#each legs as leg, i}
+				<button
+					onclick={() => (selectedIndex = i)}
+					class="flex flex-col items-start px-3 py-2 rounded-xl border text-sm transition {selectedIndex === i
+						? 'bg-blue-600 border-blue-600 text-white'
+						: 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-400'}"
+				>
+					<span class="font-semibold">{leg.destination}</span>
+					<span class="text-[11px] opacity-75">{formatLegDateRange(leg)}</span>
+				</button>
+			{/each}
+		</div>
+	{/if}
 
 	{#if loading}
 		<div class="flex items-center justify-center py-16 gap-3 text-gray-500 dark:text-gray-400">
@@ -144,9 +177,7 @@
 			<span class="text-sm">Fetching weather...</span>
 		</div>
 	{:else if error}
-		<div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded text-sm">
-			{error}
-		</div>
+		<div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded text-sm">{error}</div>
 	{:else if mode === 'future'}
 		<div class="text-center py-14">
 			<p class="text-gray-700 dark:text-gray-200 font-semibold mb-1">Forecast not yet available</p>
@@ -157,13 +188,11 @@
 	{:else}
 		{#if mode === 'archive'}
 			<div class="mb-4 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded px-3 py-2">
-				Showing historical weather for this trip.
+				Showing historical weather for this destination.
 			</div>
 		{/if}
 		{#if partialNote}
-			<div class="mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
-				{partialNote}
-			</div>
+			<div class="mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">{partialNote}</div>
 		{/if}
 
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">

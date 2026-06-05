@@ -14,18 +14,17 @@
 	let showModal = $state(false);
 	let formError = $state('');
 	let formLoading = $state(false);
-	let newTrip = $state({ title: '', destination: '', startDate: '', endDate: '', description: '' });
-	let newTripGeoData = $state(null);
+	let newTrip = $state({ title: '', description: '' });
+	let newLeg = $state({ destination: '', startDate: '', endDate: '', latitude: null, longitude: null, resolvedLocation: '' });
 
 	function toInputDate(d) {
-		// Returns YYYY-MM-DD string from a Date object
 		return d.toISOString().split('T')[0];
 	}
 
 	function openModal(day) {
 		const dateStr = toInputDate(day);
-		newTrip = { title: '', destination: '', startDate: dateStr, endDate: dateStr, description: '' };
-		newTripGeoData = null;
+		newTrip = { title: '', description: '' };
+		newLeg = { destination: '', startDate: dateStr, endDate: dateStr, latitude: null, longitude: null, resolvedLocation: '' };
 		formError = '';
 		showModal = true;
 	}
@@ -37,10 +36,10 @@
 	async function createTrip(event) {
 		event.preventDefault();
 		if (!newTrip.title.trim()) { formError = 'Please enter a trip title.'; return; }
-		if (!newTrip.destination.trim()) { formError = 'Please enter a destination.'; return; }
-		if (!newTrip.startDate) { formError = 'Please select a start date.'; return; }
-		if (!newTrip.endDate) { formError = 'Please select an end date.'; return; }
-		if (newTrip.endDate < newTrip.startDate) {
+		if (!newLeg.destination.trim()) { formError = 'Please enter a destination.'; return; }
+		if (!newLeg.startDate) { formError = 'Please select a start date.'; return; }
+		if (!newLeg.endDate) { formError = 'Please select an end date.'; return; }
+		if (newLeg.endDate < newLeg.startDate) {
 			formError = 'End date cannot be before start date.';
 			return;
 		}
@@ -50,7 +49,7 @@
 			const res = await fetch('/api/trips', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...newTrip, ...newTripGeoData })
+				body: JSON.stringify({ ...newTrip, legs: [newLeg] })
 			});
 			const data = await res.json();
 			if (data.success) {
@@ -200,7 +199,7 @@
 					<h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">New Trip</h2>
 					<p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
 						Starting
-						{new Date(newTrip.startDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+						{new Date(newLeg.startDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
 					</p>
 				</div>
 				<button
@@ -235,8 +234,11 @@
 						Destination <span class="text-red-400">*</span>
 					</label>
 					<DestinationInput
-						bind:value={newTrip.destination}
-						onlocationselect={(loc) => (newTripGeoData = loc)}
+						bind:value={newLeg.destination}
+						onlocationselect={(loc) => {
+							if (loc) { newLeg.latitude = loc.latitude; newLeg.longitude = loc.longitude; newLeg.resolvedLocation = loc.resolvedLocation; }
+							else { newLeg.latitude = null; newLeg.longitude = null; newLeg.resolvedLocation = ''; }
+						}}
 						inputClass="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 					/>
 				</div>
@@ -249,7 +251,7 @@
 						<input
 							id="cal-start"
 							type="date"
-							bind:value={newTrip.startDate}
+							bind:value={newLeg.startDate}
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 						/>
 					</div>
@@ -260,8 +262,8 @@
 						<input
 							id="cal-end"
 							type="date"
-							bind:value={newTrip.endDate}
-							min={newTrip.startDate}
+							bind:value={newLeg.endDate}
+							min={newLeg.startDate}
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 						/>
 					</div>

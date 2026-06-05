@@ -174,7 +174,8 @@
 									<p class="text-blue-300 text-[11px] font-semibold uppercase tracking-widest mb-1">Next Trip</p>
 									<h2 class="text-2xl font-bold text-white leading-tight">{nextTrip.title}</h2>
 									<p class="text-white/75 flex items-center gap-1 text-sm mt-0.5">
-										<MapPin size={12} />{nextTrip.destination}
+										<MapPin size={12} />
+										{nextTrip.legs?.length > 1 ? nextTrip.legs.map((l) => l.destination).join(' → ') : nextTrip.destination}
 									</p>
 								</div>
 							</div>

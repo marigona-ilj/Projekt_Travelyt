@@ -4,24 +4,28 @@
 	import TripCard from '$lib/components/TripCard.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
-	import { Plane, Users, Receipt, CalendarDays, PackageCheck } from 'lucide-svelte';
+	import { Plane, Users, Receipt, CalendarDays, PackageCheck, Plus, X } from 'lucide-svelte';
 
 	let trips = $state([]);
 	let loading = $state(true);
 	let error = $state('');
 	let showNewTripForm = $state(false);
 
-	let newTrip = $state({
-		title: '',
-		destination: '',
-		startDate: '',
-		endDate: '',
-		description: '',
-		currency: 'CHF',
-		coverImage: ''
-	});
-	let newTripGeoData = $state(null);
+	function emptyLeg() {
+		return { destination: '', startDate: '', endDate: '', latitude: null, longitude: null, resolvedLocation: '' };
+	}
+
+	let newTrip = $state({ title: '', description: '', currency: 'CHF', coverImage: '' });
+	let newLegs = $state([emptyLeg()]);
 	let formLoading = $state(false);
+
+	function addLeg() {
+		newLegs = [...newLegs, emptyLeg()];
+	}
+
+	function removeLeg(i) {
+		newLegs = newLegs.filter((_, idx) => idx !== i);
+	}
 
 	function handleCoverImage(event) {
 		const file = event.target.files[0];
@@ -58,13 +62,21 @@
 
 	async function createTrip(event) {
 		if (event?.preventDefault) event.preventDefault();
-		if (!newTrip.title || !newTrip.destination || !newTrip.startDate || !newTrip.endDate) {
-			error = 'Please fill in all required fields';
-			return;
-		}
-		if (new Date(newTrip.endDate) < new Date(newTrip.startDate)) {
-			error = 'End date cannot be before start date';
-			return;
+		if (!newTrip.title) { error = 'Please enter a trip title'; return; }
+		for (let i = 0; i < newLegs.length; i++) {
+			const leg = newLegs[i];
+			if (!leg.destination || !leg.startDate || !leg.endDate) {
+				error = `Please fill in all fields for destination ${i + 1}`;
+				return;
+			}
+			if (new Date(leg.endDate) < new Date(leg.startDate)) {
+				error = `Destination ${i + 1}: end date cannot be before start date`;
+				return;
+			}
+			if (i > 0 && new Date(leg.startDate) < new Date(newLegs[i - 1].endDate)) {
+				error = `Destination ${i + 1} start date overlaps with previous leg`;
+				return;
+			}
 		}
 
 		formLoading = true;
@@ -74,22 +86,14 @@
 			const response = await fetch('/api/trips', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...newTrip, ...newTripGeoData })
+				body: JSON.stringify({ ...newTrip, legs: newLegs })
 			});
 
 			const data = await response.json();
 
 			if (data.success) {
-				newTrip = {
-					title: '',
-					destination: '',
-					startDate: '',
-					endDate: '',
-					description: '',
-					currency: 'CHF',
-					coverImage: ''
-				};
-				newTripGeoData = null;
+				newTrip = { title: '', description: '', currency: 'CHF', coverImage: '' };
+				newLegs = [emptyLeg()];
 				showNewTripForm = false;
 				await fetchTrips();
 			} else {
@@ -180,55 +184,85 @@
 	{#if showNewTripForm}
 		<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6 mb-8">
 			<h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Create New Trip</h2>
-			<form onsubmit={createTrip}>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-					<div>
-						<label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Trip Title</label>
-						<input
-							type="text"
-							id="title"
-							bind:value={newTrip.title}
-							placeholder="e.g., Summer Europe 2024"
-							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-							required
-						/>
-					</div>
-					<div>
-						<label for="dest" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Destination</label>
-						<DestinationInput
-							bind:value={newTrip.destination}
-							onlocationselect={(loc) => (newTripGeoData = loc)}
-							inputClass="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
+			<form onsubmit={createTrip} novalidate>
+				<div class="mb-4">
+					<label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Trip Title <span class="text-red-500">*</span></label>
+					<input
+						type="text"
+						id="title"
+						bind:value={newTrip.title}
+						placeholder="e.g., Summer Europe 2024"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+					/>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-					<div>
-						<label for="start" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date</label>
-						<input
-							type="date"
-							id="start"
-							bind:value={newTrip.startDate}
-							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-							required
-						/>
+				<div class="mb-4">
+					<div class="flex items-center justify-between mb-1">
+						<label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Destinations <span class="text-red-500">*</span></label>
+						{#if newLegs.length > 1}
+							<span class="text-xs text-gray-400 dark:text-gray-500">{newLegs.length} destinations</span>
+						{/if}
 					</div>
-					<div>
-						<label for="end" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">End Date</label>
-						<input
-							type="date"
-							id="end"
-							bind:value={newTrip.endDate}
-							min={newTrip.startDate || ''}
-							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-							required
-						/>
+					{#if newLegs.length === 1}
+						<p class="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2 mb-2">
+							Travelling to multiple cities? Click <span class="font-semibold">+ Add destination</span> below to add more stops.
+						</p>
+					{/if}
+					<div class="space-y-2">
+						{#each newLegs as leg, i}
+							<div class="flex gap-2 items-start bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+								{#if newLegs.length > 1}
+									<div class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-2">{i + 1}</div>
+								{/if}
+								<div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+									<div class="sm:col-span-1">
+										<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Destination</p>
+										<DestinationInput
+											bind:value={leg.destination}
+											onlocationselect={(loc) => {
+												if (loc) { leg.latitude = loc.latitude; leg.longitude = loc.longitude; leg.resolvedLocation = loc.resolvedLocation; }
+												else { leg.latitude = null; leg.longitude = null; leg.resolvedLocation = ''; }
+											}}
+											inputClass="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+										/>
+									</div>
+									<div>
+										<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">From</p>
+										<input
+											type="date"
+											bind:value={leg.startDate}
+											class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+										/>
+									</div>
+									<div>
+										<p class="text-xs text-gray-500 dark:text-gray-400 mb-1">To</p>
+										<input
+											type="date"
+											bind:value={leg.endDate}
+											min={leg.startDate || ''}
+											class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
+										/>
+									</div>
+								</div>
+								{#if newLegs.length > 1}
+									<button type="button" onclick={() => removeLeg(i)} class="text-gray-400 hover:text-red-500 mt-2 shrink-0 transition">
+										<X size={16} />
+									</button>
+								{/if}
+							</div>
+						{/each}
+						<button
+							type="button"
+							onclick={addLeg}
+							class="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium px-1 py-1 transition"
+						>
+							<Plus size={15} /> Add destination
+						</button>
 					</div>
 				</div>
 
 				<div class="mb-4">
-					<label for="desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
+					<label for="desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description <span class="text-gray-400 font-normal">(optional)</span></label>
 					<textarea
 						id="desc"
 						bind:value={newTrip.description}
