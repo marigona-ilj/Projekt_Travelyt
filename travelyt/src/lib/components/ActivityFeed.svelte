@@ -63,10 +63,10 @@
 
 <div>
 	<div class="flex items-center justify-between mb-4">
-		<h2 class="text-lg font-semibold text-gray-800">Recent Activity</h2>
+		<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Recent Activity</h2>
 		<button
 			onclick={onRefresh}
-			class="text-gray-500 hover:text-gray-700 p-1 rounded"
+			class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded"
 			title="Refresh"
 		>
 			<RefreshCw size={16} />
@@ -80,25 +80,25 @@
 	{:else if error}
 		<p class="text-red-500 text-sm">{error}</p>
 	{:else if entries.length === 0}
-		<p class="text-gray-500 text-sm text-center py-8">No activity yet. Start by adding items, activities, or expenses!</p>
+		<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-8">No activity yet. Start by adding items, activities, or expenses!</p>
 	{:else}
 		<ul class="space-y-3">
 			{#each entries as entry (entry.id)}
 				{@const Icon = iconMap[entry.actionType] ?? Target}
 				{@const colors = colorMap[entry.actionType] ?? 'text-gray-500 bg-gray-100'}
 				<li
-					class="flex items-start gap-3 rounded-lg p-1 -mx-1 {entry.tripId && tabMap[entry.actionType] ? 'cursor-pointer hover:bg-gray-50 transition' : ''}"
+					class="flex items-start gap-3 rounded-lg p-1 -mx-1 {entry.tripId && tabMap[entry.actionType] ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition' : ''}"
 					onclick={() => handleEntryClick(entry)}
 				>
 					<span class="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center {colors}">
 						<Icon size={15} />
 					</span>
 					<div class="flex-1 min-w-0">
-						<p class="text-sm text-gray-800">
+						<p class="text-sm text-gray-800 dark:text-gray-100">
 							<span class="font-semibold">{entry.userName}</span>
 							{' '}{entry.message}
 						</p>
-						<p class="text-xs text-gray-400 mt-0.5">
+						<p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
 							{timeAgo(entry.createdAt)}
 							{#if entry.tripName}
 								· <span class="text-blue-400">{entry.tripName}</span>

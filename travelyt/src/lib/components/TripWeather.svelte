@@ -129,17 +129,17 @@
 
 <div>
 	<div class="flex justify-between items-center mb-5">
-		<h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
 			<Cloud size={22} />
 			Weather
 		</h2>
 		{#if resolvedLocation}
-			<span class="text-sm text-gray-500">{resolvedLocation}</span>
+			<span class="text-sm text-gray-500 dark:text-gray-400">{resolvedLocation}</span>
 		{/if}
 	</div>
 
 	{#if loading}
-		<div class="flex items-center justify-center py-16 gap-3 text-gray-500">
+		<div class="flex items-center justify-center py-16 gap-3 text-gray-500 dark:text-gray-400">
 			<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
 			<span class="text-sm">Fetching weather...</span>
 		</div>
@@ -149,14 +149,14 @@
 		</div>
 	{:else if mode === 'future'}
 		<div class="text-center py-14">
-			<p class="text-gray-700 font-semibold mb-1">Forecast not yet available</p>
-			<p class="text-gray-500 text-sm">Weather forecasts are available up to 16 days in advance. Check back closer to your trip.</p>
+			<p class="text-gray-700 dark:text-gray-200 font-semibold mb-1">Forecast not yet available</p>
+			<p class="text-gray-500 dark:text-gray-400 text-sm">Weather forecasts are available up to 16 days in advance. Check back closer to your trip.</p>
 		</div>
 	{:else if forecast.length === 0}
-		<div class="text-center py-12 text-gray-400 text-sm">No weather data available.</div>
+		<div class="text-center py-12 text-gray-400 dark:text-gray-500 text-sm">No weather data available.</div>
 	{:else}
 		{#if mode === 'archive'}
-			<div class="mb-4 text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded px-3 py-2">
+			<div class="mb-4 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded px-3 py-2">
 				Showing historical weather for this trip.
 			</div>
 		{/if}
@@ -169,26 +169,26 @@
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
 			{#each forecast as day}
 				{@const info = getWeatherInfo(day.code)}
-				<div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center text-center gap-1">
-					<p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">{formatDayLabel(day.date)}</p>
+				<div class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex flex-col items-center text-center gap-1">
+					<p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{formatDayLabel(day.date)}</p>
 					<p class="text-3xl my-1">{info.icon}</p>
-					<p class="text-xs text-gray-600">{info.label}</p>
+					<p class="text-xs text-gray-600 dark:text-gray-300">{info.label}</p>
 					<div class="flex items-baseline gap-1 mt-1">
-						<span class="text-base font-bold text-gray-800">{day.maxTemp}°</span>
-						<span class="text-sm text-gray-400">{day.minTemp}°</span>
+						<span class="text-base font-bold text-gray-800 dark:text-gray-100">{day.maxTemp}°</span>
+						<span class="text-sm text-gray-400 dark:text-gray-500">{day.minTemp}°</span>
 					</div>
 					{#if day.precipitation > 0}
 						<p class="text-xs text-blue-500 font-medium">💧 {day.precipitation.toFixed(1)} mm</p>
 					{/if}
 					{#if day.wind > 0}
-						<p class="text-xs text-gray-400">💨 {day.wind} km/h</p>
+						<p class="text-xs text-gray-400 dark:text-gray-500">💨 {day.wind} km/h</p>
 					{/if}
 				</div>
 			{/each}
 		</div>
 
-		<p class="text-xs text-gray-400 mt-4 text-right">
-			Data: <a href="https://open-meteo.com" target="_blank" class="underline hover:text-gray-600">Open-Meteo</a>
+		<p class="text-xs text-gray-400 dark:text-gray-500 mt-4 text-right">
+			Data: <a href="https://open-meteo.com" target="_blank" class="underline hover:text-gray-600 dark:hover:text-gray-400">Open-Meteo</a>
 		</p>
 	{/if}
 </div>

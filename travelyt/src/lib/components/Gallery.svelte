@@ -153,12 +153,12 @@
 <div>
 	<!-- Header -->
 	<div class="flex justify-between items-center mb-6">
-		<h2 class="text-2xl font-bold text-gray-800">Gallery</h2>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Gallery</h2>
 		<div class="flex gap-2">
 			{#if selectMode}
 				<button
 					onclick={toggleSelectAll}
-					class="flex items-center gap-1 text-sm px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+					class="flex items-center gap-1 text-sm px-3 py-1 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
 				>
 					{#if allSelected}
 						<CheckSquare size={15} /> Deselect all
@@ -183,7 +183,7 @@
 				{/if}
 				<button
 					onclick={exitSelectMode}
-					class="text-sm px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
+					class="text-sm px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
 				>
 					Cancel
 				</button>
@@ -191,7 +191,7 @@
 				{#if photos.length > 0}
 					<button
 						onclick={() => (selectMode = true)}
-						class="text-sm px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50"
+						class="text-sm px-3 py-1 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
 					>
 						Select
 					</button>
@@ -206,13 +206,13 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	{#if loading}
-		<p class="text-gray-600">Loading photos...</p>
+		<p class="text-gray-600 dark:text-gray-300">Loading photos...</p>
 	{:else if photos.length === 0}
-		<div class="text-center py-16 text-gray-400">
+		<div class="text-center py-16 text-gray-400 dark:text-gray-500">
 			<ImagePlus size={48} class="mx-auto mb-3 opacity-30" />
 			<p class="text-lg font-medium">No photos yet</p>
 			<p class="text-sm mt-1">Be the first to upload a photo from this trip!</p>
@@ -221,7 +221,7 @@
 		<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
 			{#each photos as photo}
 				<div
-					class="relative group rounded-lg overflow-hidden bg-gray-100 aspect-square cursor-pointer"
+					class="relative group rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 aspect-square cursor-pointer"
 					onclick={() => openLightbox(photo)}
 				>
 					<img

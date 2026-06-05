@@ -167,7 +167,7 @@
 
 <div>
 	<div class="flex justify-between items-center mb-4">
-		<h2 class="text-2xl font-bold text-gray-800">Packing List</h2>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Packing List</h2>
 		<button
 			onclick={() => (showNewItemForm = !showNewItemForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
@@ -177,25 +177,25 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	{#if showNewItemForm}
-		<div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
 			<form onsubmit={createItem}>
 				<div class="mb-3">
 					<input
 						type="text"
 						bind:value={newItem.item}
 						placeholder="Item name"
-						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
 				<div class="mb-3">
 					<select
 						bind:value={newItem.category}
-						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 					>
 						{#each categories as cat}
 							<option value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
@@ -205,7 +205,7 @@
 				<div class="mb-3">
 					<label class="flex items-center gap-2 cursor-pointer select-none">
 						<input type="checkbox" bind:checked={newItem.isPrivate} class="w-4 h-4" />
-						<span class="text-sm text-gray-700">
+						<span class="text-sm text-gray-700 dark:text-gray-200">
 							<Lock size={14} /> Keep private — only visible to me
 						</span>
 					</label>
@@ -221,7 +221,7 @@
 					<button
 						type="button"
 						onclick={() => (showNewItemForm = false)}
-						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
+						class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm"
 					>
 						Cancel
 					</button>
@@ -231,26 +231,26 @@
 	{/if}
 
 	{#if loading}
-		<p class="text-gray-600">Loading items...</p>
+		<p class="text-gray-600 dark:text-gray-300">Loading items...</p>
 	{:else}
 		<!-- Shared packing list -->
 		<div class="mb-8">
 			<div class="flex items-center gap-2 mb-3">
-				<Users size={20} class="text-gray-600" />
-				<h3 class="text-lg font-bold text-gray-700">Shared List</h3>
-				<span class="text-sm text-gray-400 ml-auto">{sharedPackedCount} of {sharedItems.length} packed</span>
+				<Users size={20} class="text-gray-600 dark:text-gray-300" />
+				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200">Shared List</h3>
+				<span class="text-sm text-gray-400 dark:text-gray-500 ml-auto">{sharedPackedCount} of {sharedItems.length} packed</span>
 			</div>
 
 			{#if sharedItems.length === 0}
-				<p class="text-gray-400 text-sm pl-1">No shared items yet.</p>
+				<p class="text-gray-400 dark:text-gray-500 text-sm pl-1">No shared items yet.</p>
 			{:else}
 				<div class="space-y-4">
 					{#each Object.entries(groupedShared) as [category, categoryItems]}
 						<div>
-							<h4 class="font-semibold text-gray-600 capitalize text-sm mb-1">{category}</h4>
+							<h4 class="font-semibold text-gray-600 dark:text-gray-300 capitalize text-sm mb-1">{category}</h4>
 							<div class="space-y-1">
 								{#each categoryItems as item}
-									<div class="flex items-center gap-2 bg-gray-50 rounded p-2">
+									<div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-900 rounded p-2">
 										<input
 											type="checkbox"
 											checked={item.packed}
@@ -262,9 +262,9 @@
 												type="text"
 												bind:value={editingValue}
 												onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') cancelEdit(); }}
-												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm"
+												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 											/>
-											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 rounded text-xs">
+											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 dark:border-gray-600 rounded text-xs dark:bg-gray-700 dark:text-gray-100">
 												{#each categories as cat}
 													<option value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
 												{/each}
@@ -272,7 +272,7 @@
 											<button onclick={() => saveEdit(item.id)} class="text-green-600 hover:text-green-800 text-sm font-bold">✓</button>
 											<button onclick={cancelEdit} class="text-gray-400 hover:text-gray-600 text-sm">✕</button>
 										{:else}
-											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 dark:text-gray-100 flex-1'}>
 												{item.item}
 											</span>
 											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
@@ -288,21 +288,21 @@
 		</div>
 
 		<!-- Private packing list -->
-		<div class="border-t border-gray-200 pt-6">
+		<div class="border-t border-gray-200 dark:border-gray-700 pt-6">
 			<div class="flex items-center gap-2 mb-3">
-				<Lock size={20} class="text-gray-600" />
-				<h3 class="text-lg font-bold text-gray-700">My Private List</h3>
-				<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-1">Only visible to you</span>
-				<span class="text-sm text-gray-400 ml-auto">{privatePackedCount} of {privateItems.length} packed</span>
+				<Lock size={20} class="text-gray-600 dark:text-gray-300" />
+				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200">My Private List</h3>
+				<span class="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full ml-1">Only visible to you</span>
+				<span class="text-sm text-gray-400 dark:text-gray-500 ml-auto">{privatePackedCount} of {privateItems.length} packed</span>
 			</div>
 
 			{#if privateItems.length === 0}
-				<p class="text-gray-400 text-sm pl-1">No private items yet. Add items with "Keep private" checked.</p>
+				<p class="text-gray-400 dark:text-gray-500 text-sm pl-1">No private items yet. Add items with "Keep private" checked.</p>
 			{:else}
 				<div class="space-y-4">
 					{#each Object.entries(groupedPrivate) as [category, categoryItems]}
 						<div>
-							<h4 class="font-semibold text-gray-600 capitalize text-sm mb-1">{category}</h4>
+							<h4 class="font-semibold text-gray-600 dark:text-gray-300 capitalize text-sm mb-1">{category}</h4>
 							<div class="space-y-1">
 								{#each categoryItems as item}
 									<div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded p-2">
@@ -317,9 +317,9 @@
 												type="text"
 												bind:value={editingValue}
 												onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') cancelEdit(); }}
-												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm"
+												class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 											/>
-											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 rounded text-xs">
+											<select bind:value={editingCategory} class="px-1 py-0.5 border border-gray-300 dark:border-gray-600 rounded text-xs dark:bg-gray-700 dark:text-gray-100">
 												{#each categories as cat}
 													<option value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
 												{/each}
@@ -327,7 +327,7 @@
 											<button onclick={() => saveEdit(item.id)} class="text-green-600 hover:text-green-800 text-sm font-bold">✓</button>
 											<button onclick={cancelEdit} class="text-gray-400 hover:text-gray-600 text-sm">✕</button>
 										{:else}
-											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 flex-1'}>
+											<span class={item.packed ? 'line-through text-gray-400 flex-1' : 'text-gray-800 dark:text-gray-100 flex-1'}>
 												{item.item}
 											</span>
 											<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>

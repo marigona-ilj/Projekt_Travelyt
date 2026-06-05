@@ -163,7 +163,7 @@
 
 <div>
 	<div class="flex justify-between items-center mb-4">
-		<h2 class="text-2xl font-bold text-gray-800">Pre-Trip Checklist</h2>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Pre-Trip Checklist</h2>
 		<button
 			onclick={() => (showForm = !showForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
@@ -173,16 +173,16 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	{#if items.length > 0}
 		<div class="mb-5">
-			<div class="flex justify-between text-sm text-gray-500 mb-1">
+			<div class="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
 				<span>{totalDone} of {items.length} done</span>
 				<span>{pct}%</span>
 			</div>
-			<div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+			<div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
 				<div
 					class="h-2 rounded-full transition-all duration-300 {pct === 100 ? 'bg-green-500' : 'bg-blue-500'}"
 					style="width: {pct}%"
@@ -192,20 +192,20 @@
 	{/if}
 
 	{#if showForm}
-		<div class="bg-gray-50 rounded-lg p-4 mb-5 border border-gray-200">
+		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-5 border border-gray-200 dark:border-gray-700">
 			<form onsubmit={handleSubmit}>
 				<div class="flex gap-2 mb-3">
 					<input
 						type="text"
 						bind:value={newText}
 						placeholder="e.g. Book airport transfer"
-						class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
+						class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
 				<label class="flex items-center gap-2 cursor-pointer select-none mb-3">
 					<input type="checkbox" bind:checked={newIsPersonal} class="w-4 h-4" />
-					<span class="text-sm text-gray-700 flex items-center gap-1">
+					<span class="text-sm text-gray-700 dark:text-gray-200 flex items-center gap-1">
 						<UserCheck size={13} /> Individual — everyone checks this for themselves
 					</span>
 				</label>
@@ -220,7 +220,7 @@
 					<button
 						type="button"
 						onclick={() => { showForm = false; newText = ''; newIsPersonal = false; }}
-						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
+						class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm"
 					>
 						Cancel
 					</button>
@@ -230,25 +230,25 @@
 	{/if}
 
 	{#if loading}
-		<p class="text-gray-600">Loading checklist...</p>
+		<p class="text-gray-600 dark:text-gray-300">Loading checklist...</p>
 	{:else}
 		<!-- Group items -->
 		{#if groupItems.length > 0}
 			<div class="mb-6">
 				<div class="flex items-center gap-2 mb-2">
-					<Users size={16} class="text-gray-500" />
-					<h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Group Tasks</h3>
-					<span class="text-xs text-gray-400 ml-auto">{groupDone}/{groupItems.length}</span>
+					<Users size={16} class="text-gray-500 dark:text-gray-400" />
+					<h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Group Tasks</h3>
+					<span class="text-xs text-gray-400 dark:text-gray-500 ml-auto">{groupDone}/{groupItems.length}</span>
 				</div>
 				<ul class="space-y-1">
 					{#each groupItems as item (item.id)}
-						<li class="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5">
+						<li class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2.5">
 							{#if editingId === item.id}
 								<input
 									type="text"
 									bind:value={editingText}
 									onkeydown={(e) => { if (e.key === 'Enter') saveEdit(item.id); if (e.key === 'Escape') cancelEdit(); }}
-									class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm"
+									class="flex-1 px-2 py-0.5 border border-blue-400 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 								/>
 								<button onclick={() => saveEdit(item.id)} class="text-green-600 hover:text-green-800 text-sm font-bold">✓</button>
 								<button onclick={cancelEdit} class="text-gray-400 hover:text-gray-600 text-sm">✕</button>
@@ -259,7 +259,7 @@
 									onchange={() => toggleItem(item)}
 									class="w-4 h-4 cursor-pointer accent-blue-600"
 								/>
-								<span class="flex-1 text-sm {item.checked ? 'line-through text-gray-400' : 'text-gray-800'}">
+								<span class="flex-1 text-sm {item.checked ? 'line-through text-gray-400' : 'text-gray-800 dark:text-gray-100'}">
 									{item.text}
 								</span>
 								<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
@@ -275,10 +275,10 @@
 		{#if personalItems.length > 0}
 			<div class="mb-6">
 				<div class="flex items-center gap-2 mb-2">
-					<UserCheck size={16} class="text-gray-500" />
-					<h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Individual Tasks</h3>
-					<span class="text-xs text-gray-400 ml-1">(each person checks for themselves)</span>
-					<span class="text-xs text-gray-400 ml-auto">{personalDone}/{personalItems.length}</span>
+					<UserCheck size={16} class="text-gray-500 dark:text-gray-400" />
+					<h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Individual Tasks</h3>
+					<span class="text-xs text-gray-400 dark:text-gray-500 ml-1">(each person checks for themselves)</span>
+					<span class="text-xs text-gray-400 dark:text-gray-500 ml-auto">{personalDone}/{personalItems.length}</span>
 				</div>
 				<ul class="space-y-1">
 					{#each personalItems as item (item.id)}
@@ -312,21 +312,21 @@
 		{/if}
 
 		{#if items.length === 0 && !showForm}
-			<p class="text-center text-gray-500 text-sm py-4">No items yet. Add your own or pick from suggestions below.</p>
+			<p class="text-center text-gray-500 dark:text-gray-400 text-sm py-4">No items yet. Add your own or pick from suggestions below.</p>
 		{/if}
 	{/if}
 
 	<!-- Suggestions -->
 	{#if unusedGroupSuggestions.length > 0 || unusedPersonalSuggestions.length > 0}
-		<div class="border-t border-gray-200 pt-4 space-y-3">
+		<div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
 			{#if unusedGroupSuggestions.length > 0}
 				<div>
-					<p class="text-xs text-gray-500 mb-1.5 flex items-center gap-1"><Users size={12} /> Group suggestions:</p>
+					<p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5 flex items-center gap-1"><Users size={12} /> Group suggestions:</p>
 					<div class="flex flex-wrap gap-2">
 						{#each unusedGroupSuggestions as s}
 							<button
 								onclick={() => addItem(s, false)}
-								class="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-600 text-gray-600 px-3 py-1 rounded-full border border-gray-200 transition"
+								class="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-600 transition"
 							>
 								+ {s}
 							</button>
@@ -336,7 +336,7 @@
 			{/if}
 			{#if unusedPersonalSuggestions.length > 0}
 				<div>
-					<p class="text-xs text-gray-500 mb-1.5 flex items-center gap-1"><UserCheck size={12} /> Individual suggestions:</p>
+					<p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5 flex items-center gap-1"><UserCheck size={12} /> Individual suggestions:</p>
 					<div class="flex flex-wrap gap-2">
 						{#each unusedPersonalSuggestions as s}
 							<button

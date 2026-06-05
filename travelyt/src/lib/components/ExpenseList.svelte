@@ -238,7 +238,7 @@
 	<!-- Header -->
 	<div class="flex justify-between items-center mb-6">
 		<div>
-			<h2 class="text-2xl font-bold text-gray-800">Budget</h2>
+			<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Budget</h2>
 			<div class="flex items-center gap-2 mt-1">
 				<p class="text-lg font-semibold text-blue-600">Total: {fmt(total)}</p>
 				<div class="relative group">
@@ -246,7 +246,7 @@
 						value={currency}
 						onchange={handleCurrencyChange}
 						disabled={expenses.length > 0}
-						class="text-sm border border-gray-300 rounded px-2 py-0.5 text-gray-600 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+						class="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 text-gray-600 dark:text-gray-300 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						{#each currencies as c}
 							<option value={c}>{c}</option>
@@ -269,40 +269,40 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	<!-- Add expense form -->
 	{#if showNewExpenseForm}
-		<div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
 			<form onsubmit={createExpense}>
 				<div class="mb-3">
 					<input
 						type="text"
 						bind:value={newExpense.description}
 						placeholder="What was this for? (e.g. Hotel)"
-						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
 				<div class="grid grid-cols-2 gap-2 mb-3">
 					<div>
-						<label class="block text-xs text-gray-500 mb-1">Amount ({currency})</label>
+						<label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Amount ({currency})</label>
 						<input
 							type="number"
 							bind:value={newExpense.amount}
 							placeholder="0.00"
 							step="0.01"
 							min="0"
-							class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 							required
 						/>
 					</div>
 					<div>
 						<div class="flex items-center gap-1 mb-1">
-							<label class="text-xs text-gray-500">Date</label>
+							<label class="text-xs text-gray-500 dark:text-gray-400">Date</label>
 							<div class="relative group">
-								<span class="text-xs text-gray-400 cursor-help border border-gray-300 rounded-full w-4 h-4 flex items-center justify-center font-bold leading-none">?</span>
+								<span class="text-xs text-gray-400 cursor-help border border-gray-300 dark:border-gray-600 rounded-full w-4 h-4 flex items-center justify-center font-bold leading-none">?</span>
 								<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
 									Date of payment or purchase
 								</div>
@@ -311,17 +311,17 @@
 						<input
 						type="date"
 						bind:value={newExpense.date}
-						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 						/>
 					</div>
 				</div>
 				{#if members.length > 1}
 					<div class="mb-3">
-						<label class="block text-xs text-gray-500 mb-1">Paid by</label>
+						<label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Paid by</label>
 						<select
 							bind:value={newExpense.paidBy}
-							class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						>
 							{#each members as member}
 								<option value={member.userId}>
@@ -331,7 +331,7 @@
 						</select>
 					</div>
 					<div class="mb-3">
-						<label class="block text-xs text-gray-500 mb-1">Split between</label>
+						<label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Split between</label>
 						<div class="flex flex-wrap gap-3">
 							{#each members as member}
 								<label class="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -354,8 +354,8 @@
 					</div>
 				{/if}
 				<div class="mb-3">
-					<label class="block text-xs text-gray-500 mb-1">Category</label>
-					<select bind:value={newExpense.category} required class="w-full px-3 py-2 border border-gray-300 rounded text-sm {newExpense.category === '' ? 'text-gray-400' : 'text-gray-800'}">
+					<label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Category</label>
+					<select bind:value={newExpense.category} required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 {newExpense.category === '' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'}">
 						<option value="" disabled>Select a category...</option>
 						{#each categoryKeys as key}
 							<option value={key}>{categoryConfig[key].label}</option>
@@ -373,7 +373,7 @@
 					<button
 						type="button"
 						onclick={() => (showNewExpenseForm = false)}
-						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
+						class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm"
 					>
 						Cancel
 					</button>
@@ -383,21 +383,21 @@
 	{/if}
 
 	{#if loading}
-		<p class="text-gray-600">Loading expenses...</p>
+		<p class="text-gray-600 dark:text-gray-300">Loading expenses...</p>
 	{:else if expenses.length === 0}
-		<p class="text-gray-500 text-sm">No expenses yet. Add one to start tracking!</p>
+		<p class="text-gray-500 dark:text-gray-400 text-sm">No expenses yet. Add one to start tracking!</p>
 	{:else}
 		<!-- Expense list -->
 		<div class="space-y-2 mb-8">
 			{#each expenses as expense}
-				<div class="bg-gray-50 rounded-lg p-3">
+				<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
 					{#if editingId === expense.id}
 						<form onsubmit={saveEditExpense}>
 							<div class="mb-2">
 								<input
 									type="text"
 									bind:value={editingExpense.description}
-									class="w-full px-3 py-2 border border-blue-400 rounded text-sm"
+									class="w-full px-3 py-2 border border-blue-400 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 									required
 								/>
 							</div>
@@ -407,19 +407,19 @@
 									bind:value={editingExpense.amount}
 									step="0.01"
 									min="0"
-									class="px-3 py-2 border border-gray-300 rounded text-sm"
+									class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 									required
 								/>
 								<input
 									type="date"
 									bind:value={editingExpense.date}
-									class="px-3 py-2 border border-gray-300 rounded text-sm"
+									class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 									required
 								/>
 							</div>
 							{#if members.length > 1}
 								<div class="mb-2">
-									<select bind:value={editingExpense.paidBy} class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+									<select bind:value={editingExpense.paidBy} class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100">
 										{#each members as member}
 											<option value={member.userId}>
 												{member.name}{member.userId === currentUserId ? ' (you)' : ''}
@@ -428,7 +428,7 @@
 									</select>
 								</div>
 								<div class="mb-2">
-									<label class="block text-xs text-gray-500 mb-1">Split between</label>
+									<label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Split between</label>
 									<div class="flex flex-wrap gap-3">
 										{#each members as member}
 											<label class="flex items-center gap-1.5 text-sm cursor-pointer">
@@ -451,7 +451,7 @@
 								</div>
 							{/if}
 							<div class="mb-2">
-								<select bind:value={editingExpense.category} class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+								<select bind:value={editingExpense.category} class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100">
 									{#each categoryKeys as key}
 										<option value={key}>{categoryConfig[key].label}</option>
 									{/each}
@@ -461,7 +461,7 @@
 								<button type="submit" disabled={editLoading} class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm">
 									{editLoading ? 'Saving...' : '✓ Save'}
 								</button>
-								<button type="button" onclick={cancelEditExpense} class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm">
+								<button type="button" onclick={cancelEditExpense} class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm">
 									Cancel
 								</button>
 							</div>
@@ -470,26 +470,26 @@
 						<div class="flex justify-between items-center">
 							<div>
 								<div class="flex items-center gap-2 mb-0.5">
-									<p class="font-semibold text-gray-800">{expense.description}</p>
+									<p class="font-semibold text-gray-800 dark:text-gray-100">{expense.description}</p>
 									<span class="text-xs px-1.5 py-0.5 rounded-full text-white {categoryConfig[expense.category || 'other'].color}">
 										{categoryConfig[expense.category || 'other'].label}
 									</span>
 								</div>
-								<p class="text-xs text-gray-500">
+								<p class="text-xs text-gray-500 dark:text-gray-400">
 									{new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-									· paid by <span class="font-medium text-gray-700">
+									· paid by <span class="font-medium text-gray-700 dark:text-gray-200">
 										{memberMap[expense.paidBy] ?? 'Unknown'}
 										{expense.paidBy === currentUserId ? ' (you)' : ''}
 									</span>
 								</p>
 								{#if expense.participants?.length > 0 && expense.participants.length < members.length}
-									<p class="text-xs text-gray-400 mt-0.5">
+									<p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
 										Split with: {expense.participants.map((uid) => memberMap[uid] ?? 'Unknown').join(', ')}
 									</p>
 								{/if}
 							</div>
 							<div class="flex items-center gap-3">
-								<span class="font-semibold text-gray-800">{fmt(expense.amount)}</span>
+								<span class="font-semibold text-gray-800 dark:text-gray-100">{fmt(expense.amount)}</span>
 								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
 								<button onclick={() => deleteExpense(expense.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 							</div>
@@ -501,17 +501,17 @@
 
 		<!-- Category breakdown -->
 		{#if categoryBreakdown.length > 0}
-			<div class="border-t border-gray-200 pt-6 mb-6">
-				<h3 class="text-lg font-bold text-gray-700 mb-3">By Category</h3>
+			<div class="border-t border-gray-200 dark:border-gray-700 pt-6 mb-6">
+				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3">By Category</h3>
 				<div class="space-y-2">
 					{#each categoryBreakdown as cat}
 						<div class="flex items-center gap-3">
-							<span class="w-28 text-sm text-gray-600 shrink-0">{cat.label}</span>
-							<div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+							<span class="w-28 text-sm text-gray-600 dark:text-gray-300 shrink-0">{cat.label}</span>
+							<div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
 								<div class="h-2 rounded-full {cat.color}" style="width: {cat.pct}%"></div>
 							</div>
-							<span class="text-sm font-semibold text-gray-700 w-24 text-right shrink-0">{fmt(cat.amount)}</span>
-							<span class="text-xs text-gray-400 w-8 text-right shrink-0">{cat.pct}%</span>
+							<span class="text-sm font-semibold text-gray-700 dark:text-gray-200 w-24 text-right shrink-0">{fmt(cat.amount)}</span>
+							<span class="text-xs text-gray-400 dark:text-gray-500 w-8 text-right shrink-0">{cat.pct}%</span>
 						</div>
 					{/each}
 				</div>
@@ -520,13 +520,13 @@
 
 		<!-- Group settlement (only for group trips) -->
 		{#if settlement}
-			<div class="border-t border-gray-200 pt-6">
+			<div class="border-t border-gray-200 dark:border-gray-700 pt-6">
 				<!-- Who paid what -->
-				<h3 class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2"><Wallet size={18} /> Who paid what</h3>
-				<div class="bg-gray-50 rounded-lg overflow-hidden mb-6">
+				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2"><Wallet size={18} /> Who paid what</h3>
+				<div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden mb-6">
 					<table class="w-full text-sm">
 						<thead>
-							<tr class="bg-gray-100 text-gray-600 text-xs uppercase">
+							<tr class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs uppercase">
 								<th class="text-left px-4 py-2">Member</th>
 								<th class="text-right px-4 py-2">Paid</th>
 								<th class="text-right px-4 py-2">Owes</th>
@@ -535,13 +535,13 @@
 						</thead>
 						<tbody>
 							{#each settlement.balances as row}
-								<tr class="border-t border-gray-200">
-									<td class="px-4 py-2 font-medium text-gray-800">
+								<tr class="border-t border-gray-200 dark:border-gray-700">
+									<td class="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">
 										{row.name}{row.userId === currentUserId ? ' (you)' : ''}
 									</td>
-									<td class="px-4 py-2 text-right text-gray-700">{fmt(row.paid)}</td>
-									<td class="px-4 py-2 text-right text-gray-500">{fmt(row.owes)}</td>
-									<td class="px-4 py-2 text-right font-semibold {row.balance > 0 ? 'text-green-600' : row.balance < 0 ? 'text-red-500' : 'text-gray-400'}">
+									<td class="px-4 py-2 text-right text-gray-700 dark:text-gray-200">{fmt(row.paid)}</td>
+									<td class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">{fmt(row.owes)}</td>
+									<td class="px-4 py-2 text-right font-semibold {row.balance > 0 ? 'text-green-600' : row.balance < 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'}">
 										{row.balance > 0 ? '+' : ''}{fmt(row.balance)}
 									</td>
 								</tr>
@@ -551,7 +551,7 @@
 				</div>
 
 				<!-- Settlements -->
-				<h3 class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2"><ArrowRightLeft size={18} /> Who owes whom</h3>
+				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2"><ArrowRightLeft size={18} /> Who owes whom</h3>
 				{#if settlement.settlements.length === 0}
 					<p class="text-green-600 text-sm font-medium">Everyone is even — nothing to settle!</p>
 				{:else}

@@ -119,22 +119,22 @@
 
 <div>
 	<div class="flex justify-between items-center mb-4">
-		<h2 class="text-2xl font-bold text-gray-800">Trip Members</h2>
-		<span class="text-sm text-gray-500">{members.length} {members.length === 1 ? 'person' : 'people'}</span>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Trip Members</h2>
+		<span class="text-sm text-gray-500 dark:text-gray-400">{members.length} {members.length === 1 ? 'person' : 'people'}</span>
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">{error}</div>
 	{/if}
 
-	<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-			<h3 class="text-sm font-semibold text-blue-800 mb-3">Invite someone by email</h3>
+	<div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+			<h3 class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-3">Invite someone by email</h3>
 			<form onsubmit={inviteMember} class="flex gap-2">
 				<input
 					type="email"
 					bind:value={inviteEmail}
 					placeholder="friend@email.com"
-					class="flex-1 px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+					class="flex-1 px-3 py-2 border border-blue-300 dark:border-blue-700 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm dark:bg-gray-700 dark:text-gray-100"
 				/>
 				<button
 					type="submit"
@@ -153,19 +153,19 @@
 		</div>
 
 	<!-- Invite link -->
-	<div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-		<h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2"><Link size={14} /> Invite via link</h3>
+	<div class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6">
+		<h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2"><Link size={14} /> Invite via link</h3>
 		{#if inviteCode}
 			<div class="flex gap-2 mb-2">
 				<input
 					type="text"
 					value={inviteLink}
 					readonly
-					class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 bg-white"
+					class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700"
 				/>
 				<button
 					onclick={copyLink}
-					class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition {copied ? 'bg-green-100 text-green-700' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}"
+					class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition {copied ? 'bg-green-100 text-green-700' : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'}"
 				>
 					<Copy size={14} />
 					{copied ? 'Copied!' : 'Copy'}
@@ -180,7 +180,7 @@
 			<button
 				onclick={generateInviteLink}
 				disabled={inviteLinkLoading}
-				class="bg-gray-200 hover:bg-gray-300 disabled:opacity-50 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition"
+				class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg text-sm transition"
 			>
 				{inviteLinkLoading ? 'Generating...' : 'Generate invite link'}
 			</button>
@@ -190,23 +190,23 @@
 	{#if loading}
 		<div class="text-center py-8">
 			<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-			<p class="text-gray-500 text-sm">Loading members...</p>
+			<p class="text-gray-500 dark:text-gray-400 text-sm">Loading members...</p>
 		</div>
 	{:else}
 		<div class="space-y-3">
 			{#each members as member}
-				<div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+				<div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg px-4 py-3">
 					<div class="flex items-center gap-3">
 						<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
 							{member.name.charAt(0).toUpperCase()}
 						</div>
 						<div>
-							<p class="font-semibold text-gray-800 text-sm">{member.name}</p>
-							<p class="text-gray-500 text-xs">{member.email}</p>
+							<p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{member.name}</p>
+							<p class="text-gray-500 dark:text-gray-400 text-xs">{member.email}</p>
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
-						<span class="text-xs font-semibold px-2 py-1 rounded-full {member.role === 'owner' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}">
+						<span class="text-xs font-semibold px-2 py-1 rounded-full {member.role === 'owner' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">
 							{member.role === 'owner' ? 'Owner' : 'Member'}
 						</span>
 						{#if isOwner && member.role !== 'owner'}
@@ -224,7 +224,7 @@
 	{/if}
 
 	{#if !loading && members.length === 1}
-		<p class="text-center text-gray-400 text-sm mt-6">
+		<p class="text-center text-gray-400 dark:text-gray-500 text-sm mt-6">
 			This is a solo trip. Add friends to plan together.
 		</p>
 	{/if}

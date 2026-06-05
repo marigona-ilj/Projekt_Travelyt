@@ -68,11 +68,11 @@
 	}
 </script>
 
-<header class="bg-white shadow-sm relative z-50">
+<header class="bg-white shadow-sm relative z-50 dark:!bg-gray-900 dark:border-b dark:border-gray-700">
 	<div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 		<a href="/trips" class="flex items-center gap-2 no-underline">
 			<div class="text-blue-600"><Plane size={28} /></div>
-			<span class="text-2xl font-bold text-gray-800">Travelyt</span>
+			<span class="text-2xl font-bold text-gray-800 dark:text-gray-100">Travelyt</span>
 		</a>
 
 		<nav class="flex items-center gap-1">
@@ -80,8 +80,8 @@
 				<a
 					href={link.href}
 					class="px-4 py-2 rounded-lg font-semibold transition {$page.url.pathname === link.href || ($page.url.pathname.startsWith(link.href) && link.href !== '/')
-						? 'bg-blue-50 text-blue-600'
-						: 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
+						? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+						: 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
 				>
 					{link.label}
 				</a>
@@ -90,7 +90,7 @@
 			<div class="relative">
 				<button
 					onclick={toggleFeed}
-					class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'}"
+					class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
 					title="Activity Feed"
 				>
 					<Bell size={22} />
@@ -102,9 +102,9 @@
 				</button>
 
 				{#if feedOpen}
-					<div class="absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
-						<div class="px-4 py-3 border-b border-gray-100">
-							<h3 class="font-semibold text-gray-800">Activity Feed</h3>
+					<div class="absolute right-0 top-full mt-2 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50">
+						<div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+							<h3 class="font-semibold text-gray-800 dark:text-gray-100">Activity Feed</h3>
 						</div>
 						<div class="p-4 max-h-[480px] overflow-y-auto">
 							<ActivityFeed {entries} loading={feedLoading} error={feedError} onRefresh={fetchFeed} onNavigate={() => (feedOpen = false)} />

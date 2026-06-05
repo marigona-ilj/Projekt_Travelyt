@@ -46,7 +46,7 @@
 
 <div
 	{onclick}
-	class="bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer overflow-hidden"
+	class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg dark:shadow-gray-900 transition cursor-pointer overflow-hidden"
 >
 	<div class="h-36 relative overflow-hidden">
 		{#if trip.coverImage && !imageError}
@@ -62,13 +62,13 @@
 	</div>
 	<div class="p-4">
 		<div class="flex justify-between items-start mb-2">
-			<h3 class="text-xl font-bold text-gray-800">{trip.title}</h3>
+			<h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">{trip.title}</h3>
 			<span class="text-xs font-semibold px-2 py-0.5 rounded-full {statusConfig[status].classes}">
 				{statusConfig[status].label}
 			</span>
 		</div>
-		<p class="text-gray-600 mb-3">{trip.destination}</p>
-		<div class="text-sm text-gray-500 mb-3">
+		<p class="text-gray-600 dark:text-gray-300 mb-3">{trip.destination}</p>
+		<div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
 			<p class="flex items-center gap-1"><Calendar size={14} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
 			<p class="flex items-center gap-1 mt-1"><Clock size={14} /> {daysBetween(trip.startDate, trip.endDate)} days</p>
 		</div>
@@ -76,7 +76,7 @@
 			<p class="text-sm font-semibold text-blue-600">{countdownLabel}</p>
 		{/if}
 		{#if trip.description}
-			<p class="text-sm text-gray-600 line-clamp-2">{trip.description}</p>
+			<p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{trip.description}</p>
 		{/if}
 	</div>
 </div>

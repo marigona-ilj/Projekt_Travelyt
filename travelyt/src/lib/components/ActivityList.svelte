@@ -240,7 +240,7 @@
 
 <div>
 	<div class="flex justify-between items-center mb-6">
-		<h2 class="text-2xl font-bold text-gray-800">Itinerary</h2>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Itinerary</h2>
 		<button
 			onclick={() => (showNewActivityForm = !showNewActivityForm)}
 			class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
@@ -250,18 +250,18 @@
 	</div>
 
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">{error}</div>
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
 	{/if}
 
 	{#if showNewActivityForm}
-		<div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
 			<form onsubmit={createActivity}>
 				<div class="mb-3">
 					<input
 						type="text"
 						bind:value={newActivity.title}
 						placeholder="Activity title"
-						class="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
@@ -271,26 +271,26 @@
 						bind:value={newActivity.date}
 						min={allDays[0]}
 						max={allDays[allDays.length - 1]}
-						class="px-3 py-2 border border-gray-300 rounded text-sm"
+						class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 					<input
 						type="time"
 						bind:value={newActivity.time}
-						class="px-3 py-2 border border-gray-300 rounded text-sm"
+						class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 					/>
 				</div>
 				<input
 					type="text"
 					bind:value={newActivity.location}
 					placeholder="Location (optional)"
-					class="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-3"
+					class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm mb-3 dark:bg-gray-700 dark:text-gray-100"
 				/>
 				<textarea
 					bind:value={newActivity.description}
 					placeholder="Notes (optional)"
 					rows="2"
-					class="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-3"
+					class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm mb-3 dark:bg-gray-700 dark:text-gray-100"
 				></textarea>
 				<div class="flex gap-2">
 					<button
@@ -303,7 +303,7 @@
 					<button
 						type="button"
 						onclick={() => (showNewActivityForm = false)}
-						class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
+						class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm"
 					>
 						Cancel
 					</button>
@@ -313,20 +313,20 @@
 	{/if}
 
 	{#if loading}
-		<p class="text-gray-600">Loading itinerary...</p>
+		<p class="text-gray-600 dark:text-gray-300">Loading itinerary...</p>
 	{:else if allDays.length === 0}
 		<!-- Fallback: no trip dates available, show flat list -->
 		{#if activities.length === 0}
-			<p class="text-gray-500">No activities yet. Add one to get started!</p>
+			<p class="text-gray-500 dark:text-gray-400">No activities yet. Add one to get started!</p>
 		{:else}
 			<div class="space-y-2">
 				{#each activities as activity}
-					<div class="bg-gray-50 rounded p-3 flex justify-between items-start">
+					<div class="bg-gray-50 dark:bg-gray-900 rounded p-3 flex justify-between items-start">
 						<div>
-							<p class="font-semibold text-gray-800">{activity.title}</p>
-							{#if activity.time}<p class="text-sm text-gray-500 flex items-center gap-1"><Clock size={13} /> {activity.time}</p>{/if}
-							{#if activity.location}<p class="text-sm text-gray-500 flex items-center gap-1"><MapPin size={13} /> {activity.location}</p>{/if}
-							{#if activity.description}<p class="text-sm text-gray-600 mt-1">{activity.description}</p>{/if}
+							<p class="font-semibold text-gray-800 dark:text-gray-100">{activity.title}</p>
+							{#if activity.time}<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1"><Clock size={13} /> {activity.time}</p>{/if}
+							{#if activity.location}<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1"><MapPin size={13} /> {activity.location}</p>{/if}
+							{#if activity.description}<p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{activity.description}</p>{/if}
 						</div>
 						<button onclick={() => deleteActivity(activity.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
 					</div>
@@ -341,7 +341,7 @@
 					ondragover={(e) => handleDragOver(e, day)}
 					ondragleave={handleDragLeave}
 					ondrop={(e) => handleDrop(e, day)}
-					class="rounded-lg transition-colors {dragOverDay === day ? 'bg-blue-50 ring-2 ring-blue-300' : ''}"
+					class="rounded-lg transition-colors {dragOverDay === day ? 'bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-300' : ''}"
 				>
 					<!-- Day header -->
 					<div class="flex items-center gap-3 mb-3">
@@ -349,8 +349,8 @@
 							{i + 1}
 						</div>
 						<div class="flex-1">
-							<p class="font-bold text-gray-800">{formatDayHeader(day)}</p>
-							<p class="text-xs text-gray-400">Day {i + 1}</p>
+							<p class="font-bold text-gray-800 dark:text-gray-100">{formatDayHeader(day)}</p>
+							<p class="text-xs text-gray-400 dark:text-gray-500">Day {i + 1}</p>
 						</div>
 						<button
 							onclick={() => openDayForm(day)}
@@ -362,21 +362,21 @@
 
 					<!-- Activities for this day -->
 					{#if grouped[day] && grouped[day].length > 0}
-						<div class="ml-5 pl-8 border-l-2 border-blue-100 space-y-3">
+						<div class="ml-5 pl-8 border-l-2 border-blue-100 dark:border-blue-900 space-y-3">
 							{#each grouped[day] as activity}
 								<div
 									draggable="true"
 									ondragstart={(e) => handleDragStart(e, activity)}
 									ondragend={handleDragEnd}
-									class="relative bg-white border border-gray-200 rounded-lg p-3 shadow-sm cursor-grab active:cursor-grabbing transition-opacity {draggingId === activity.id ? 'opacity-40' : ''}"
+									class="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-sm cursor-grab active:cursor-grabbing transition-opacity {draggingId === activity.id ? 'opacity-40' : ''}"
 								>
-									<div class="absolute -left-[2.15rem] top-4 w-3 h-3 rounded-full bg-blue-400 border-2 border-white"></div>
+									<div class="absolute -left-[2.15rem] top-4 w-3 h-3 rounded-full bg-blue-400 border-2 border-white dark:border-gray-800"></div>
 									{#if editingId === activity.id}
 										<form onsubmit={saveEdit}>
 											<input
 												type="text"
 												bind:value={editingActivity.title}
-												class="w-full px-2 py-1 border border-blue-400 rounded text-sm mb-2"
+												class="w-full px-2 py-1 border border-blue-400 rounded text-sm mb-2 dark:bg-gray-700 dark:text-gray-100"
 												required
 											/>
 											<div class="grid grid-cols-3 gap-2 mb-2">
@@ -385,31 +385,31 @@
 													bind:value={editingActivity.date}
 													min={allDays[0]}
 													max={allDays[allDays.length - 1]}
-													class="px-2 py-1 border border-gray-300 rounded text-sm"
+													class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 												/>
 												<input
 													type="time"
 													bind:value={editingActivity.time}
-													class="px-2 py-1 border border-gray-300 rounded text-sm"
+													class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 												/>
 												<input
 													type="text"
 													bind:value={editingActivity.location}
 													placeholder="Location"
-													class="px-2 py-1 border border-gray-300 rounded text-sm"
+													class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 												/>
 											</div>
 											<textarea
 												bind:value={editingActivity.description}
 												placeholder="Notes"
 												rows="2"
-												class="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2"
+												class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm mb-2 dark:bg-gray-700 dark:text-gray-100"
 											></textarea>
 											<div class="flex gap-2">
 												<button type="submit" disabled={editLoading} class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-1 px-3 rounded text-sm">
 													{editLoading ? 'Saving...' : '✓ Save'}
 												</button>
-												<button type="button" onclick={cancelEdit} class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm">
+												<button type="button" onclick={cancelEdit} class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm">
 													Cancel
 												</button>
 											</div>
@@ -417,15 +417,15 @@
 									{:else}
 										<div class="flex justify-between items-start">
 											<div class="flex-1">
-												<p class="font-semibold text-gray-800">{activity.title}</p>
+												<p class="font-semibold text-gray-800 dark:text-gray-100">{activity.title}</p>
 												{#if activity.time}
 													<p class="text-sm text-blue-600 font-medium mt-0.5 flex items-center gap-1"><Clock size={13} /> {activity.time}</p>
 												{/if}
 												{#if activity.location}
-													<p class="text-sm text-gray-500 mt-0.5 flex items-center gap-1"><MapPin size={13} /> {activity.location}</p>
+													<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1"><MapPin size={13} /> {activity.location}</p>
 												{/if}
 												{#if activity.description}
-													<p class="text-sm text-gray-600 mt-1">{activity.description}</p>
+													<p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{activity.description}</p>
 												{/if}
 											</div>
 											<div class="flex gap-1 ml-2">
@@ -438,40 +438,40 @@
 							{/each}
 						</div>
 					{:else}
-						<div class="ml-5 pl-8 border-l-2 border-gray-100">
-							<p class="text-gray-400 text-sm italic py-1">Nothing planned yet.</p>
+						<div class="ml-5 pl-8 border-l-2 border-gray-100 dark:border-gray-700">
+							<p class="text-gray-400 dark:text-gray-500 text-sm italic py-1">Nothing planned yet.</p>
 						</div>
 					{/if}
 
 					<!-- Inline form for this day -->
 					{#if activeDay === day}
 						<div class="ml-5 pl-8 mt-3">
-							<form onsubmit={createActivity} class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+							<form onsubmit={createActivity} class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
 								<input
 									type="text"
 									bind:value={newActivity.title}
 									placeholder="Activity title"
-									class="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-2"
+									class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm mb-2 dark:bg-gray-700 dark:text-gray-100"
 									required
 								/>
 								<div class="grid grid-cols-2 gap-2 mb-2">
 									<input
 										type="time"
 										bind:value={newActivity.time}
-										class="px-3 py-2 border border-gray-300 rounded text-sm"
+										class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 									/>
 									<input
 										type="text"
 										bind:value={newActivity.location}
 										placeholder="Location (optional)"
-										class="px-3 py-2 border border-gray-300 rounded text-sm"
+										class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-700 dark:text-gray-100"
 									/>
 								</div>
 								<textarea
 									bind:value={newActivity.description}
 									placeholder="Notes (optional)"
 									rows="2"
-									class="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-2"
+									class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm mb-2 dark:bg-gray-700 dark:text-gray-100"
 								></textarea>
 								<div class="flex gap-2">
 									<button
@@ -484,7 +484,7 @@
 									<button
 										type="button"
 										onclick={cancelDayForm}
-										class="bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
+										class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 py-1 px-3 rounded text-sm"
 									>
 										Cancel
 									</button>

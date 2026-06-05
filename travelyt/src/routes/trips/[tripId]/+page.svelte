@@ -156,9 +156,9 @@ let tripId = $state('');
 
 <Header />
 
-<main class="max-w-6xl mx-auto px-4 py-8">
+<main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	{#if error}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">
 			{error}
 		</div>
 	{/if}
@@ -166,15 +166,15 @@ let tripId = $state('');
 	{#if loading}
 		<div class="text-center py-12">
 			<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-			<p class="text-gray-600">Loading trip...</p>
+			<p class="text-gray-600 dark:text-gray-300">Loading trip...</p>
 		</div>
 	{:else if trip}
 		<div class="mb-8">
 			<div class="flex justify-between items-start mb-4">
 				<div>
-					<h1 class="text-4xl font-bold text-gray-800 mb-2">{trip.title}</h1>
-					<p class="text-lg text-gray-600 mb-2 flex items-center gap-1"><MapPin size={18} /> {trip.destination}</p>
-					<p class="text-gray-600 flex items-center gap-1">
+					<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">{trip.title}</h1>
+					<p class="text-lg text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1"><MapPin size={18} /> {trip.destination}</p>
+					<p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
 						<Calendar size={16} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)} ({daysBetween(
 							trip.startDate,
 							trip.endDate
@@ -185,7 +185,7 @@ let tripId = $state('');
 					<a
 						href="/trips/{tripId}/print"
 						target="_blank"
-						class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm"
+						class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg text-sm"
 					>
 						<FileDown size={15} />
 						Export PDF
@@ -193,7 +193,7 @@ let tripId = $state('');
 					{#if isOwner}
 						<button
 							onclick={openEditForm}
-							class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg"
+							class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-lg"
 						>
 							Edit Trip
 						</button>
@@ -210,69 +210,69 @@ let tripId = $state('');
 			</div>
 
 			{#if trip.description}
-				<p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{trip.description}</p>
+				<p class="text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">{trip.description}</p>
 			{/if}
 		</div>
 
 		<!-- Edit form -->
 		{#if showEditForm}
-			<div class="bg-white rounded-lg shadow-md p-6 mb-8 border border-blue-200">
-				<h2 class="text-xl font-bold mb-4 text-gray-800">Edit Trip</h2>
+			<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6 mb-8 border border-blue-200 dark:border-blue-800">
+				<h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Edit Trip</h2>
 				<form onsubmit={updateTrip}>
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 						<div>
-							<label for="edit-title" class="block text-sm font-medium text-gray-700 mb-1">Trip Title</label>
+							<label for="edit-title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Trip Title</label>
 							<input
 								type="text"
 								id="edit-title"
 								bind:value={editTrip.title}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 								required
 							/>
 						</div>
 						<div>
-							<label for="edit-dest" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+							<label for="edit-dest" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Destination</label>
 							<DestinationInput
 								bind:value={editTrip.destination}
 								onlocationselect={(loc) => (editGeoData = loc)}
-								inputClass="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+								inputClass="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 							/>
 						</div>
 					</div>
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 						<div>
-							<label for="edit-start" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+							<label for="edit-start" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date</label>
 							<input
 								type="date"
 								id="edit-start"
 								bind:value={editTrip.startDate}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 								required
 							/>
 						</div>
 						<div>
-							<label for="edit-end" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+							<label for="edit-end" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">End Date</label>
 							<input
 								type="date"
 								id="edit-end"
 								bind:value={editTrip.endDate}
 								min={editTrip.startDate || ''}
-								class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+								class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 								required
 							/>
 						</div>
 					</div>
 					<div class="mb-4">
-						<label for="edit-desc" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+						<label for="edit-desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
 						<textarea
 							id="edit-desc"
 							bind:value={editTrip.description}
 							rows="3"
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 						></textarea>
 					</div>
 					<div class="mb-4">
-						<label for="edit-cover" class="block text-sm font-medium text-gray-700 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
+						<label for="edit-cover" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
 						{#if editTrip.coverImage}
 							<div class="relative mb-2">
 								<img src={editTrip.coverImage} alt="Current cover" class="h-28 w-full object-cover rounded-lg" />
@@ -290,7 +290,7 @@ let tripId = $state('');
 							id="edit-cover"
 							accept="image/*"
 							onchange={handleEditCoverImage}
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm text-gray-600 dark:text-gray-300 dark:bg-gray-700 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
 						/>
 					</div>
 
@@ -305,7 +305,7 @@ let tripId = $state('');
 						<button
 							type="button"
 							onclick={() => (showEditForm = false)}
-							class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg"
+							class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-lg"
 						>
 							Cancel
 						</button>
@@ -316,13 +316,13 @@ let tripId = $state('');
 
 		<!-- Tabs -->
 		<div class="mb-6">
-			<div class="flex border-b border-gray-300">
+			<div class="flex border-b border-gray-300 dark:border-gray-700 flex-wrap">
 				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
-							? 'text-blue-600 border-b-2 border-blue-600'
-							: 'text-gray-600 hover:text-gray-800'}"
+							? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+							: 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}"
 					>
 						{#if tab === 'activities'}
 							<span class="flex items-center gap-1"><Target size={15} /> Activities</span>
@@ -347,7 +347,7 @@ let tripId = $state('');
 		</div>
 
 		<!-- Tab Content -->
-		<div class="bg-white rounded-lg shadow-md p-6">
+		<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6">
 			{#if activeTab === 'activities'}
 				<ActivityList {tripId} startDate={trip.startDate} endDate={trip.endDate} />
 			{:else if activeTab === 'packing'}

@@ -49,16 +49,16 @@ let error = $state('');
 	}
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-	<div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-		<h1 class="text-3xl font-bold text-center mb-2 text-gray-800">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+	<div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+		<h1 class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-gray-100">
 			{#if isLogin}
 				Welcome Back
 			{:else}
 				Join Travelyt
 			{/if}
 		</h1>
-		<p class="text-center text-gray-600 mb-6">
+		<p class="text-center text-gray-600 dark:text-gray-300 mb-6">
 			{#if isLogin}
 				Plan your perfect trip
 			{:else}
@@ -68,52 +68,52 @@ let error = $state('');
 
 		<form onsubmit={handleSubmit}>
 			{#if error}
-				<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+				<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">
 					{error}
 				</div>
 			{/if}
 
 			{#if !isLogin}
 				<div class="mb-4">
-					<label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+					<label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Full Name</label>
 					<input
 						type="text"
 						id="name"
 						bind:value={name}
 						placeholder="Your name"
-						class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
 			{/if}
 
 			<div class="mb-4">
-				<label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+				<label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email</label>
 				<input
 					type="email"
 					id="email"
 					bind:value={email}
 					placeholder="your@email.com"
-					class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 					required
 				/>
 			</div>
 
 			<div class="mb-4">
-				<label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+				<label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Password</label>
 				<input
 					type="password"
 					id="password"
 					bind:value={password}
 					placeholder="••••••••"
-					class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 					required
 				/>
 			</div>
 
 			{#if !isLogin}
 				<div class="mb-6">
-					<label for="confirm" class="block text-sm font-medium text-gray-700 mb-1"
+					<label for="confirm" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
 						>Confirm Password</label
 					>
 					<input
@@ -121,7 +121,7 @@ let error = $state('');
 						id="confirm"
 						bind:value={confirmPassword}
 						placeholder="••••••••"
-						class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
 						required
 					/>
 				</div>
@@ -138,7 +138,7 @@ let error = $state('');
 			</button>
 		</form>
 
-		<p class="text-center text-gray-600 mt-6">
+		<p class="text-center text-gray-600 dark:text-gray-300 mt-6">
 			{#if isLogin}
 				Don't have an account?
 				<button onclick={toggleMode} class="text-blue-600 hover:underline font-semibold">
@@ -154,8 +154,3 @@ let error = $state('');
 	</div>
 </div>
 
-<style>
-	:global(body) {
-		background-color: #f5f5f5;
-	}
-</style>
