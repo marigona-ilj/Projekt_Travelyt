@@ -4,6 +4,7 @@
 	import TripCard from '$lib/components/TripCard.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
+	import { Plane, Users, Receipt, CalendarDays, PackageCheck } from 'lucide-svelte';
 
 	let trips = $state([]);
 	let loading = $state(true);
@@ -277,8 +278,28 @@
 			<p class="text-gray-600 dark:text-gray-300">Loading your trips...</p>
 		</div>
 	{:else if trips.length === 0}
-		<div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900">
-			<p class="text-gray-600 dark:text-gray-300 text-lg">No trips yet. Create your first trip to get started!</p>
+		<div class="flex flex-col items-center py-16 px-4">
+			<div class="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center mb-5 text-blue-600">
+				<Plane size={32} />
+			</div>
+			<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">No trips yet</h2>
+			<p class="text-gray-500 dark:text-gray-400 text-sm mb-8 text-center max-w-sm">
+				Create your first trip and start planning — invite friends, track expenses, and more.
+			</p>
+			<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 w-full max-w-lg">
+				{#each [[Users, 'Invite friends'], [Receipt, 'Split expenses'], [CalendarDays, 'Plan activities'], [PackageCheck, 'Packing list']] as [Icon, label]}
+					<div class="flex flex-col items-center gap-1.5 bg-white dark:bg-gray-800 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
+						<svelte:component this={Icon} size={18} class="text-blue-500" />
+						<span class="text-xs font-medium text-gray-600 dark:text-gray-300 text-center">{label}</span>
+					</div>
+				{/each}
+			</div>
+			<button
+				onclick={() => (showNewTripForm = true)}
+				class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-8 rounded-xl transition text-sm"
+			>
+				Create your first trip
+			</button>
 		</div>
 	{:else if filteredTrips.length === 0}
 		<div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900">

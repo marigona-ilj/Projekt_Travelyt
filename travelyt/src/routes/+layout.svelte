@@ -4,6 +4,7 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import OnboardingTour from '$lib/components/OnboardingTour.svelte';
 
 	let { children } = $props();
 	let isAuthenticated = $state(false);
@@ -61,4 +62,7 @@
 	</div>
 {:else if isAuthenticated || $page.url.pathname.includes('auth')}
 	{@render children()}
+	{#if isAuthenticated}
+		<OnboardingTour />
+	{/if}
 {/if}

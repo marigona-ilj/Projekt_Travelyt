@@ -81,6 +81,7 @@
 			{#each navLinks as link}
 				<a
 					href={link.href}
+					data-tour={link.href === '/' ? 'dashboard' : link.href === '/trips' ? 'trips' : link.href === '/calendar' ? 'calendar' : link.href === '/profile' ? 'profile' : link.href === '/settings' ? 'settings' : undefined}
 					class="px-4 py-2 rounded-lg font-semibold transition {link.exact ? $page.url.pathname === link.href : ($page.url.pathname === link.href || $page.url.pathname.startsWith(link.href + '/'))
 						? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
 						: 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
@@ -92,6 +93,7 @@
 			<div class="relative">
 				<button
 					onclick={toggleFeed}
+					data-tour="feed"
 					class="relative p-2 rounded-lg transition {feedOpen ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
 					title="Activity Feed"
 				>
