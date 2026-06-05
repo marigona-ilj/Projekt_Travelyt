@@ -19,6 +19,10 @@ Travelyt is a SvelteKit 5 travel planning web app with MongoDB.
 ## Files
 - Do not modify `README.md` unless explicitly told to do so.
 
+## Language
+- The app is English-only. All UI text, labels, placeholders, validation messages, and empty states must be in English.
+- Never rely on browser-native form validation (which uses the OS language). Always use `novalidate` on forms and handle all validation in JavaScript with English error messages.
+
 ## Project Behavior
 - Trips are collaborative.
 - A trip can have multiple members.

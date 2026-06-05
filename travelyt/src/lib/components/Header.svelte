@@ -11,6 +11,7 @@
 	const navLinks = [
 		{ href: '/', label: 'Dashboard', exact: true },
 		{ href: '/trips', label: 'My Trips' },
+		{ href: '/calendar', label: 'Calendar' },
 		{ href: '/profile', label: 'Profile' },
 		{ href: '/settings', label: 'Settings' }
 	];
