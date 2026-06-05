@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Copy, Link, Trash2, UserPlus } from 'lucide-svelte';
 
-	let { tripId, isOwner } = $props();
+	let { tripId, isOwner, currentUserId = '' } = $props();
 
 	let members = $state([]);
 	let pendingInvites = $state([]);
@@ -161,6 +161,21 @@
 			pendingInvites = pendingInvites.filter((i) => i.id !== inviteId);
 		} catch {
 			// silently ignore
+		}
+	}
+
+	async function leaveTrip() {
+		if (!confirm('Are you sure you want to leave this trip?')) return;
+		try {
+			const res = await fetch(`/api/trips/${tripId}/members/${currentUserId}`, { method: 'DELETE' });
+			const data = await res.json();
+			if (data.success) {
+				window.location.href = '/trips';
+			} else {
+				error = data.error || 'Failed to leave trip';
+			}
+		} catch {
+			error = 'Network error';
 		}
 	}
 
@@ -323,6 +338,13 @@
 								class="text-red-400 hover:text-red-600 text-xs font-semibold ml-1"
 							>
 								Remove
+							</button>
+						{:else if !isOwner && member.userId === currentUserId}
+							<button
+								onclick={leaveTrip}
+								class="text-red-400 hover:text-red-600 text-xs font-semibold ml-1"
+							>
+								Leave trip
 							</button>
 						{/if}
 					</div>

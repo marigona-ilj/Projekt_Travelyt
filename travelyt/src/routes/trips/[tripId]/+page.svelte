@@ -362,7 +362,7 @@ let tripId = $state('');
 			{:else if activeTab === 'checklist'}
 				<TripChecklist {tripId} />
 			{:else if activeTab === 'members'}
-				<MemberList {tripId} {isOwner} />
+				<MemberList {tripId} {isOwner} {currentUserId} />
 			{:else if activeTab === 'weather'}
 				<TripWeather latitude={trip.latitude} longitude={trip.longitude} resolvedLocation={trip.resolvedLocation} startDate={trip.startDate} endDate={trip.endDate} />
 			{:else if activeTab === 'map'}
