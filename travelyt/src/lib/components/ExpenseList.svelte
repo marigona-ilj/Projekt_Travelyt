@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { Wallet, ArrowRightLeft, Pencil, Trash2 } from 'lucide-svelte';
 
-	let { tripId, currentUserId, currency = 'CHF', oncurrencychange = null } = $props();
+	let { tripId, currentUserId, currency = 'CHF', oncurrencychange = null, startDate = '', endDate = '' } = $props();
 
 	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
 
@@ -40,6 +40,8 @@
 
 	let settlement = $derived(calculateSettlement(expenses, members));
 
+	let isPast = $derived(endDate ? new Date(endDate) < new Date() : false);
+
 	let categoryBreakdown = $derived.by(() => {
 		if (expenses.length === 0) return [];
 		const totals = {};
@@ -50,6 +52,24 @@
 		return categoryKeys
 			.filter((k) => totals[k])
 			.map((k) => ({ key: k, ...categoryConfig[k], amount: Math.round(totals[k] * 100) / 100, pct: Math.round((totals[k] / total) * 100) }));
+	});
+
+	let tripStats = $derived.by(() => {
+		if (!startDate || !endDate || expenses.length === 0) return null;
+		const byDate = {};
+		for (const e of expenses) {
+			const d = (e.date ?? '').split('T')[0];
+			byDate[d] = (byDate[d] || 0) + e.amount;
+		}
+		const [topDate, topDateAmount] = Object.entries(byDate).sort(([, a], [, b]) => b - a)[0] ?? [null, 0];
+		const topCat = [...categoryBreakdown].sort((a, b) => b.amount - a.amount)[0] ?? null;
+		return {
+			busiestDay: topDate ? {
+				label: new Date(topDate + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+				amount: Math.round(topDateAmount * 100) / 100
+			} : null,
+			topCategory: topCat
+		};
 	});
 
 	function calculateSettlement(exps, mbrs) {
@@ -270,6 +290,36 @@
 
 	{#if error}
 		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-2 rounded mb-4">{error}</div>
+	{/if}
+
+	<!-- Trip stats summary — only for past trips with expenses -->
+	{#if isPast && !loading && tripStats}
+		<div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-800 p-5 mb-6">
+			<p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4">Trip Summary</p>
+			<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+				<div>
+					<p class="text-xl font-bold text-gray-800 dark:text-gray-100">{fmt(total)}</p>
+					<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Total spent</p>
+				</div>
+				{#if tripStats.busiestDay}
+					<div>
+						<p class="text-xl font-bold text-gray-800 dark:text-gray-100">{fmt(tripStats.busiestDay.amount)}</p>
+						<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Most spent in a day</p>
+						<p class="text-xs text-gray-400 dark:text-gray-500">{tripStats.busiestDay.label}</p>
+					</div>
+				{/if}
+				{#if tripStats.topCategory}
+					<div>
+						<div class="flex items-center gap-1.5 mb-0.5">
+							<span class="w-2.5 h-2.5 rounded-full {tripStats.topCategory.color} shrink-0"></span>
+							<p class="text-xl font-bold text-gray-800 dark:text-gray-100">{tripStats.topCategory.label}</p>
+						</div>
+						<p class="text-xs text-gray-500 dark:text-gray-400">Top category</p>
+						<p class="text-xs text-gray-400 dark:text-gray-500">{tripStats.topCategory.pct}% of budget</p>
+					</div>
+				{/if}
+			</div>
+		</div>
 	{/if}
 
 	<!-- Add expense form -->
