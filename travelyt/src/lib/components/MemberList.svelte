@@ -164,6 +164,21 @@
 		}
 	}
 
+	async function transferOwnership(member) {
+		if (!confirm(`Transfer ownership to ${member.name}? You will lose your owner rights and become a regular member.`)) return;
+		try {
+			const res = await fetch(`/api/trips/${tripId}/members/${member.userId}`, { method: 'PATCH' });
+			const data = await res.json();
+			if (data.success) {
+				window.location.reload();
+			} else {
+				error = data.error || 'Failed to transfer ownership';
+			}
+		} catch {
+			error = 'Network error';
+		}
+	}
+
 	async function leaveTrip() {
 		if (!confirm('Are you sure you want to leave this trip?')) return;
 		try {
@@ -318,31 +333,40 @@
 	{:else}
 		<div class="space-y-3">
 			{#each members as member}
-				<div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg px-4 py-3">
-					<div class="flex items-center gap-3">
-						<div class="w-10 h-10 rounded-full {avatarColor(member.userId)} flex items-center justify-center text-white font-bold text-sm">
-							{initials(member.name)}
-						</div>
-						<div>
-							<p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{member.name}</p>
-							<p class="text-gray-500 dark:text-gray-400 text-xs">{member.email}</p>
-						</div>
+				<div class="flex items-center bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-lg px-4 py-3 gap-3">
+					<!-- Avatar -->
+					<div class="w-10 h-10 rounded-full {avatarColor(member.userId)} flex items-center justify-center text-white font-bold text-sm shrink-0">
+						{initials(member.name)}
 					</div>
-					<div class="flex items-center gap-2">
-						<span class="text-xs font-semibold px-2 py-1 rounded-full {member.role === 'owner' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">
-							{member.role === 'owner' ? 'Owner' : 'Member'}
-						</span>
+					<!-- Name + role badge on first line, email below -->
+					<div class="flex-1 min-w-0">
+						<div class="flex items-center gap-2">
+							<p class="font-semibold text-gray-800 dark:text-gray-100 text-sm truncate">{member.name}</p>
+							<span class="text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 {member.role === 'owner' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'}">
+								{member.role === 'owner' ? 'Owner' : 'Member'}
+							</span>
+						</div>
+						<p class="text-gray-500 dark:text-gray-400 text-xs truncate">{member.email}</p>
+					</div>
+					<!-- Action buttons — right side, always visible -->
+					<div class="flex items-center gap-3 shrink-0">
 						{#if isOwner && member.role !== 'owner'}
 							<button
+								onclick={() => transferOwnership(member)}
+								class="text-xs font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition"
+							>
+								Make owner
+							</button>
+							<button
 								onclick={() => removeMember(member.userId)}
-								class="text-red-400 hover:text-red-600 text-xs font-semibold ml-1"
+								class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition"
 							>
 								Remove
 							</button>
 						{:else if !isOwner && member.userId === currentUserId}
 							<button
 								onclick={leaveTrip}
-								class="text-red-400 hover:text-red-600 text-xs font-semibold ml-1"
+								class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition"
 							>
 								Leave trip
 							</button>
