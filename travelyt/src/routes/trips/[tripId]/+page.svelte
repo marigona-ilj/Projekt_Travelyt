@@ -10,6 +10,7 @@
 	import TripChecklist from '$lib/components/TripChecklist.svelte';
 	import TripWeather from '$lib/components/TripWeather.svelte';
 	import TripMap from '$lib/components/TripMap.svelte';
+	import TripChat from '$lib/components/TripChat.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
@@ -21,6 +22,7 @@ let tripId = $state('');
 	let error = $state('');
 	let activeTab = $state('activities');
 	let currentUserId = $state('');
+	let currentUserName = $state('');
 	let isOwner = $derived(trip !== null && trip.createdBy === currentUserId);
 
 	let showEditForm = $state(false);
@@ -46,6 +48,7 @@ let tripId = $state('');
 		const authRes = await fetch('/api/auth');
 		const authData = await authRes.json();
 		currentUserId = authData.userId || '';
+		currentUserName = authData.user?.name || '';
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
 		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'];
@@ -368,6 +371,10 @@ let tripId = $state('');
 		</div>
 	{/if}
 </main>
+
+{#if trip}
+	<TripChat {tripId} {currentUserId} {currentUserName} />
+{/if}
 
 <style>
 	:global(.animate-spin) {

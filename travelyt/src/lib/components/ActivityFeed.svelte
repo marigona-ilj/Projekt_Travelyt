@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { Wallet, Package, Target, UserPlus, UserMinus, RefreshCw, Images } from 'lucide-svelte';
+	import { Wallet, Package, Target, UserPlus, UserMinus, RefreshCw, Images, MessageCircle } from 'lucide-svelte';
 
 	let { entries = [], loading = false, error = '', onRefresh, onNavigate = null } = $props();
 
@@ -16,15 +16,16 @@
 		member_added: 'members',
 		member_removed: 'members',
 		photo_added: 'gallery',
-		photo_deleted: 'gallery'
+		photo_deleted: 'gallery',
+		chat_message: null
 	};
 
 	function handleEntryClick(entry) {
 		if (!entry.tripId) return;
 		const tab = tabMap[entry.actionType];
-		if (!tab) return;
+		if (tab === undefined) return; // unknown action type
 		if (onNavigate) onNavigate();
-		goto(`/trips/${entry.tripId}?tab=${tab}`);
+		goto(tab ? `/trips/${entry.tripId}?tab=${tab}` : `/trips/${entry.tripId}`);
 	}
 
 	const iconMap = {
@@ -36,7 +37,8 @@
 		activity_updated: Target,
 		activity_deleted: Target,
 		member_added: UserPlus,
-		member_removed: UserMinus
+		member_removed: UserMinus,
+		chat_message: MessageCircle
 	};
 
 	const colorMap = {
@@ -48,7 +50,8 @@
 		activity_updated: 'text-purple-500 bg-purple-50',
 		activity_deleted: 'text-red-500 bg-red-50',
 		member_added: 'text-teal-600 bg-teal-50',
-		member_removed: 'text-red-500 bg-red-50'
+		member_removed: 'text-red-500 bg-red-50',
+		chat_message: 'text-blue-600 bg-blue-50'
 	};
 
 	function timeAgo(date) {
@@ -87,7 +90,7 @@
 				{@const Icon = iconMap[entry.actionType] ?? Target}
 				{@const colors = colorMap[entry.actionType] ?? 'text-gray-500 bg-gray-100'}
 				<li
-					class="flex items-start gap-3 rounded-lg p-1 -mx-1 {entry.tripId && tabMap[entry.actionType] ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition' : ''}"
+					class="flex items-start gap-3 rounded-lg p-1 -mx-1 {entry.tripId && entry.actionType in tabMap ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition' : ''}"
 					onclick={() => handleEntryClick(entry)}
 				>
 					<span class="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center {colors}">

@@ -54,7 +54,7 @@
 			lastSeen = stored;
 		}
 		fetchFeed();
-		intervalId = setInterval(fetchFeed, 30000);
+		intervalId = setInterval(fetchFeed, 12000);
 		return () => clearInterval(intervalId);
 	});
 

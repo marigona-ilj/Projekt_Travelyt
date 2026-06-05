@@ -32,12 +32,16 @@ export async function GET({ cookies }) {
 		const entries = await logs
 			.find({ tripId: { $in: tripIds } })
 			.sort({ createdAt: -1 })
-			.limit(50)
+			.limit(100)
 			.toArray();
+
+		const filtered = entries
+			.filter((e) => !(e.actionType === 'chat_message' && e.userId.toString() === userId))
+			.slice(0, 50);
 
 		return json({
 			success: true,
-			entries: entries.map((e) => ({
+			entries: filtered.map((e) => ({
 				id: e._id.toString(),
 				tripId: e.tripId.toString(),
 				tripName: tripNameMap[e.tripId.toString()] || 'Unknown trip',
