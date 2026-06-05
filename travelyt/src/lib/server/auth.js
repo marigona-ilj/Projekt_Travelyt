@@ -112,6 +112,7 @@ export async function getUserById(userId) {
 			id: user._id.toString(),
 			email: user.email,
 			name: user.name,
+			avatar: user.avatar ?? null,
 			createdAt: user.createdAt
 		};
 	} catch (error) {
