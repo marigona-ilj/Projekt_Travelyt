@@ -138,6 +138,12 @@
 
 	let searchQuery = $state('');
 	let statusFilter = $state('all');
+	let sortOrder = $state('date-asc');
+	let filterOpen = $state(false);
+	let sortOpen = $state(false);
+
+	const filterLabels = { all: 'All', upcoming: 'Upcoming', ongoing: 'Ongoing', past: 'Past' };
+	const sortLabels = { 'date-asc': 'Date ↑', 'date-desc': 'Date ↓', 'name-asc': 'A–Z' };
 
 	function getTripStatus(trip) {
 		const now = new Date();
@@ -149,18 +155,28 @@
 		return 'upcoming';
 	}
 
-	let filteredTrips = $derived(
-		trips.filter((trip) => {
-			const q = searchQuery.trim().toLowerCase();
+	let filteredTrips = $derived.by(() => {
+		const q = searchQuery.trim().toLowerCase();
+		const result = trips.filter((trip) => {
 			const matchesSearch =
 				!q ||
 				trip.title.toLowerCase().includes(q) ||
 				trip.destination.toLowerCase().includes(q);
 			const matchesStatus = statusFilter === 'all' || getTripStatus(trip) === statusFilter;
 			return matchesSearch && matchesStatus;
-		})
-	);
+		});
+		result.sort((a, b) => {
+			if (sortOrder === 'name-asc') return a.title.localeCompare(b.title);
+			if (sortOrder === 'date-desc') return new Date(b.startDate) - new Date(a.startDate);
+			return new Date(a.startDate) - new Date(b.startDate);
+		});
+		return result;
+	});
 </script>
+
+{#if filterOpen || sortOpen}
+	<div class="fixed inset-0 z-10" role="presentation" onclick={() => { filterOpen = false; sortOpen = false; }}></div>
+{/if}
 
 <Header />
 
@@ -186,17 +202,54 @@
 				placeholder="Search by title or destination..."
 				class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm dark:bg-gray-700 dark:text-gray-100"
 			/>
-			<div class="flex gap-1">
-				{#each [['all', 'All'], ['upcoming', 'Upcoming'], ['ongoing', 'Ongoing'], ['past', 'Past']] as [value, label]}
+			<div class="flex gap-2">
+				<!-- Filter dropdown -->
+				<div class="relative">
 					<button
-						onclick={() => (statusFilter = value)}
-						class="px-3 py-2 rounded-lg text-sm font-semibold transition {statusFilter === value
-							? 'bg-blue-600 text-white'
-							: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}"
+						onclick={() => { filterOpen = !filterOpen; sortOpen = false; }}
+						class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition border {statusFilter !== 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'}"
 					>
-						{label}
+						Filter: {filterLabels[statusFilter]}
+						<svg class="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
 					</button>
-				{/each}
+					{#if filterOpen}
+						<div class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-20 py-1 min-w-[140px]">
+							{#each [['all', 'All'], ['upcoming', 'Upcoming'], ['ongoing', 'Ongoing'], ['past', 'Past']] as [value, label]}
+								<button
+									onclick={() => { statusFilter = value; filterOpen = false; }}
+									class="w-full text-left px-4 py-2 text-sm transition flex items-center justify-between {statusFilter === value ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}"
+								>
+									{label}
+									{#if statusFilter === value}<span>✓</span>{/if}
+								</button>
+							{/each}
+						</div>
+					{/if}
+				</div>
+
+				<!-- Sort dropdown -->
+				<div class="relative">
+					<button
+						onclick={() => { sortOpen = !sortOpen; filterOpen = false; }}
+						class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition border bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+					>
+						Sort: {sortLabels[sortOrder]}
+						<svg class="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+					</button>
+					{#if sortOpen}
+						<div class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-20 py-1 min-w-[140px]">
+							{#each [['date-asc', 'Date ↑'], ['date-desc', 'Date ↓'], ['name-asc', 'A–Z']] as [value, label]}
+								<button
+									onclick={() => { sortOrder = value; sortOpen = false; }}
+									class="w-full text-left px-4 py-2 text-sm transition flex items-center justify-between {sortOrder === value ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}"
+								>
+									{label}
+									{#if sortOrder === value}<span>✓</span>{/if}
+								</button>
+							{/each}
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	{/if}
