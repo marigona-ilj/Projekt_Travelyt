@@ -406,7 +406,7 @@
 	<!-- Add expense form -->
 	{#if showNewExpenseForm}
 		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
-			<form onsubmit={createExpense}>
+			<form onsubmit={createExpense} novalidate>
 				<div class="mb-3">
 					<input
 						type="text"
@@ -523,7 +523,7 @@
 			{#each expenses as expense}
 				<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
 					{#if editingId === expense.id}
-						<form onsubmit={saveEditExpense} class="px-4 py-3">
+						<form onsubmit={saveEditExpense} class="px-4 py-3" novalidate>
 							<div class="mb-2">
 								<input
 									type="text"

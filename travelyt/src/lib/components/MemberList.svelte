@@ -304,7 +304,7 @@
 		<h3 class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-3">
 			{availableContacts.length > 0 ? 'Or invite by email' : 'Invite someone by email'}
 		</h3>
-		<form onsubmit={inviteMember} class="flex gap-2">
+		<form onsubmit={inviteMember} class="flex gap-2" novalidate>
 			<input
 				type="email"
 				bind:value={inviteEmail}

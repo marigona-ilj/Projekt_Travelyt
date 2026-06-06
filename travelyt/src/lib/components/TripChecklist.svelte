@@ -230,7 +230,7 @@
 
 	{#if showForm}
 		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-5 border border-gray-200 dark:border-gray-700">
-			<form onsubmit={handleSubmit}>
+			<form onsubmit={handleSubmit} novalidate>
 				<div class="flex gap-2 mb-3">
 					<input
 						type="text"

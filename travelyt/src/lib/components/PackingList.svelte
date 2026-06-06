@@ -211,7 +211,7 @@
 
 	{#if showNewItemForm}
 		<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
-			<form onsubmit={createItem}>
+			<form onsubmit={createItem} novalidate>
 				<div class="mb-3">
 					<input
 						type="text"
