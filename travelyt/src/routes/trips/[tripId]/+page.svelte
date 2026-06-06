@@ -228,12 +228,8 @@
 />
 
 {#if trip}
-	<PageHeader title={trip.title} subtitle="{tripDestinationLabel} · {formatDate(trip.startDate)} – {formatDate(trip.endDate)}" description={trip.description}>
+	<PageHeader title={trip.title} subtitle="{tripDestinationLabel} · {formatDate(trip.startDate)} – {formatDate(trip.endDate)}" description={trip.description} backHref="/trips" backLabel="My Trips">
 		<div class="flex items-center gap-3">
-			<a href="/trips" class="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition">
-				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-				My Trips
-			</a>
 			<div class="relative">
 				<button
 					onclick={() => (tripMenuOpen = !tripMenuOpen)}
