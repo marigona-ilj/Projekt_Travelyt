@@ -34,7 +34,8 @@
 	}
 
 	function selectSuggestion(s) {
-		const parts = [s.name, s.admin1, s.country].filter(Boolean);
+		const admin1 = s.admin1 !== s.name ? s.admin1 : null;
+		const parts = [s.name, admin1, s.country].filter(Boolean);
 		value = parts.join(', ');
 		showSuggestions = false;
 		suggestions = [];
@@ -48,7 +49,8 @@
 	}
 
 	function formatSuggestion(s) {
-		const sub = [s.admin1, s.country].filter(Boolean).join(', ');
+		const admin1 = s.admin1 !== s.name ? s.admin1 : null;
+		const sub = [admin1, s.country].filter(Boolean).join(', ');
 		return { main: s.name, sub };
 	}
 </script>
