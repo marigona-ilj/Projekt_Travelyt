@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Copy, Link, Trash2, UserPlus } from 'lucide-svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let { tripId, isOwner, currentUserId = '' } = $props();
 
@@ -19,6 +20,16 @@
 	let copied = $state(false);
 	// Per-contact loading state: userId → true/false
 	let contactAdding = $state({});
+
+	let confirmDialog = $state({ open: false, title: '', message: '', confirmLabel: 'Confirm', onconfirm: () => {} });
+
+	function openConfirm({ title, message, confirmLabel = 'Confirm', onconfirm }) {
+		confirmDialog = { open: true, title, message, confirmLabel, onconfirm };
+	}
+
+	function closeConfirm() {
+		confirmDialog = { ...confirmDialog, open: false };
+	}
 
 	let inviteLink = $derived(inviteCode ? `${window?.location?.origin}/trips/join/${inviteCode}` : '');
 
@@ -139,14 +150,19 @@
 		}
 	}
 
-	async function revokeInviteLink() {
-		if (!confirm('Revoke the invite link? Existing links will no longer work.')) return;
-		try {
-			await fetch(`/api/trips/${tripId}/invite`, { method: 'DELETE' });
-			inviteCode = '';
-		} catch {
-			// silently ignore
-		}
+	function revokeInviteLink() {
+		openConfirm({
+			title: 'Revoke invite link?',
+			message: 'Existing links will no longer work.',
+			confirmLabel: 'Revoke',
+			onconfirm: async () => {
+				closeConfirm();
+				try {
+					await fetch(`/api/trips/${tripId}/invite`, { method: 'DELETE' });
+					inviteCode = '';
+				} catch {}
+			}
+		});
 	}
 
 	async function copyLink() {
@@ -164,53 +180,81 @@
 		}
 	}
 
-	async function transferOwnership(member) {
-		if (!confirm(`Transfer ownership to ${member.name}? You will lose your owner rights and become a regular member.`)) return;
-		try {
-			const res = await fetch(`/api/trips/${tripId}/members/${member.userId}`, { method: 'PATCH' });
-			const data = await res.json();
-			if (data.success) {
-				window.location.reload();
-			} else {
-				error = data.error || 'Failed to transfer ownership';
+	function transferOwnership(member) {
+		openConfirm({
+			title: `Transfer ownership to ${member.name}?`,
+			message: 'You will lose your owner rights and become a regular member.',
+			confirmLabel: 'Transfer',
+			onconfirm: async () => {
+				closeConfirm();
+				try {
+					const res = await fetch(`/api/trips/${tripId}/members/${member.userId}`, { method: 'PATCH' });
+					const data = await res.json();
+					if (data.success) {
+						window.location.reload();
+					} else {
+						error = data.error || 'Failed to transfer ownership';
+					}
+				} catch {
+					error = 'Network error';
+				}
 			}
-		} catch {
-			error = 'Network error';
-		}
+		});
 	}
 
-	async function leaveTrip() {
-		if (!confirm('Are you sure you want to leave this trip?')) return;
-		try {
-			const res = await fetch(`/api/trips/${tripId}/members/${currentUserId}`, { method: 'DELETE' });
-			const data = await res.json();
-			if (data.success) {
-				window.location.href = '/trips';
-			} else {
-				error = data.error || 'Failed to leave trip';
+	function leaveTrip() {
+		openConfirm({
+			title: 'Leave this trip?',
+			message: 'You will lose access to this trip.',
+			confirmLabel: 'Leave',
+			onconfirm: async () => {
+				closeConfirm();
+				try {
+					const res = await fetch(`/api/trips/${tripId}/members/${currentUserId}`, { method: 'DELETE' });
+					const data = await res.json();
+					if (data.success) {
+						window.location.href = '/trips';
+					} else {
+						error = data.error || 'Failed to leave trip';
+					}
+				} catch {
+					error = 'Network error';
+				}
 			}
-		} catch {
-			error = 'Network error';
-		}
+		});
 	}
 
-	async function removeMember(memberId) {
-		if (!confirm('Remove this member from the trip?')) return;
-		try {
-			const response = await fetch(`/api/trips/${tripId}/members/${memberId}`, {
-				method: 'DELETE'
-			});
-			const data = await response.json();
-			if (data.success) {
-				await fetchMembers();
-			} else {
-				error = data.error || 'Failed to remove member';
+	function removeMember(memberId) {
+		openConfirm({
+			title: 'Remove member?',
+			message: 'This person will lose access to the trip.',
+			confirmLabel: 'Remove',
+			onconfirm: async () => {
+				closeConfirm();
+				try {
+					const response = await fetch(`/api/trips/${tripId}/members/${memberId}`, { method: 'DELETE' });
+					const data = await response.json();
+					if (data.success) {
+						await fetchMembers();
+					} else {
+						error = data.error || 'Failed to remove member';
+					}
+				} catch {
+					error = 'Network error';
+				}
 			}
-		} catch {
-			error = 'Network error';
-		}
+		});
 	}
 </script>
+
+<ConfirmDialog
+	open={confirmDialog.open}
+	title={confirmDialog.title}
+	message={confirmDialog.message}
+	confirmLabel={confirmDialog.confirmLabel}
+	onconfirm={confirmDialog.onconfirm}
+	oncancel={closeConfirm}
+/>
 
 <div>
 	<div class="flex justify-between items-center mb-4">
