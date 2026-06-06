@@ -38,6 +38,13 @@
 	let newLegs = $state([emptyLeg()]);
 	let formLoading = $state(false);
 
+	let upcomingCount = $derived(trips.filter(t => {
+		const legs = t.legs ?? [];
+		const last = legs[legs.length - 1];
+		return last ? new Date(last.endDate) >= new Date() : false;
+	}).length);
+	let destinations = $derived(trips.flatMap(t => t.legs ?? []).length);
+
 	function addLeg() {
 		newLegs = [...newLegs, emptyLeg()];
 	}
@@ -168,16 +175,34 @@
 
 <Header />
 
-<PageHeader title="My Trips" subtitle="Plan and manage your travel adventures">
-	<button
-		onclick={() => (showNewTripForm = !showNewTripForm)}
-		class="bg-white/15 hover:bg-white/25 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition border border-white/20"
-	>
-		+ New Trip
-	</button>
+<PageHeader title="My Trips" subtitle="Your adventures, all in one place." description="Track expenses, pack smarter, and plan every detail — together." showDate={true}>
+	{#snippet extra()}
+		{#if !loading}
+			<span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-3.5 py-1.5 rounded-full">
+				<Plane size={13} /> {trips.length} {trips.length === 1 ? 'trip' : 'trips'} in total
+			</span>
+			{#if upcomingCount > 0}
+				<span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-3.5 py-1.5 rounded-full">
+					<CalendarDays size={13} /> {upcomingCount} upcoming
+				</span>
+			{/if}
+		{/if}
+	{/snippet}
 </PageHeader>
 
 <main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
+
+	{#if !showNewTripForm}
+		<div class="flex justify-end mb-6">
+			<button
+				onclick={() => (showNewTripForm = true)}
+				class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition text-sm"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+				New Trip
+			</button>
+		</div>
+	{/if}
 
 	{#if !showNewTripForm && trips.length > 0}
 		<div class="flex flex-col sm:flex-row gap-3 mb-6">

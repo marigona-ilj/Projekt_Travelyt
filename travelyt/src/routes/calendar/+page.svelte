@@ -4,12 +4,19 @@
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
-	import { ChevronLeft, ChevronRight, MapPin, Plus, X } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, MapPin, Plus, X, CalendarDays, Plane } from 'lucide-svelte';
 
 	let trips = $state([]);
 	let loading = $state(true);
 	let viewYear = $state(new Date().getFullYear());
 	let viewMonth = $state(new Date().getMonth()); // 0-indexed
+
+	let upcomingCount = $derived(trips.filter(t => {
+		const legs = t.legs ?? [];
+		const last = legs[legs.length - 1];
+		return last ? new Date(last.endDate) >= new Date() : false;
+	}).length);
+	let currentMonthLabel = $derived(new Date(viewYear, viewMonth, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
 
 	// --- New trip modal ---
 	let showModal = $state(false);
@@ -178,7 +185,15 @@
 </script>
 
 <Header />
-<PageHeader title="Calendar" subtitle="Your travel timeline" />
+<PageHeader title="Calendar" subtitle="Your travel timeline at a glance." description="See all your trips, plan new ones, and never miss a departure." showDate={true}>
+	{#snippet extra()}
+		{#if !loading && upcomingCount > 0}
+			<span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-3.5 py-1.5 rounded-full">
+				<Plane size={13} /> {upcomingCount} upcoming {upcomingCount === 1 ? 'trip' : 'trips'}
+			</span>
+		{/if}
+	{/snippet}
+</PageHeader>
 
 <!-- New Trip Modal -->
 {#if showModal}
