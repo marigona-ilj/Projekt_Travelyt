@@ -15,6 +15,24 @@
 		return { destination: '', startDate: '', endDate: '', latitude: null, longitude: null, resolvedLocation: '' };
 	}
 
+	const dateMin = `${new Date().getFullYear() - 5}-01-01`;
+	const dateMax = `${new Date().getFullYear() + 10}-12-31`;
+	const minYear = new Date().getFullYear() - 5;
+	const maxYear = new Date().getFullYear() + 10;
+
+	function validateDateYear(value, label) {
+		if (!value) return;
+		const match = value.match(/^(\d{4,})-\d{2}-\d{2}$/);
+		if (!match) return;
+		const year = parseInt(match[1]);
+		if (year < 1000) return; // still being typed (browser pads with leading zeros)
+		if (year < minYear || year > maxYear) {
+			error = `${label}: year must be between ${minYear} and ${maxYear}`;
+		} else {
+			error = '';
+		}
+	}
+
 	let newTrip = $state({ title: '', description: '', currency: 'CHF', coverImage: '' });
 	let newLegs = $state([emptyLeg()]);
 	let formLoading = $state(false);
@@ -239,6 +257,9 @@
 										<input
 											type="date"
 											bind:value={leg.startDate}
+											min={dateMin}
+											max={dateMax}
+											onchange={(e) => validateDateYear(e.target.value, `Destination ${i + 1} start date`)}
 											class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
 										/>
 									</div>
@@ -247,7 +268,9 @@
 										<input
 											type="date"
 											bind:value={leg.endDate}
-											min={leg.startDate || ''}
+											min={leg.startDate || dateMin}
+											max={dateMax}
+											onchange={(e) => validateDateYear(e.target.value, `Destination ${i + 1} end date`)}
 											class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 text-sm"
 										/>
 									</div>
