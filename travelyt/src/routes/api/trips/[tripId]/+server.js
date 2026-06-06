@@ -124,6 +124,18 @@ export async function PUT({ params, request, cookies }) {
 			updLegs = [];
 		}
 
+		// Check for date overlap with other trips (excluding this one)
+		const memberRecords = await tripMembers.find({ userId: new ObjectId(userId) }).toArray();
+		const otherTripIds = memberRecords.map((m) => m.tripId).filter((id) => id.toString() !== tripId);
+		const overlapping = await trips.findOne({
+			_id: { $in: otherTripIds },
+			startDate: { $lte: updEnd },
+			endDate: { $gte: updStart }
+		});
+		if (overlapping) {
+			return json({ success: false, error: `Date range overlaps with your existing trip "${overlapping.title}"` }, { status: 400 });
+		}
+
 		await trips.updateOne(
 			{ _id: new ObjectId(tripId) },
 			{

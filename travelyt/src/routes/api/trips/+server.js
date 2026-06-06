@@ -110,6 +110,18 @@ export async function POST({ request, cookies }) {
 			storedLegs = [];
 		}
 
+		// Check for date overlap with existing trips
+		const memberRecords = await tripMembers.find({ userId: new ObjectId(userId) }).toArray();
+		const existingTripIds = memberRecords.map((m) => m.tripId);
+		const overlapping = await trips.findOne({
+			_id: { $in: existingTripIds },
+			startDate: { $lte: tripEnd },
+			endDate: { $gte: tripStart }
+		});
+		if (overlapping) {
+			return json({ success: false, error: `Date range overlaps with your existing trip "${overlapping.title}"` }, { status: 400 });
+		}
+
 		// Create trip
 		const tripResult = await trips.insertOne({
 			title: tripData.title,
