@@ -3,12 +3,13 @@
 	import Header from '$lib/components/Header.svelte';
 	import ActivityFeed from '$lib/components/ActivityFeed.svelte';
 	import { onMount } from 'svelte';
-	import { Plane, TrendingDown, TrendingUp, CheckCircle, ArrowRight, MapPin, Calendar, Wallet } from 'lucide-svelte';
+	import { Plane, TrendingDown, TrendingUp, CheckCircle, ArrowRight, MapPin, Calendar, Wallet, Globe } from 'lucide-svelte';
 
 	let userName = $state('');
 	let nextTrip = $state(null);
 	let nextTripMembers = $state([]);
 	let balances = $state([]);
+	let stats = $state(null);
 	let feedEntries = $state([]);
 	let feedLoading = $state(true);
 	let dashLoading = $state(true);
@@ -74,6 +75,7 @@
 			nextTrip = dash.nextTrip;
 			nextTripMembers = dash.nextTripMembers ?? [];
 			balances = dash.balances;
+			stats = dash.stats ?? null;
 		}
 		dashLoading = false;
 	});
@@ -128,6 +130,32 @@
 				<div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
 			</div>
 		{:else}
+			{#if stats}
+				<div class="grid grid-cols-3 gap-3 mb-5">
+					{#each [
+						{ icon: Plane, label: 'Trips completed', value: stats.completedTrips, planned: stats.upcomingTrips, plannedLabel: 'planned', bg: 'bg-blue-600', light: 'bg-blue-50 dark:bg-blue-950/60', border: 'border-blue-100 dark:border-blue-900', href: '/trips' },
+						{ icon: Globe, label: 'Destinations visited', value: stats.destinations, planned: stats.plannedDestinations, plannedLabel: 'planned', bg: 'bg-emerald-500', light: 'bg-emerald-50 dark:bg-emerald-950/60', border: 'border-emerald-100 dark:border-emerald-900', href: '/trips' },
+						{ icon: Wallet, label: 'Total spent so far', value: stats.totalSpent.toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), planned: null, plannedLabel: '', bg: 'bg-violet-500', light: 'bg-violet-50 dark:bg-violet-950/60', border: 'border-violet-100 dark:border-violet-900', href: null }
+					] as s}
+						<div
+							class="rounded-2xl border {s.light} {s.border} px-4 py-4 flex items-center gap-3 {s.href ? 'cursor-pointer hover:brightness-95 transition-all' : ''}"
+							onclick={() => s.href && goto(s.href)}
+							role={s.href ? 'button' : undefined}
+						>
+							<div class="w-10 h-10 rounded-xl {s.bg} flex items-center justify-center shrink-0 shadow-sm">
+								<svelte:component this={s.icon} size={17} class="text-white" />
+							</div>
+							<div class="min-w-0">
+								<p class="text-2xl font-bold text-gray-800 dark:text-gray-100 leading-none">{s.value}</p>
+								<p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5 font-semibold">{s.label}</p>
+								{#if s.planned !== null}
+									<span class="inline-block mt-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/70 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">{s.planned} {s.plannedLabel}</span>
+								{/if}
+							</div>
+						</div>
+					{/each}
+				</div>
+			{/if}
 			<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 				<!-- Left column (2/3) -->
 				<div class="lg:col-span-2 flex flex-col gap-5">

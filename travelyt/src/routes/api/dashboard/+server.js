@@ -84,9 +84,52 @@ export async function GET({ cookies }) {
 			}));
 		}
 
+		// Travel stats
+		const completedTrips = userTrips.filter((t) => new Date(t.endDate) < now);
+		const upcomingTrips = userTrips.filter((t) => new Date(t.startDate) > now);
+		const completedTripIds = completedTrips.map((t) => t._id);
+
+		const completedMemberships = await tripMembers.find({ tripId: { $in: completedTripIds } }).toArray();
+		const companionIds = new Set(
+			completedMemberships
+				.filter((m) => m.userId.toString() !== userId)
+				.map((m) => m.userId.toString())
+		);
+
+		const uniqueDestinations = new Set();
+		for (const t of completedTrips) {
+			if (t.legs?.length > 0) {
+				t.legs.forEach((l) => { if (l.destination) uniqueDestinations.add(l.destination.trim().toLowerCase()); });
+			} else if (t.destination) {
+				uniqueDestinations.add(t.destination.trim().toLowerCase());
+			}
+		}
+
+		const uniquePlannedDestinations = new Set();
+		for (const t of upcomingTrips) {
+			if (t.legs?.length > 0) {
+				t.legs.forEach((l) => { if (l.destination) uniquePlannedDestinations.add(l.destination.trim().toLowerCase()); });
+			} else if (t.destination) {
+				uniquePlannedDestinations.add(t.destination.trim().toLowerCase());
+			}
+		}
+
+		const totalSpent = allExpenses
+			.filter((e) => e.paidBy.toString() === userId)
+			.reduce((s, e) => s + (e.amount || 0), 0);
+
+		const stats = {
+			completedTrips: completedTrips.length,
+			upcomingTrips: upcomingTrips.length,
+			destinations: uniqueDestinations.size,
+			plannedDestinations: uniquePlannedDestinations.size,
+			totalSpent: Math.round(totalSpent * 100) / 100
+		};
+
 		return json({
 			success: true,
 			userName,
+			stats,
 			nextTrip: nextTrip
 				? {
 						id: nextTrip._id.toString(),
