@@ -30,6 +30,9 @@ html.dark body {
 	color: #f1f5f9;
 }
 
+.nav-icon-dark { display: none; }
+html.dark .nav-icon-dark { display: block; }
+
 button:disabled {
 	@apply opacity-50 cursor-not-allowed;
 }

@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { Plane, Bell, LogOut, User, Settings } from 'lucide-svelte';
+	import { Bell, LogOut, User, Settings } from 'lucide-svelte';
 	import ActivityFeed from '$lib/components/ActivityFeed.svelte';
 
 	const navLinks = [
@@ -107,12 +107,13 @@
 </script>
 
 <header class="sticky top-0 z-50 bg-white border-b border-gray-200 dark:!bg-gray-900 dark:border-gray-700">
-	<div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
+	<div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-6">
 
 		<!-- Logo -->
-		<a href="/" class="flex items-center gap-2 shrink-0 no-underline">
-			<div class="text-blue-600"><Plane size={22} /></div>
-			<span class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">Travelyt</span>
+		<a href="/" class="flex items-center gap-0.5 shrink-0 no-underline">
+			<img src="/Icon for light mode_removed background.png" alt="" class="nav-icon-light h-10 w-auto dark:hidden" />
+			<img src="/Logo Icon_removed background.png" alt="" class="nav-icon-dark h-10 w-auto" />
+			<span class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Travelyt</span>
 		</a>
 
 		<!-- Main nav -->
