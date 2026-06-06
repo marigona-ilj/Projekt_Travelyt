@@ -22,21 +22,19 @@
 <!-- Diese Vorlage ist für eine README.md im Repository gedacht. Abschnitte mit [Optional] können weggelassen werden, wenn in den Übungen nichts anderes verlangt wird. -->
 
 ## 1. Ausgangslage
-Travelyt adressiert das Problem, dass Reiseplanung häufig unübersichtlich und auf verschiedene Tools verteilt ist. Viele Reisende organisieren ihre Trips über WhatsApp-Chats, Notizen, Excel-Listen, Kalender oder separate Apps für Budget, Aktivitäten und Packlisten. Dadurch können wichtige Informationen verloren gehen, Absprachen unklar bleiben oder Aufgaben vergessen werden. Dieses Problem betrifft sowohl Gruppenreisen als auch Einzelreisen: Während Gruppen vor allem gemeinsame Abstimmung benötigen, brauchen Solo-Reisende eine zentrale Übersicht über ihre Planung.
+Gruppenreisen werden heute oft über mehrere Tools gleichzeitig koordiniert — WhatsApp für Absprachen, Excel für Kosten, Notizen für Packlisten. Das führt zu Unübersichtlichkeit, vergessenen Aufgaben und Mehraufwand. Travelyt löst dieses Problem mit einer zentralen Web-App, die alle Planungsbereiche einer Gruppenreise an einem Ort bündelt. Die Lösung richtet sich an Reisegruppen (Freunde, Paare, Familien), die Aktivitäten, Ausgaben und Packlisten gemeinsam koordinieren wollen.
 
-Das angestrebte Ergebnis ist ein funktionaler Web-Prototyp, der die Reiseplanung an einem Ort bündelt. Nutzerinnen und Nutzer sollen Trips erstellen, Aktivitäten planen, Ausgaben erfassen und Packlisten verwalten können. Bei gemeinsamen Reisen sollen mehrere Personen einen Trip einsehen und bearbeiten können.
+- **Problem:** Gruppenreisen erfordern die Abstimmung vieler Beteiligter über Aktivitäten, Ausgaben, Packlisten und Kommunikation — heute auf mehrere Apps und Chats verteilt, was zu Informationsverlust und Koordinationsaufwand führt.
 
-- **Problem:** Reiseplanung ist oft auf mehrere Apps, Chats oder Dokumente verteilt. Dadurch entstehen Unübersichtlichkeit, vergessene Aufgaben und zusätzlicher Koordinationsaufwand. Bei Gruppenreisen kommt hinzu, dass Aktivitäten, Ausgaben und Packlisten gemeinsam abgestimmt werden müssen. Bei Solo-Reisen fehlt häufig eine zentrale Übersicht über alle wichtigen Reiseinformationen.
- 
-- **Ziele:**  Ziel des Projekts ist die Entwicklung einer Web-App, mit der Reisen strukturiert geplant und verwaltet werden können. Die App soll es ermöglichen, Trips zu erstellen, Aktivitäten festzuhalten, Ausgaben zu erfassen und Packlisten zu nutzen. Für Gruppenreisen soll zusätzlich eine gemeinsame Bearbeitung möglich sein, damit alle Beteiligten Zugriff auf dieselben Informationen haben. Der Prototyp soll die wichtigsten Workflows einer digitalen Reiseplanung abbilden und als online zugängliche SvelteKit-Anwendung umgesetzt werden.
+- **Ziele:** Entwicklung eines funktionalen Web-Prototyps, mit dem Gruppenreisen strukturiert geplant und verwaltet werden können. Mehrere Personen sollen denselben Trip gemeinsam einsehen und bearbeiten können — von der Aktivitätsplanung über die Kostenteilung bis zur Packliste.
 
-- **Primäre Zielgruppe:**  Die primäre Zielgruppe sind Personen, die gemeinsam mit Freunden, Familie oder Partnern reisen und Aktivitäten, Kosten sowie Vorbereitungsschritte koordinieren wollen. Der aktuelle Fokus liegt bewusst auf Gruppenreisen, da kollaborative Planung den zentralen Mehrwert der App darstellt. Solo-Reisen sind technisch bereits möglich, jedoch ist die Benutzeroberfläche noch nicht gezielt darauf ausgerichtet. Eine Erweiterung und UI-Anpassung für Solo-Reisende ist für einen späteren Entwicklungsschritt vorgesehen.
+- **Primäre Zielgruppe:** Personen, die gemeinsam mit Freunden, Familie oder Partnern reisen und Aktivitäten, Kosten sowie Vorbereitungsschritte koordinieren wollen.
 
 
 ## 2. Lösungsidee
 Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lösungsidee besteht darin, alle relevanten Planungsbereiche – von der Reiseübersicht über Aktivitäten, Packliste und Budget bis hin zu Karte, Wetter, Galerie und Gruppen-Chat – in einer einzigen Anwendung zu bündeln. Dadurch sollen Reisende nicht mehr zwischen mehreren Tools, Chats oder Dokumenten wechseln müssen. Im Zentrum steht die kollaborative Nutzung: Mehrere Personen können denselben Trip gemeinsam einsehen und bearbeiten.
 
-- **Kernfunktionalität:**  Die zentrale Funktion ist das Erstellen und Verwalten von Trips. Nutzer können einen neuen Trip mit Titel, Reiseziel, Zeitraum und optionalem Coverbild anlegen. Trips mit mehreren Zwischenstopps werden durch eine Multi-Destination-Funktion unterstützt: Jede Station erhält ein eigenes Ziel und einen eigenen Zeitraum. Trips können über einen Einladungslink mit Mitreisenden geteilt werden, sodass alle Beteiligten Zugriff auf dieselben Informationen haben.
+- **Kernfunktionalität:**  Die zentrale Funktion ist das Erstellen und Verwalten von Trips. User können einen neuen Trip mit Titel, Reiseziel und Zeitraum anlegen. Trips mit mehreren Zwischenstopps werden durch eine Multi-Destination-Funktion unterstützt: Jede Station erhält ein eigenes Ziel und einen eigenen Zeitraum. Trips können über einen Einladungslink mit Mitreisenden geteilt werden, sodass alle Beteiligten Zugriff auf dieselben Informationen haben.
 
   Innerhalb eines Trips können Aktivitäten geplant und verwaltet werden – zum Beispiel Ausflüge, Restaurantbesuche oder Sehenswürdigkeiten. Jede Aktivität kann mit Titel, Datum, Uhrzeit, Ort, Kategorie und Beschreibung ergänzt werden.
 
@@ -46,20 +44,19 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 
   Ergänzend stehen folgende Funktionen zur Verfügung: eine **Galerie** für gemeinsame Reisefotos, ein **Gruppen-Chat** für Absprachen innerhalb des Trips, eine **Checkliste** für reisebezogene Aufgaben, eine **Wettervorschau** pro Reiseziel sowie eine interaktive **Karte**, die Aktivitäten und Reisestationen visualisiert. Alle Trips sind ausserdem in einer **Kalenderansicht** dargestellt.
 
-- **Abgrenzung [Optional]:** Die gezielte Unterstützung von Solo-Reisen gehört nicht zum aktuellen Umfang des Prototyps. Solo-Nutzung ist zwar möglich, jedoch ist die Benutzeroberfläche (z. B. Ausgaben-Splitting, Mitglieder-Verwaltung, Gruppen-Chat) auf gemeinsame Reisen ausgerichtet. Eine UI-Anpassung für Solo-Reisende ist als zukünftige Erweiterung geplant. Der Prototyp wurde zudem ausschliesslich als Desktop-Web-App entwickelt und ist nicht für mobile Geräte optimiert. Eine native Mobile App ist für einen späteren Entwicklungsschritt vorgesehen.
+- **Abgrenzung:** Die gezielte Unterstützung von Solo-Reisen gehört nicht zum aktuellen Umfang des Prototyps. Solo-Nutzung ist zwar möglich, jedoch ist die Benutzeroberfläche (z. B. Ausgaben-Splitting, Mitglieder-Verwaltung, Gruppen-Chat) auf gemeinsame Reisen ausgerichtet. Eine UI-Anpassung für Solo-Reisende ist als zukünftige Erweiterung geplant. Der Prototyp wurde zudem ausschliesslich als Desktop-Web-App entwickelt und ist nicht für mobile Geräte optimiert. Eine native Mobile App ist für einen späteren Entwicklungsschritt vorgesehen.
 
 ## 3. Vorgehen & Artefakte
-Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergebnisse je Phase.
 
 ### 3.1 Understand & Define
-- **Zielgruppenverständnis:** Im Rahmen einer informellen Zielgruppenanalyse wurden drei typische Nutzergruppen identifiziert, für die gemeinsame Reiseplanung besonders relevant ist:
+- **Zielgruppenverständnis:** Im Rahmen einer informellen Zielgruppenanalyse wurden drei typische Usergruppen identifiziert, für die gemeinsame Reiseplanung besonders relevant ist:
   - **Freundesgruppen** (z. B. Studierende oder junge Berufstätige): planen Reisen gemeinsam, teilen sich Kosten, haben aber oft unklare Absprachen über Aktivitäten und Budget
   - **Paare**: reisen häufig zusammen und möchten Planung und Ausgaben unkompliziert koordinieren
   - **Familien**: benötigen vor allem Übersicht über Packlisten und gemeinsame Aktivitäten; mehrere Personen müssen koordiniert werden
 
 - **Wesentliche Erkenntnisse:**
   - Reisende nutzen heute mehrere Tools parallel (WhatsApp, Notes, Excel, Splitwise), was zu Informationsverlust und Mehraufwand führt
-  - Es gibt viele Reise-Apps, aber kaum eine, die Aktivitäten, Ausgaben, Packliste, Kommunikation und Karte in einem vereint – Nutzer müssen zwischen mehreren Apps wechseln
+  - Es gibt viele Reise-Apps, aber kaum eine, die Aktivitäten, Ausgaben, Packliste, Kommunikation und Karte in einem vereint – User müssen zwischen mehreren Apps wechseln
   - Apps wie Splitwise lösen das Ausgabenproblem, haben aber keinen Reisekontext; Google Maps und Kalender-Apps fehlt die kollaborative Planungsebene
   - Bei Gruppenreisen ist die Kostenteilung ein zentrales Frustrationspotenzial
   - Packlisten werden oft mündlich oder in Chat-Gruppen koordiniert und häufig vergessen
@@ -70,9 +67,7 @@ Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergeb
 - **Variantenüberblick:**
   In der Sketch-Phase wurde gezielt ein card- und tab-basierter Ansatz erarbeitet. Da die App von Anfang an viele Funktionsbereiche abdecken sollte (Aktivitäten, Packliste, Budget, Galerie, Checkliste, Mitglieder, Wetter, Karte), wurde eine klare strukturelle Trennung über Tabs als einzig sinnvoller Ansatz identifiziert — eine rein scroll-basierte Variante wurde konzeptuell verworfen, da sie bei diesem Umfang schnell unübersichtlich wird, ohne sie formell auszuarbeiten.
 
-  Die Sketch-Phase verlief in zwei Schritten:
-  1. **Papier-Handskizze** – grobe Layoutidee für Dashboard, Trip-Detailseite mit Tabs und wichtigste Screens
-  2. **Figma-Wireframe** – Verfeinerung der Handskizze als interaktives Wireframe in Figma Make
+  Die Sketch-Phase umfasste eine **Papier-Handskizze** mit einer groben Layoutidee für Dashboard, Trip-Detailseite mit Tabs und die wichtigsten Screens.
 
 - **Skizzen:**
 
@@ -81,27 +76,38 @@ Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergeb
   Auf Basis der Handskizze wurde ein Wireframe in Figma erstellt, das die finale Struktur (Tab-Navigation, Dashboard-Layout, Trip-Karten) vorwegnimmt. Details zum Wireframe und zur getroffenen Entscheidung folgen in Abschnitt 3.3.
 
 ### 3.3 Decide
-- **Gewählte Variante & Begründung:** Gewählt wurde ein **card- und tab-basiertes Layout** mit einer persistenten Kopfnavigation. Die Trip-Detailseite ist in acht Tabs unterteilt (Itinerary, Packing, Budget, Gallery, Checklist, Members, Weather, Map), um die vielen Funktionsbereiche übersichtlich zu strukturieren, ohne die Nutzenden zu überfordern. Diese Variante wurde gegenüber einer rein listen- oder scroll-basierten Ansicht bevorzugt, da Tabs einen schnellen Kontextwechsel ermöglichen und der Umfang der Funktionen eine klare Trennung erfordert. Das Dashboard bietet eine kompakte Übersicht über den nächsten Trip, offene Salden und den Activity Feed, damit Nutzende sofort den relevantesten Inhalt sehen.
+- **Gewählte Variante & Begründung:** Gewählt wurde ein **card- und tab-basiertes Layout** mit einer persistenten Kopfnavigation. Die Trip-Detailseite ist in acht Tabs unterteilt (Itinerary, Packing, Budget, Gallery, Checklist, Members, Weather, Map), um die vielen Funktionsbereiche übersichtlich zu strukturieren, ohne die Usern zu überfordern. Diese Variante wurde gegenüber einer rein listen- oder scroll-basierten Ansicht bevorzugt, da Tabs einen schnellen Kontextwechsel ermöglichen und der Umfang der Funktionen eine klare Trennung erfordert. Das Dashboard bietet eine kompakte Übersicht über den nächsten Trip, offene Salden und den Activity Feed, damit User sofort den relevantesten Inhalt sehen.
 
 - **End-to-End-Ablauf:** Ein typischer Nutzungsfluss sieht wie folgt aus:
-  1. **Registrierung/Login** – Nutzerin erstellt einen Account oder meldet sich an
-  2. **Trip erstellen** – Titel, Reiseziel(e), Zeitraum und optionales Coverbild werden erfasst; bei Mehrfachzielen können mehrere Stationen hinzugefügt werden
+  1. **Registrierung/Login** – Userin erstellt einen Account oder meldet sich an
+  1. **Registrierung / Login** – Userin erstellt einen Account oder meldet sich an
+  2. **Trip erstellen** – Titel, Reiseziel(e) und Zeitraum werden erfasst; bei Mehrfachzielen können mehrere Stationen hinzugefügt werden
   3. **Mitglieder einladen** – ein Einladungslink wird generiert und geteilt; Mitreisende treten dem Trip über den Link bei
-  4. **Aktivitäten planen** – alle Mitglieder können Aktivitäten mit Datum, Ort und Beschreibung erfassen
+  4. **Aktivitäten planen** – alle Mitglieder können Aktivitäten mit Datum, Uhrzeit, Ort, Kategorie und Beschreibung erfassen
   5. **Packliste befüllen** – Einträge werden in der geteilten Liste ergänzt; jede Person hakt ihre eigenen Sachen ab; persönliche Gegenstände kommen in die private Liste
   6. **Ausgaben erfassen** – Kosten werden mit Betrag, Kategorie und Aufteilung auf ausgewählte Personen eingetragen
   7. **Während der Reise** – Fotos in die Galerie hochladen, im Gruppen-Chat kommunizieren, Checkliste abhaken
   8. **Abschluss** – offene Salden einsehen und Schulden begleichen
 
-- **Mockup:** Das Wireframe wurde eigenständig in Figma erstellt: [Travelyt – Figma Wireframe](https://www.figma.com/make/KxztIkmeWMwjQ0OYVbP0yp/Travelyt---Design)
+- **Mockup:** Das Wireframe wurde in Figma erstellt, mit Figma Make als Inspirationsquelle für Layoutideen: [Travelyt – Figma Wireframe](https://www.figma.com/proto/eGOPITLXT65c9L0HnifHD1/Travelyt-Prototype?node-id=2-5&starting-point-node-id=3%3A85&t=yd1KnFcDivep3yxE-1)
 
   Das Wireframe zeigt die grundlegende Layoutstruktur mit Tab-Navigation auf der Trip-Detailseite und dem Dashboard-Aufbau. Einzelne Details (z. B. zusätzliche Tabs, Farbgebung, Formularfelder) haben sich im Verlauf der Umsetzung weiterentwickelt und weichen vom ursprünglichen Wireframe ab.
+
+  **My Trips – Übersicht**
+  ![Wireframe My Trips](doc/figma_mytrips.png)
+
+  **Trip erstellen – Formular**
+  ![Wireframe Trip erstellen](doc/figma_formular-createtrip.png)
+
+  **Trip-Detail – Übersicht**
+  ![Wireframe Trip-Detail](doc/figma_overview-trip-detail.png)
+
+  **Ausgaben (Budget)**
+  ![Wireframe Ausgaben](doc/figma_expenses.png)
 
 ### 3.4 Prototype
 
 #### 3.4.1. Entwurf (Design)
-Beschreibt die Gestaltung und Interaktion.
-> **Hinweis:** Hier wird der **Prototyp** beschrieben, nicht das **Mockup**.
 - **Informationsarchitektur:** Die App ist in drei Hauptbereiche gegliedert, die über eine persistente Kopfnavigation erreichbar sind:
   - **Dashboard** – Übersicht mit dem nächsten Trip, offenen Salden und dem Activity Feed
   - **My Trips** – Listenansicht aller eigenen Trips; Erstellen neuer Trips; Detail-Ansicht mit acht Tabs (Activities, Packing, Budget, Gallery, Checklist, Members, Weather, Map)
@@ -159,7 +165,7 @@ Beschreibt die Gestaltung und Interaktion.
   ![My Trips](doc/my_trips.png)
 
   **Trip-Detail – Activities**
-  Die Trip-Detailseite öffnet standardmässig den Activities-Tab. Aktivitäten sind tagesweise gruppiert und können mit Titel, Datum, Uhrzeit, Ort und Kategorie erfasst werden. Über das Options-Menü (oben rechts) lässt sich der Trip bearbeiten, als PDF exportieren oder löschen.
+  Die Trip-Detailseite öffnet standardmässig den Activities-Tab. Aktivitäten sind tagesweise gruppiert und können mit Titel, Datum, Uhrzeit, Ort und Kategorie erfasst werden. Über das Options-Menü (oben rechts) lässt sich der Trip als PDF exportieren. Das Bearbeiten und Löschen des Trips ist nur dem Owner vorbehalten.
 
   ![Trip Activities](doc/trip_activities.png)
 
@@ -217,7 +223,6 @@ Beschreibt die Gestaltung und Interaktion.
   - **Onboarding-Tour** beim ersten Login, die interaktiv durch die wichtigsten Navigationspunkte führt
 
 #### 3.4.2. Umsetzung (Technik)
-Fasst die technische Realisierung zusammen.
 - **Technologie-Stack:**
   - **Framework:** SvelteKit 5 mit Svelte 5 Runes (`$state`, `$derived`, `$props`, `$effect`)
   - **Sprache:** JavaScript (kein TypeScript)
@@ -255,7 +260,7 @@ Fasst die technische Realisierung zusammen.
     | `/profile` | Profil | Name, E-Mail und Profilfoto bearbeiten |
     | `/settings` | Einstellungen | Dark Mode, Benachrichtigungs-Präferenzen |
     | `/trips/join/[code]` | Einladungslink | Tritt einem Trip über einen Einladungscode bei |
-    | `/join/pending` | Warteseite | Zwischenseite für nicht eingeloggte Nutzende beim Öffnen eines Einladungslinks |
+    | `/join/pending` | Warteseite | Zwischenseite für nicht eingeloggte User beim Öffnen eines Einladungslinks |
   - **API-Routen** unter `src/routes/api/` für alle Datenzugriffe (trips, activities, expenses, packing, gallery, members, messages, feed, dashboard, auth, user)
   - **Wiederverwendbare Komponenten** unter `src/lib/components/`: `Header`, `PageHeader`, `TripCard`, `ActivityList`, `ExpenseList`, `PackingList`, `MemberList`, `Gallery`, `TripChat`, `TripWeather`, `TripMap`, `TripChecklist`, `ActivityFeed`, `DestinationInput`, `OnboardingTour`, `Toast`, `ConfirmDialog`
   - **State-Management:** Ausschliesslich lokales Komponentenstate via Svelte 5 Runes; kein globaler Store
@@ -267,7 +272,7 @@ Fasst die technische Realisierung zusammen.
   - **Bilder** (Profilfotos, Galerie) werden als Base64-Strings direkt in MongoDB gespeichert (Prototyp-Entscheidung; für Produktion wäre Cloudinary o. Ä. sinnvoll)
   - **Echtzeit:** Kein WebSocket; Updates erfolgen per Polling: Activity Feed alle 12 Sekunden, Chat alle 5 Sekunden (wenn geöffnet) bzw. alle 8 Sekunden (wenn geschlossen)
 
-- **Deployment:** _[TODO: URL der deployten Anwendunjg einfügen]_
+- **Deployment:** https://travelyt-v2.netlify.app/
 
 - **Besondere Entscheidungen:**
   - **Base64-Bildspeicherung in MongoDB:** Für den Prototyp wurde auf einen externen Bildhosting-Dienst verzichtet. Bilder werden direkt als Base64 in der Datenbank gespeichert. Dies vereinfacht die Umsetzung, ist aber für den Produktiveinsatz nicht skalierbar.
@@ -276,12 +281,14 @@ Fasst die technische Realisierung zusammen.
   - **Multi-Destination als Legs:** Trips mit mehreren Zielen werden über ein `legs`-Array im Trip-Dokument abgebildet. Ältere Trips ohne `legs` werden beim Lesen automatisch normalisiert (Rückwärtskompatibilität).
 
 ### 3.5 Validate
-- **URL der getesteten Version:** _[TODO: URL der deployten Version einfügen]_
+- **URL der getesteten Version:** https://travelyt-v2.netlify.app/
+
+  > **Hinweis:** Die automatischen Deploys auf Netlify waren zum Zeitpunkt des Usability-Tests versehentlich noch aktiv. Nach dem Test wurden Änderungen am Prototyp vorgenommen, die dadurch automatisch live gegangen sind. Die unter dieser URL verfügbare Version entspricht daher möglicherweise nicht exakt dem Zustand zum Testzeitpunkt. Die Dokumentation in diesem Kapitel beschreibt korrekt den Zustand während des Tests.
 
 - **Ziele der Prüfung:**
   - Verstehen Testpersonen ohne Erklärung, was die App macht und wie man startet?
   - Ist die Erstellung einer Reise (Trip) intuitiv und selbsterklärend?
-  - Finden Nutzer die verschiedenen Tabs (Aktivitäten, Ausgaben, Packliste, Mitglieder) eigenständig?
+  - Finden User die verschiedenen Tabs (Aktivitäten, Ausgaben, Packliste, Mitglieder) eigenständig?
   - Ist das Konzept der kollaborativen Reise (Mitglieder einladen) verständlich?
   - Wird die Benachrichtigungsglocke (Activity Feed) wahrgenommen?
 
@@ -343,7 +350,7 @@ Fasst die technische Realisierung zusammen.
 Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 
 ### 4.1 Login & Registrierung (Authentifizierung)
-- **Beschreibung & Nutzen:** Nutzerinnen und Nutzer können sich mit E-Mail und Passwort registrieren und anmelden. Passwörter werden sicher mit bcryptjs gehasht gespeichert. Nach erfolgreichem Login wird ein `userId`-Cookie gesetzt, das bei jeder API-Anfrage serverseitig geprüft wird. Ohne gültige Session ist kein Zugriff auf Trips oder Daten möglich.
+- **Beschreibung & Nutzen:** User können sich mit E-Mail und Passwort registrieren und anmelden. Passwörter werden sicher mit bcryptjs gehasht gespeichert. Nach erfolgreichem Login wird ein `userId`-Cookie gesetzt, das bei jeder API-Anfrage serverseitig geprüft wird. Ohne gültige Session ist kein Zugriff auf Trips oder Daten möglich.
 - **Wo umgesetzt:**
   - **Frontend:** `src/routes/auth/+page.svelte` — kombiniertes Login-/Registrierungsformular
   - **Backend:** `src/routes/api/auth/+server.js` — Passwort-Hashing, Cookie-Setzen, Session-Prüfung
@@ -352,7 +359,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Aus Evaluation abgeleitet?:** Nein
 
 ### 4.2 Dashboard
-- **Beschreibung & Nutzen:** Die Startseite der App zeigt sofort die relevantesten Informationen: ein Karussell mit bevorstehenden Trips inklusive Countdown bis zur Abreise, offene Salden quer über alle Trips sowie die neuesten Aktivitäten aller Mitreisenden im Activity Feed. So müssen Nutzende nicht erst in einzelne Trips navigieren, um den aktuellen Stand zu sehen.
+- **Beschreibung & Nutzen:** Die Startseite der App zeigt sofort die relevantesten Informationen: ein Karussell mit bevorstehenden Trips inklusive Countdown bis zur Abreise, offene Salden quer über alle Trips sowie die neuesten Aktivitäten aller Mitreisenden im Activity Feed. So müssen User nicht erst in einzelne Trips navigieren, um den aktuellen Stand zu sehen.
 - **Wo umgesetzt:**
   - **Frontend:** `src/routes/+page.svelte` — Dashboard-Seite mit Karussell, Saldo-Übersicht und Feed
   - **Backend:** `src/routes/api/dashboard/+server.js` — aggregiert Trip-Daten, Salden und Feed-Einträge
@@ -361,7 +368,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Aus Evaluation abgeleitet?:** Nein
 
 ### 4.3 Kalenderansicht
-- **Beschreibung & Nutzen:** Eine separate Kalenderseite zeigt alle Trips der Nutzerin / des Nutzers in einer Monatsansicht als farbige Balken. So lässt sich auf einen Blick erkennen, welche Reisen wann stattfinden und ob sich Zeiträume überschneiden. Direkt aus dem Kalender heraus kann auch ein neuer Trip erstellt werden.
+- **Beschreibung & Nutzen:** Eine separate Kalenderseite zeigt alle Trips der Userin / des Users in einer Monatsansicht als farbige Balken. So lässt sich auf einen Blick erkennen, welche Reisen wann stattfinden und ob sich Zeiträume überschneiden. Direkt aus dem Kalender heraus kann auch ein neuer Trip erstellt werden.
 - **Wo umgesetzt:**
   - **Frontend:** `src/routes/calendar/+page.svelte` — Monatskalender mit Trip-Balken und Erstellungs-Modal
   - **Backend:** `src/routes/api/trips/+server.js` (GET) — liefert alle Trips mit Zeiträumen
@@ -379,7 +386,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Aus Evaluation abgeleitet?:** Nein
 
 ### 4.5 Activity Feed & Benachrichtigungen
-- **Beschreibung & Nutzen:** Ein tripübergreifender Activity Feed zeigt die neuesten Aktionen aller Mitreisenden (z. B. «Ana added an expense», «Luca added a photo»). Der Feed ist über das Glocken-Icon in der Kopfnavigation zugänglich und zählt ungelesene Einträge. Nutzende können in den Einstellungen festlegen, welche Kategorien angezeigt werden (Ausgaben, Aktivitäten, Mitglieder, Chat, Fotos, Packliste). Im Dashboard werden die neuesten Feed-Einträge ebenfalls angezeigt.
+- **Beschreibung & Nutzen:** Ein tripübergreifender Activity Feed zeigt die neuesten Aktionen aller Mitreisenden (z. B. «Ana added an expense», «Luca added a photo»). Der Feed ist über das Glocken-Icon in der Kopfnavigation zugänglich und zählt ungelesene Einträge. User können in den Einstellungen festlegen, welche Kategorien angezeigt werden (Ausgaben, Aktivitäten, Mitglieder, Chat, Fotos, Packliste). Im Dashboard werden die neuesten Feed-Einträge ebenfalls angezeigt.
 - **Wo umgesetzt:**
   - **Frontend:** `src/lib/components/ActivityFeed.svelte`, `src/lib/components/Header.svelte` (Bell-Icon)
   - **Backend:** `src/routes/api/feed/+server.js` (globaler Feed), `src/routes/api/trips/[tripId]/feed/+server.js` (trip-spezifisch), `src/lib/server/activityLog.js` (Log-Hilfsfunktionen)
@@ -493,7 +500,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 ### 4.18 Einladungslink-System
 - **Beschreibung & Nutzen:** Statt Mitreisende direkt über ihre E-Mail-Adresse hinzuzufügen, kann der Trip-Owner einen Einladungslink generieren und teilen. Wer den Link öffnet, wird dem Trip automatisch als Member hinzugefügt (nach Login). Der Owner kann den Link jederzeit widerrufen, sodass der bisherige Link ungültig wird. Ein widerrufener Link schützt vor ungewolltem Beitritt nach einer Reise.
 - **Wo umgesetzt:**
-  - **Frontend:** `src/lib/components/MemberList.svelte` (Link generieren/widerrufen), `src/routes/trips/join/[code]/+page.svelte` (Beitritt-Handler), `src/routes/join/pending/+page.svelte` (Warteseite bei nicht eingeloggten Nutzern)
+  - **Frontend:** `src/lib/components/MemberList.svelte` (Link generieren/widerrufen), `src/routes/trips/join/[code]/+page.svelte` (Beitritt-Handler), `src/routes/join/pending/+page.svelte` (Warteseite bei nicht eingeloggten Usern)
   - **Backend:** `src/routes/api/trips/[tripId]/invite/+server.js` (GET: Code generieren, DELETE: widerrufen), `src/routes/api/trips/join/[code]/+server.js` (Beitritt verarbeiten)
   - **Datenbank:** `inviteCode`-Feld im `trips`-Dokument; Collection `tripInvites`
 - **Referenz:** Kap. 3.3 (End-to-End-Ablauf, Schritt 3), Kap. 3.4.1 (Members-Screenshot), Testaufgabe 2 in Kap. 3.5
@@ -509,7 +516,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Aus Evaluation abgeleitet?:** Ja — Beobachtung #4 im Usability-Test (Kap. 3.5)
 
 ### 4.20 Währungsfeld in Budget-Tab integriert
-- **Beschreibung & Nutzen:** Das Währungsfeld wurde aus dem Trip-Erstellungsformular entfernt und direkt in den Budget-Tab verschoben, wo es kontextuell sinnvoll ist. Nutzende können die Währung inline im Budget-Tab wählen (z. B. CHF, EUR, USD). Die Entscheidung wurde getroffen, weil das Feld beim Trip-Erstellen für beide Testpersonen verwirrend wirkte — sie verstanden nicht, warum die Währung dort schon festgelegt werden muss.
+- **Beschreibung & Nutzen:** Das Währungsfeld wurde aus dem Trip-Erstellungsformular entfernt und direkt in den Budget-Tab verschoben, wo es kontextuell sinnvoll ist. User können die Währung inline im Budget-Tab wählen (z. B. CHF, EUR, USD). Die Entscheidung wurde getroffen, weil das Feld beim Trip-Erstellen für beide Testpersonen verwirrend wirkte — sie verstanden nicht, warum die Währung dort schon festgelegt werden muss.
 - **Wo umgesetzt:**
   - **Frontend:** `src/lib/components/ExpenseList.svelte` — Währungs-Dropdown direkt im Budget-Tab; `src/routes/trips/+page.svelte` — Feld aus Erstellungsformular entfernt
   - **Backend:** `src/routes/api/trips/[tripId]/+server.js` — `currency`-Feld wird weiterhin im Trip gespeichert, aber nur noch über den Budget-Tab gesetzt
@@ -547,13 +554,12 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Commit-Praxis:** Zu Beginn des Projekts wurden Commits ohne festes Schema gemacht. Nach der Einführung von GitHub Issues im Unterricht wurde die Arbeitsweise angepasst: Ab diesem Zeitpunkt schliesst jeder Commit genau ein GitHub Issue (`Closes #XX`), sodass jede Änderung direkt einer definierten Aufgabe zugeordnet ist. Insgesamt wurden rund 105 Commits gemacht.
 
 ## 6. KI-Deklaration
-Die folgende Deklaration ist verpflichtend und beschreibt den Einsatz von KI im Projekt.
 
 ### 6.1 KI-Tools
 - **Eingesetzte Tools:**
   - **Claude Code** (Anthropic) — primäres Werkzeug; eingesetzt über die gesamte Entwicklungsphase
   - **ChatGPT** (OpenAI) — eingesetzt für die Erstellung des App-Icons / Logos
-  - **Figma Make** — gegen Ende der Sketch-Phase als Inspirationsquelle für Layoutideen konsultiert (nicht zur Erstellung der Wireframes)
+  - **Figma Make** — als Inspirationsquelle für Layoutideen bei der Erstellung der Wireframes in Figma genutzt
   - **GitHub Copilot** — vereinzelt zu Beginn des Projekts, danach kaum mehr verwendet
 
 - **Zweck & Umfang:**
@@ -564,23 +570,20 @@ Die folgende Deklaration ist verpflichtend und beschreibt den Einsatz von KI im 
 
 - **Eigene Leistung (Abgrenzung):**
   - Die **Projektidee** (Travelyt als kollaborative Reiseplanning-App) wurde eigenständig entwickelt.
-  - Die **Wireframes** wurden vollständig eigenständig in Figma erstellt — ohne Figma Make oder andere generative Tools.
+  - Die **Wireframes** wurden in Figma erstellt; Figma Make diente dabei als Inspirationsquelle für Layoutideen.
   - Der **Usability-Test** wurde eigenständig geplant, durchgeführt und ausgewertet. Die Formulierung der Testaufgaben erfolgte mit KI-Unterstützung.
   - **Inhaltliche Entscheidungen** (Funktionsumfang, Feature-Priorisierung, Design) wurden eigenständig getroffen; KI diente als Hilfsmittel bei der Umsetzung, nicht als Entscheidungsträger.
 
 ### 6.2 Prompt-Vorgehen
-Die Zusammenarbeit mit Claude Code erfolgte iterativ und kontextbezogen. Zu Beginn jeder Aufgabe wurde der gewünschte Funktionsumfang beschrieben, oft ergänzt durch den relevanten bestehenden Code oder Fehlermeldungen. Die KI lieferte Vorschläge, die anschliessend überprüft, getestet und bei Bedarf korrigiert oder weiterentwickelt wurden. Bei komplexeren Features (z. B. Settlement-Algorithmus, Private Packliste, Multi-Destination) wurde schrittweise vorgegangen: erst das Datenbankmodell, dann die API-Route, dann das Frontend. Für die Dokumentation wurden Stichpunkte und eigene Beobachtungen als Grundlage übergeben, die KI hat diese dann in lesbare Abschnitte strukturiert.
+Die Zusammenarbeit mit Claude Code erfolgte iterativ und kontextbezogen. Claude Code läuft direkt im Editor (VS Code) und hat Zugriff auf das gesamte Projekt — dadurch war keine manuelle Code-Übergabe nötig, die KI konnte bestehende Dateien direkt lesen und bearbeiten. Zu Beginn jeder Aufgabe wurde der gewünschte Funktionsumfang beschrieben, oft ergänzt durch den relevanten bestehenden Code oder Fehlermeldungen. Die KI lieferte Vorschläge, die anschliessend überprüft, getestet und bei Bedarf korrigiert oder weiterentwickelt wurden. Bei komplexeren Features (z. B. Settlement-Algorithmus, Private Packliste, Multi-Destination) wurde schrittweise vorgegangen: erst das Datenbankmodell, dann die API-Route, dann das Frontend. Für die Dokumentation wurden Stichpunkte und eigene Beobachtungen als Grundlage übergeben, die KI hat diese dann in lesbare Abschnitte strukturiert.
 
 ### 6.3 Reflexion
 **Nutzen:** KI-Unterstützung hat die Entwicklungsgeschwindigkeit deutlich erhöht. Insbesondere bei repetitiven Aufgaben (z. B. CRUD-Endpunkte, Formularvalidierung, Styling) konnte Zeit gespart werden. Auch beim Debugging war die direkte Analyse durch Claude Code hilfreich.
 
-**Grenzen:** KI generiert nicht immer korrekten oder projektspezifisch passenden Code. Vorschläge mussten stets auf Korrektheit, Konsistenz mit dem bestehenden Code (z. B. Svelte 5 Runes-Syntax) und tatsächliche Funktionalität geprüft werden.
+**Grenzen:** KI generiert nicht immer korrekten oder projektspezifisch passenden Code. Vorschläge mussten stets auf Korrektheit, Konsistenz mit dem bestehenden Code (z. B. Svelte 5 Runes-Syntax) und tatsächliche Funktionalität geprüft werden. Eine weitere Grenze zeigte sich bei wiederkehrenden Bugs: Obwohl ein Bug behoben wurde, tauchte er beim Weiterentwickeln des Projekts teilweise erneut auf — weil neue Änderungen denselben Fehler wieder einführten. Dies führte dazu, dass einzelne Bugs mehrfach gefixt werden mussten.
 
 **Risiken & Qualitätssicherung:** Das grösste Risiko bestand darin, generierten Code unkritisch zu übernehmen. Als Gegenmassnahme wurden alle Änderungen im Browser manuell getestet und bei Unklarheiten gezielt nachgebessert. Die Verantwortung für die finale Qualität und Korrektheit des Codes lag stets bei der Entwicklerin.
 
-## 7. Anhang [Optional]
-Beispiele:
-- **Quellen:** _[verwendete Vorlagen/Assets/Modelle; Lizenz/Urheberrecht; ...]_ Gratis Bilder von Pixabay
-- **Testskript & Materialien:** _[Link/Datei]_  
-- **Rohdaten/Auswertung:** _[Link/Datei]_  
+## 7. Anhang
+- **Quellen:** Zwei Testbilder für die Galerie-Funktion stammen von [Pixabay](https://pixabay.com) (Lizenz: Pixabay Content License, kostenlos für private und kommerzielle Nutzung, keine Namensnennung erforderlich).  
 
