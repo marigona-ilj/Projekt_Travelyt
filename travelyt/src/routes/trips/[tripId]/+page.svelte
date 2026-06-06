@@ -73,7 +73,7 @@
 		currentUserName = authData.user?.name || '';
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
-		const validTabs = ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'];
+		const validTabs = ['activities', 'members', 'expenses', 'packing', 'checklist', 'weather', 'map', 'gallery'];
 		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
 	});
 
@@ -388,7 +388,7 @@
 		<!-- Tabs -->
 		<div class="mb-6">
 			<div class="flex border-b border-gray-300 dark:border-gray-700 flex-wrap">
-				{#each ['activities', 'packing', 'expenses', 'gallery', 'checklist', 'members', 'weather', 'map'] as tab}
+				{#each ['activities', 'members', 'expenses', 'packing', 'checklist', 'weather', 'map', 'gallery'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
 						class="py-2 px-4 font-semibold {activeTab === tab
