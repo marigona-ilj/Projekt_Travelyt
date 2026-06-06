@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="560" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg"
+  font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="560" fill="#F8FAFC" rx="10"/>
+
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#0F172A">Travelyt – Systemarchitektur</text>
+
+  <!-- ===== BROWSER / CLIENT ===== -->
+  <rect x="20" y="44" width="760" height="148" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5" rx="10"/>
+  <text x="30" y="63" font-size="10" font-weight="700" fill="#1D4ED8" letter-spacing="0.8">BROWSER / CLIENT</text>
+
+  <!-- SvelteKit Frontend inner box -->
+  <rect x="35" y="70" width="730" height="112" fill="#DBEAFE" stroke="#BFDBFE" stroke-width="1" rx="7"/>
+  <text x="400" y="87" text-anchor="middle" font-size="10" font-weight="700" fill="#1E40AF">SvelteKit 5 — Frontend</text>
+
+  <!-- Pages -->
+  <rect x="50" y="96" width="340" height="72" fill="white" stroke="#BFDBFE" stroke-width="1" rx="5"/>
+  <text x="220" y="113" text-anchor="middle" font-size="9.5" font-weight="600" fill="#374151">Seiten (Routes)</text>
+  <text x="220" y="129" text-anchor="middle" font-size="8.5" fill="#6B7280">Dashboard · My Trips · Calendar</text>
+  <text x="220" y="145" text-anchor="middle" font-size="8.5" fill="#6B7280">Profile · Settings · Auth · Print</text>
+  <text x="220" y="161" text-anchor="middle" font-size="8" fill="#9CA3AF">trips/join · join/pending</text>
+
+  <!-- Components -->
+  <rect x="405" y="96" width="345" height="72" fill="white" stroke="#BFDBFE" stroke-width="1" rx="5"/>
+  <text x="577" y="113" text-anchor="middle" font-size="9.5" font-weight="600" fill="#374151">Komponenten</text>
+  <text x="577" y="129" text-anchor="middle" font-size="8.5" fill="#6B7280">ActivityList · ExpenseList · PackingList · Gallery</text>
+  <text x="577" y="145" text-anchor="middle" font-size="8.5" fill="#6B7280">TripChat · TripWeather · TripMap · MemberList</text>
+  <text x="577" y="161" text-anchor="middle" font-size="8" fill="#9CA3AF">TripChecklist · Header · ConfirmDialog · Toast</text>
+
+  <!-- Arrow down -->
+  <line x1="400" y1="192" x2="400" y2="226" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="415" y="213" font-size="8.5" fill="#64748B">HTTP / fetch()</text>
+
+  <!-- ===== SVELTEKIT SERVER ===== -->
+  <rect x="20" y="231" width="760" height="138" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.5" rx="10"/>
+  <text x="30" y="250" font-size="10" font-weight="700" fill="#15803D" letter-spacing="0.8">SVELTEKIT SERVER — Node.js</text>
+
+  <!-- API Routes -->
+  <rect x="35" y="258" width="455" height="99" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1" rx="7"/>
+  <text x="262" y="275" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">API Routes (/api/...)</text>
+  <text x="262" y="292" text-anchor="middle" font-size="8.5" fill="#374151">/auth · /trips · /trips/[id]/activities · /expenses</text>
+  <text x="262" y="307" text-anchor="middle" font-size="8.5" fill="#374151">/packing · /messages · /gallery · /checklist</text>
+  <text x="262" y="322" text-anchor="middle" font-size="8.5" fill="#374151">/members · /repayments · /feed · /dashboard</text>
+  <text x="262" y="348" text-anchor="middle" font-size="8" fill="#4B5563">Auth via Cookie (userId) · Server-seitige Validierung</text>
+
+  <!-- Server Library -->
+  <rect x="505" y="258" width="260" height="99" fill="#DCFCE7" stroke="#86EFAC" stroke-width="1" rx="7"/>
+  <text x="635" y="275" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">Server Library</text>
+  <text x="635" y="292" text-anchor="middle" font-size="8.5" fill="#374151">auth.js — bcryptjs (Passwort-Hashing)</text>
+  <text x="635" y="307" text-anchor="middle" font-size="8.5" fill="#374151">db.js — MongoDB Driver</text>
+  <text x="635" y="322" text-anchor="middle" font-size="8.5" fill="#374151">validators.js</text>
+  <text x="635" y="337" text-anchor="middle" font-size="8.5" fill="#374151">activityLog.js</text>
+
+  <!-- Arrows down -->
+  <line x1="205" y1="369" x2="205" y2="404" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="595" y1="369" x2="595" y2="404" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ===== MONGODB ATLAS ===== -->
+  <rect x="20" y="409" width="370" height="132" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5" rx="10"/>
+  <text x="30" y="428" font-size="10" font-weight="700" fill="#C2410C" letter-spacing="0.8">MONGODB ATLAS</text>
+  <text x="205" y="452" text-anchor="middle" font-size="8.5" fill="#374151">users · trips · tripMembers</text>
+  <text x="205" y="468" text-anchor="middle" font-size="8.5" fill="#374151">activities · expenses · packingItems</text>
+  <text x="205" y="484" text-anchor="middle" font-size="8.5" fill="#374151">messages · gallery · checklist</text>
+  <text x="205" y="500" text-anchor="middle" font-size="8.5" fill="#374151">tripActivityLog · tripInvites</text>
+  <text x="205" y="528" text-anchor="middle" font-size="8" fill="#92400E">Cloud-gehostet · M0 Free Tier</text>
+
+  <!-- ===== EXTERNE APIs ===== -->
+  <rect x="410" y="409" width="370" height="132" fill="#FAF5FF" stroke="#D8B4FE" stroke-width="1.5" rx="10"/>
+  <text x="420" y="428" font-size="10" font-weight="700" fill="#7C3AED" letter-spacing="0.8">EXTERNE APIs</text>
+  <text x="595" y="452" text-anchor="middle" font-size="8.5" fill="#374151">Open-Meteo — Wetterdaten &amp; Historische Daten</text>
+  <text x="595" y="468" text-anchor="middle" font-size="8.5" fill="#374151">Open-Meteo Geocoding — Destination-Autocomplete</text>
+  <text x="595" y="484" text-anchor="middle" font-size="8.5" fill="#374151">Nominatim / OpenStreetMap — Geocoding</text>
+  <text x="595" y="500" text-anchor="middle" font-size="8.5" fill="#374151">MapLibre GL — Kartendarstellung (OpenFreeMap)</text>
+  <text x="595" y="528" text-anchor="middle" font-size="8" fill="#6D28D9">Alle kostenlos · kein API-Key erforderlich</text>
+</svg>
