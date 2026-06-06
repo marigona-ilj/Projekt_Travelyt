@@ -50,7 +50,7 @@ export async function GET({ cookies }) {
 				endDate: trip.endDate,
 				description: trip.description,
 				currency: trip.currency || 'CHF',
-				coverImage: trip.coverImage || '',
+
 				createdBy: trip.createdBy.toString(),
 				createdAt: trip.createdAt,
 				legs: normLegs(trip)
@@ -130,7 +130,7 @@ export async function POST({ request, cookies }) {
 			startDate: tripStart,
 			endDate: tripEnd,
 			currency: tripData.currency || 'CHF',
-			coverImage: tripData.coverImage || '',
+
 			...(tripLat != null ? { latitude: tripLat, longitude: tripLon, resolvedLocation: tripResolved } : {}),
 			legs: storedLegs,
 			createdBy: new ObjectId(userId),

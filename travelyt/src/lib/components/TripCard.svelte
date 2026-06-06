@@ -1,6 +1,6 @@
 <script>
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
-	import { Calendar, Clock, MapPin } from 'lucide-svelte';
+	import { Calendar, Clock } from 'lucide-svelte';
 
 	let { trip, onclick } = $props();
 
@@ -26,14 +26,6 @@
 		return 'upcoming';
 	});
 
-	let gradientClass = $derived(
-		status === 'past'
-			? 'bg-gradient-to-r from-gray-400 to-gray-500'
-			: status === 'ongoing'
-				? 'bg-gradient-to-r from-green-500 to-teal-600'
-				: 'bg-gradient-to-r from-blue-500 to-indigo-600'
-	);
-
 	let daysUntil = $derived.by(() => {
 		if (status !== 'upcoming') return null;
 		const now = new Date();
@@ -47,25 +39,13 @@
 		daysUntil === 1 ? 'Tomorrow' : daysUntil === 0 ? 'Today' : `In ${daysUntil} days`
 	);
 
-	let imageError = $state(false);
+
 </script>
 
 <div
 	{onclick}
 	class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg dark:shadow-gray-900 transition cursor-pointer overflow-hidden"
 >
-	<div class="h-36 relative overflow-hidden">
-		{#if trip.coverImage && !imageError}
-			<img
-				src={trip.coverImage}
-				alt={trip.title}
-				class="w-full h-full object-cover"
-				onerror={() => (imageError = true)}
-			/>
-		{:else}
-			<div class="w-full h-full {gradientClass}"></div>
-		{/if}
-	</div>
 	<div class="p-4">
 		<div class="flex justify-between items-start mb-2">
 			<h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">{trip.title}</h3>

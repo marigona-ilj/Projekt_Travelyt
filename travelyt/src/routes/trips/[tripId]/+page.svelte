@@ -54,7 +54,6 @@
 	let editTitle = $state('');
 	let editDescription = $state('');
 	let editCurrency = $state('CHF');
-	let editCoverImage = $state('');
 	let editLegs = $state([]);
 	let editLoading = $state(false);
 
@@ -68,19 +67,6 @@
 
 	function removeEditLeg(i) {
 		editLegs = editLegs.filter((_, idx) => idx !== i);
-	}
-
-	function handleEditCoverImage(event) {
-		const file = event.target.files[0];
-		if (!file) return;
-		if (file.size > 2 * 1024 * 1024) {
-			error = 'Image must be under 2 MB';
-			event.target.value = '';
-			return;
-		}
-		const reader = new FileReader();
-		reader.onload = (e) => { editCoverImage = e.target.result; };
-		reader.readAsDataURL(file);
 	}
 
 	onMount(async () => {
@@ -115,7 +101,6 @@
 		editTitle = trip.title;
 		editDescription = trip.description || '';
 		editCurrency = trip.currency || 'CHF';
-		editCoverImage = trip.coverImage || '';
 		editLegs = (trip.legs ?? []).map((leg) => ({
 			destination: leg.destination,
 			startDate: String(leg.startDate).split('T')[0],
@@ -159,7 +144,7 @@
 					title: editTitle,
 					description: editDescription,
 					currency: editCurrency,
-					coverImage: editCoverImage,
+	
 					legs: editLegs
 				})
 			});
@@ -186,7 +171,6 @@
 					title: trip.title,
 					description: trip.description || '',
 					currency: newCurrency,
-					coverImage: trip.coverImage || '',
 					legs: trip.legs ?? []
 				})
 			});
@@ -376,29 +360,6 @@
 							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
 						></textarea>
 					</div>
-					<div class="mb-4">
-						<label for="edit-cover" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Cover Image <span class="text-gray-400 font-normal">(optional)</span></label>
-						{#if editCoverImage}
-							<div class="relative mb-2">
-								<img src={editCoverImage} alt="Current cover" class="h-28 w-full object-cover rounded-lg" />
-								<button
-									type="button"
-									onclick={() => (editCoverImage = '')}
-									class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
-								>
-									Remove
-								</button>
-							</div>
-						{/if}
-						<input
-							type="file"
-							id="edit-cover"
-							accept="image/*"
-							onchange={handleEditCoverImage}
-							class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm text-gray-600 dark:text-gray-300 dark:bg-gray-700 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-						/>
-					</div>
-
 					<div class="flex gap-2">
 						<button
 							type="submit"

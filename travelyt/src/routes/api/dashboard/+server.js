@@ -89,7 +89,7 @@ export async function GET({ cookies }) {
 					destination: t.destination,
 					startDate: t.startDate,
 					endDate: t.endDate,
-					coverImage: t.coverImage || '',
+
 					currency: t.currency || 'CHF',
 					legs: t.legs ?? [],
 					members

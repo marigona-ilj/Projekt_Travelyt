@@ -183,14 +183,10 @@
 							<div class="relative h-60 overflow-hidden">
 								{#key carouselIndex}
 									<div class="absolute inset-0 carousel-slide-{slideDir}">
-										{#if currentTrip.coverImage}
-											<img src={currentTrip.coverImage} alt={currentTrip.title} class="w-full h-full object-cover" />
-										{:else}
-											<div class="w-full h-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700"></div>
-											<div class="absolute inset-0 flex items-center justify-center opacity-10">
-												<Plane size={120} class="text-white rotate-12" />
-											</div>
-										{/if}
+										<div class="w-full h-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700"></div>
+										<div class="absolute inset-0 flex items-center justify-center opacity-10">
+											<Plane size={120} class="text-white rotate-12" />
+										</div>
 										<div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div>
 									</div>
 								{/key}
