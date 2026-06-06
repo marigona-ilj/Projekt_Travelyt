@@ -5,6 +5,7 @@
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
 	import { Plane, Users, Receipt, CalendarDays, PackageCheck, Plus, X } from 'lucide-svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 
 	let trips = $state([]);
 	let loading = $state(true);
@@ -180,19 +181,16 @@
 
 <Header />
 
+<PageHeader title="My Trips" subtitle="Plan and manage your travel adventures">
+	<button
+		onclick={() => (showNewTripForm = !showNewTripForm)}
+		class="bg-white/15 hover:bg-white/25 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition border border-white/20"
+	>
+		+ New Trip
+	</button>
+</PageHeader>
+
 <main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
-	<div class="flex justify-between items-center mb-8">
-		<div>
-			<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100">My Trips</h1>
-			<p class="text-gray-600 dark:text-gray-300 mt-2">Plan and manage your travel adventures</p>
-		</div>
-		<button
-			onclick={() => (showNewTripForm = !showNewTripForm)}
-			class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition"
-		>
-			+ New Trip
-		</button>
-	</div>
 
 	{#if !showNewTripForm && trips.length > 0}
 		<div class="flex flex-col sm:flex-row gap-3 mb-6">
@@ -374,14 +372,14 @@
 					<button
 						type="submit"
 						disabled={formLoading}
-						class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg"
+						class="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition"
 					>
 						{formLoading ? 'Creating...' : 'Create Trip'}
 					</button>
 					<button
 						type="button"
 						onclick={() => { showNewTripForm = false; error = ''; }}
-						class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-lg"
+						class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 py-1.5 px-4 rounded-lg transition"
 					>
 						Cancel
 					</button>
@@ -414,7 +412,7 @@
 			</div>
 			<button
 				onclick={() => (showNewTripForm = true)}
-				class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-8 rounded-xl transition text-sm"
+				class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition"
 			>
 				Create your first trip
 			</button>

@@ -1,5 +1,6 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { onMount } from 'svelte';
 	import { Camera, Pencil, Check, X, KeyRound, Trash2, AlertTriangle, LogOut } from 'lucide-svelte';
 
@@ -215,10 +216,10 @@
 
 <Header />
 
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<PageHeader title="Profile" subtitle="Manage your account" />
+
+<div class="dark:bg-gray-900 min-h-screen">
 <main class="max-w-2xl mx-auto px-4 py-8">
-	<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">Profile</h1>
-	<p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Manage your account</p>
 
 	{#if loading}
 		<div class="flex justify-center py-16">

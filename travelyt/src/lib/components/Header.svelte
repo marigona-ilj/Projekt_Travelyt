@@ -11,6 +11,12 @@
 		{ href: '/settings', label: 'Settings' }
 	];
 
+	function isActive(link) {
+		const path = $page.url.pathname;
+		if (link.exact) return path === link.href;
+		return path === link.href || path.startsWith(link.href + '/');
+	}
+
 	let feedOpen = $state(false);
 	let tripId = $derived($page.params.tripId ?? null);
 	let entries = $state([]);
@@ -65,7 +71,7 @@
 	}
 </script>
 
-<header class="bg-white shadow-sm relative z-50 dark:!bg-gray-900 dark:border-b dark:border-gray-700">
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200 dark:!bg-gray-900 dark:border-gray-700">
 	<div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 		<a href="/" class="flex items-center gap-2 no-underline">
 			<div class="text-blue-600"><Plane size={28} /></div>
@@ -77,7 +83,7 @@
 				<a
 					href={link.href}
 					data-tour={link.href === '/' ? 'dashboard' : link.href === '/trips' ? 'trips' : link.href === '/calendar' ? 'calendar' : link.href === '/profile' ? 'profile' : link.href === '/settings' ? 'settings' : undefined}
-					class="px-4 py-2 rounded-lg font-semibold transition {link.exact ? $page.url.pathname === link.href : ($page.url.pathname === link.href || $page.url.pathname.startsWith(link.href + '/'))
+					class="px-4 py-2 rounded-lg font-semibold transition {isActive(link)
 						? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
 						: 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-700'}"
 				>

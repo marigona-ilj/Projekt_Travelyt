@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import Header from '$lib/components/Header.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { onMount } from 'svelte';
 	import { ChevronLeft, ChevronRight, MapPin, Plus, X } from 'lucide-svelte';
@@ -177,6 +178,7 @@
 </script>
 
 <Header />
+<PageHeader title="Calendar" subtitle="Your travel timeline" />
 
 <!-- New Trip Modal -->
 {#if showModal}

@@ -1,5 +1,6 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { onMount } from 'svelte';
 	import { Moon, Sun, Bell, Users, Receipt, Calendar, MessageSquare, Image, ShoppingBag } from 'lucide-svelte';
 
@@ -90,10 +91,10 @@
 
 <Header />
 
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<PageHeader title="Settings" subtitle="App preferences" />
+
+<div class="dark:bg-gray-900 min-h-screen">
 	<main class="max-w-2xl mx-auto px-4 py-8">
-		<h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">Settings</h1>
-		<p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">App preferences</p>
 
 		<!-- Appearance -->
 		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-4">

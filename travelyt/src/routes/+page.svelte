@@ -139,7 +139,7 @@
 	</div>
 </div>
 
-<main class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<main class="dark:bg-gray-900 min-h-screen">
 	<div class="max-w-6xl mx-auto px-4 py-6">
 		{#if dashLoading}
 			<div class="flex justify-center py-20">

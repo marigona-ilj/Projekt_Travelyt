@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Header from '$lib/components/Header.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import ActivityList from '$lib/components/ActivityList.svelte';
 	import ExpenseList from '$lib/components/ExpenseList.svelte';
 	import PackingList from '$lib/components/PackingList.svelte';
@@ -14,7 +15,7 @@
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
 	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map, Plus, X } from 'lucide-svelte';
+	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map, Plus, X, ChevronDown, Pencil, Trash2 } from 'lucide-svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let tripId = $state('');
@@ -197,6 +198,7 @@
 	}
 
 	let deleteTripDialogOpen = $state(false);
+	let tripMenuOpen = $state(false);
 
 	async function confirmDeleteTrip() {
 		deleteTripDialogOpen = false;
@@ -225,6 +227,56 @@
 	oncancel={() => (deleteTripDialogOpen = false)}
 />
 
+{#if trip}
+	<PageHeader title={trip.title} subtitle="{tripDestinationLabel} · {formatDate(trip.startDate)} – {formatDate(trip.endDate)}" description={trip.description}>
+		<div class="flex items-center gap-3">
+			<a href="/trips" class="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition">
+				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+				My Trips
+			</a>
+			<div class="relative">
+				<button
+					onclick={() => (tripMenuOpen = !tripMenuOpen)}
+					class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-sm font-semibold transition border border-white/20"
+				>
+					Options <ChevronDown size={14} />
+				</button>
+				{#if tripMenuOpen}
+					<div class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 py-1 overflow-hidden">
+						<a
+							href="/trips/{tripId}/print"
+							target="_blank"
+							onclick={() => (tripMenuOpen = false)}
+							class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+						>
+							<FileDown size={15} class="text-gray-400" /> Export PDF
+						</a>
+						{#if isOwner}
+							<button
+								onclick={() => { tripMenuOpen = false; openEditForm(); }}
+								class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+							>
+								<Pencil size={15} class="text-gray-400" /> Edit Trip
+							</button>
+							<div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+							<button
+								onclick={() => { tripMenuOpen = false; deleteTripDialogOpen = true; }}
+								class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+							>
+								<Trash2 size={15} /> Delete Trip
+							</button>
+						{/if}
+					</div>
+				{/if}
+			</div>
+		</div>
+	</PageHeader>
+{/if}
+
+{#if tripMenuOpen}
+	<div class="fixed inset-0 z-40" role="presentation" onclick={() => (tripMenuOpen = false)}></div>
+{/if}
+
 <main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	{#if error}
 		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">
@@ -238,54 +290,6 @@
 			<p class="text-gray-600 dark:text-gray-300">Loading trip...</p>
 		</div>
 	{:else if trip}
-		<div class="mb-8">
-			<a href="/trips" class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition mb-4">
-				<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-				My Trips
-			</a>
-			<div class="flex justify-between items-start mb-4">
-				<div>
-					<h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">{trip.title}</h1>
-					<p class="text-lg text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1"><MapPin size={18} /> {tripDestinationLabel}</p>
-					<p class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
-						<Calendar size={16} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)} ({daysBetween(
-							trip.startDate,
-							trip.endDate
-						)} days)
-					</p>
-				</div>
-			<div class="flex gap-2 flex-wrap">
-					<a
-						href="/trips/{tripId}/print"
-						target="_blank"
-						class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-lg text-sm"
-					>
-						<FileDown size={15} />
-						Export PDF
-					</a>
-					{#if isOwner}
-						<button
-							onclick={openEditForm}
-							class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-lg"
-						>
-							Edit Trip
-						</button>
-					{/if}
-					{#if isOwner}
-						<button
-							onclick={() => (deleteTripDialogOpen = true)}
-							class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
-						>
-							Delete Trip
-						</button>
-					{/if}
-				</div>
-			</div>
-
-			{#if trip.description}
-				<p class="text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">{trip.description}</p>
-			{/if}
-		</div>
 
 		<!-- Edit form -->
 		{#if showEditForm}
@@ -403,14 +407,14 @@
 						<button
 							type="submit"
 							disabled={editLoading}
-							class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg"
+							class="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition"
 						>
 							{editLoading ? 'Saving...' : 'Save Changes'}
 						</button>
 						<button
 							type="button"
 							onclick={() => { showEditForm = false; error = ''; }}
-							class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-lg"
+							class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 py-1.5 px-4 rounded-lg transition"
 						>
 							Cancel
 						</button>
@@ -421,30 +425,30 @@
 
 		<!-- Tabs -->
 		<div class="mb-6">
-			<div class="flex border-b border-gray-300 dark:border-gray-700 flex-wrap">
+			<div class="flex flex-wrap gap-1.5">
 				{#each ['activities', 'members', 'expenses', 'packing', 'checklist', 'weather', 'map', 'gallery'] as tab}
 					<button
 						onclick={() => (activeTab = tab)}
-						class="py-2 px-4 font-semibold {activeTab === tab
-							? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
-							: 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}"
+						class="flex items-center gap-1.5 py-2 px-4 rounded-xl text-sm font-semibold transition {activeTab === tab
+							? 'bg-blue-600 text-white shadow-sm'
+							: 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'}"
 					>
 						{#if tab === 'activities'}
-							<span class="flex items-center gap-1"><Target size={15} /> Activities</span>
+							<Target size={14} /> Activities
 						{:else if tab === 'packing'}
-							<span class="flex items-center gap-1"><Package size={15} /> Packing</span>
+							<Package size={14} /> Packing
 						{:else if tab === 'expenses'}
-							<span class="flex items-center gap-1"><Wallet size={15} /> Budget</span>
+							<Wallet size={14} /> Budget
 						{:else if tab === 'gallery'}
-							<span class="flex items-center gap-1"><Images size={15} /> Gallery</span>
+							<Images size={14} /> Gallery
 						{:else if tab === 'checklist'}
-							<span class="flex items-center gap-1"><ClipboardList size={15} /> Checklist</span>
+							<ClipboardList size={14} /> Checklist
 						{:else if tab === 'weather'}
-							<span class="flex items-center gap-1"><Cloud size={15} /> Weather</span>
+							<Cloud size={14} /> Weather
 						{:else if tab === 'map'}
-							<span class="flex items-center gap-1"><Map size={15} /> Map</span>
+							<Map size={14} /> Map
 						{:else}
-							<span class="flex items-center gap-1"><Users size={15} /> Members</span>
+							<Users size={14} /> Members
 						{/if}
 					</button>
 				{/each}
