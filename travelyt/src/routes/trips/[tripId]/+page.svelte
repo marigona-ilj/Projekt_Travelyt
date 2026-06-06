@@ -78,7 +78,11 @@
 		await fetchTrip();
 		const tabParam = $page.url.searchParams.get('tab');
 		const validTabs = ['activities', 'members', 'expenses', 'packing', 'checklist', 'weather', 'map', 'gallery'];
-		if (tabParam && validTabs.includes(tabParam)) activeTab = tabParam;
+		if (tabParam && validTabs.includes(tabParam)) {
+			activeTab = tabParam;
+		} else {
+			replaceState(`?tab=${activeTab}`, {});
+		}
 	});
 
 	async function fetchTrip() {
