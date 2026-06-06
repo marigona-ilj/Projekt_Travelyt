@@ -317,16 +317,18 @@
 								<h2 class="font-bold text-gray-800 dark:text-gray-100">Open Balances</h2>
 							</div>
 							{#if balances.length > 0}
-								<div class="flex gap-3">
+								<div class="flex gap-4">
 									{#if totalOwed > 0.005}
-										<span class="text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-lg">
-											+{totalOwed.toFixed(2)}
-										</span>
+										<div class="text-right">
+											<p class="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">You get back</p>
+											<p class="text-2xl font-bold text-green-600 dark:text-green-400">+{totalOwed.toFixed(2)}</p>
+										</div>
 									{/if}
 									{#if totalOwe > 0.005}
-										<span class="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2.5 py-1 rounded-lg">
-											−{totalOwe.toFixed(2)}
-										</span>
+										<div class="text-right">
+											<p class="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide">You owe</p>
+											<p class="text-2xl font-bold text-red-500 dark:text-red-400">−{totalOwe.toFixed(2)}</p>
+										</div>
 									{/if}
 								</div>
 							{/if}
