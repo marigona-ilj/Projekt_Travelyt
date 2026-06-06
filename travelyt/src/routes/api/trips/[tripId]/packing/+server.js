@@ -43,7 +43,7 @@ export async function GET({ params, cookies }) {
 				id: item._id.toString(),
 				item: item.item,
 				category: item.category,
-				packed: item.packed || false,
+				packed: item.packedBy ? item.packedBy.some((id) => id.toString() === userId) : false,
 				isPrivate: item.isPrivate || false,
 				createdBy: item.createdBy?.toString() || '',
 				createdAt: item.createdAt
@@ -87,7 +87,7 @@ export async function POST({ params, request, cookies }) {
 			tripId: new ObjectId(tripId),
 			item: itemData.item,
 			category: itemData.category,
-			packed: false,
+			packedBy: [],
 			isPrivate: itemData.isPrivate === true,
 			createdBy: new ObjectId(userId),
 			createdAt: new Date(),

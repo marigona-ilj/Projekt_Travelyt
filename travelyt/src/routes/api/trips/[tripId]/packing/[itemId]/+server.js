@@ -42,14 +42,22 @@ export async function PUT({ params, request, cookies }) {
 			}
 		}
 
-		const $set = { updatedAt: new Date() };
-		if (body.packed !== undefined) $set.packed = body.packed;
-		if (body.item !== undefined) $set.item = body.item;
-		if (body.category !== undefined) $set.category = body.category;
+		const setFields = { updatedAt: new Date() };
+		if (body.item !== undefined) setFields.item = body.item;
+		if (body.category !== undefined) setFields.category = body.category;
+
+		const updateDoc = { $set: setFields };
+		if (body.packed !== undefined) {
+			if (body.packed) {
+				updateDoc.$addToSet = { packedBy: new ObjectId(userId) };
+			} else {
+				updateDoc.$pull = { packedBy: new ObjectId(userId) };
+			}
+		}
 
 		const result = await packingItems.updateOne(
 			{ _id: new ObjectId(itemId), tripId: new ObjectId(tripId) },
-			{ $set }
+			updateDoc
 		);
 
 		if (result.matchedCount === 0) {
