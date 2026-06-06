@@ -1,7 +1,7 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
 	import { onMount } from 'svelte';
-	import { Camera, Pencil, Check, X, KeyRound, Trash2, AlertTriangle } from 'lucide-svelte';
+	import { Camera, Pencil, Check, X, KeyRound, Trash2, AlertTriangle, LogOut } from 'lucide-svelte';
 
 	let user = $state(null);
 	let loading = $state(true);
@@ -181,6 +181,11 @@
 		}
 	}
 
+	function logout() {
+		document.cookie = 'userId=; Max-Age=0; Path=/;';
+		window.location.href = '/auth';
+	}
+
 	async function deleteAccount() {
 		deleteError = '';
 		if (!deletePassword) {
@@ -352,6 +357,22 @@
 					{passwordSaving ? 'Saving...' : 'Update password'}
 				</button>
 			</form>
+		</div>
+
+		<!-- Logout -->
+		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-4">
+			<div class="flex items-center justify-between">
+				<div>
+					<p class="text-sm font-semibold text-gray-800 dark:text-gray-100">Sign out</p>
+					<p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">You will be redirected to the login page.</p>
+				</div>
+				<button
+					onclick={logout}
+					class="flex items-center gap-2 text-sm font-semibold text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg transition"
+				>
+					<LogOut size={15} /> Sign out
+				</button>
+			</div>
 		</div>
 
 		<!-- Danger Zone -->

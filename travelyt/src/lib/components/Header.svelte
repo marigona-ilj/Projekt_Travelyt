@@ -3,11 +3,6 @@
 	import { Plane, Bell } from 'lucide-svelte';
 	import ActivityFeed from '$lib/components/ActivityFeed.svelte';
 
-	async function logout() {
-		document.cookie = 'userId=; Max-Age=0; Path=/;';
-		window.location.href = '/auth';
-	}
-
 	const navLinks = [
 		{ href: '/', label: 'Dashboard', exact: true },
 		{ href: '/trips', label: 'My Trips' },
@@ -117,13 +112,6 @@
 				{/if}
 			</div>
 		</nav>
-
-		<button
-			onclick={logout}
-			class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition"
-		>
-			Logout
-		</button>
 	</div>
 </header>
 
