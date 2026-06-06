@@ -263,7 +263,7 @@
 									{item.text}
 								</span>
 								<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
-								<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+								<button onclick={() => deleteItem(item.id)} class="text-gray-400 hover:text-gray-600"><Trash2 size={14} /></button>
 							{/if}
 						</li>
 					{/each}
@@ -303,7 +303,7 @@
 									{item.text}
 								</span>
 								<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
-								<button onclick={() => deleteItem(item.id)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+								<button onclick={() => deleteItem(item.id)} class="text-gray-400 hover:text-gray-600"><Trash2 size={14} /></button>
 							{/if}
 						</li>
 					{/each}

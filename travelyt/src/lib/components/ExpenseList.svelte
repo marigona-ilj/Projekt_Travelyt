@@ -565,7 +565,7 @@
 							<div class="flex items-center gap-3">
 								<span class="font-semibold text-gray-800 dark:text-gray-100">{fmt(expense.amount)}</span>
 								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
-								<button onclick={() => requestDeleteExpense(expense)} class="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+								<button onclick={() => requestDeleteExpense(expense)} class="text-gray-400 hover:text-gray-600"><Trash2 size={14} /></button>
 							</div>
 						</div>
 					{/if}
