@@ -44,23 +44,25 @@
 			if (stored) lastSeenTime = stored;
 		} catch {}
 		fetchMessages();
-		const bg = setInterval(() => { if (!open) fetchMessages(); }, 8000);
-		return () => clearInterval(bg);
 	});
 
 	$effect(() => {
-		if (!open) return;
-		loading = true;
-		fetchMessages().then(() => {
-			loading = false;
-			markAsSeen();
-			scrollToBottom();
-		});
-		const interval = setInterval(async () => {
-			await fetchMessages();
-			markAsSeen();
-		}, 5000);
-		return () => clearInterval(interval);
+		if (open) {
+			loading = true;
+			fetchMessages().then(() => {
+				loading = false;
+				markAsSeen();
+				scrollToBottom();
+			});
+			const interval = setInterval(async () => {
+				await fetchMessages();
+				markAsSeen();
+			}, 5000);
+			return () => clearInterval(interval);
+		} else {
+			const interval = setInterval(fetchMessages, 8000);
+			return () => clearInterval(interval);
+		}
 	});
 
 	async function sendMessage(event) {
