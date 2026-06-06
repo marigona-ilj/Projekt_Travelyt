@@ -9,11 +9,11 @@
 	const currencies = ['CHF', 'EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'SEK', 'NOK', 'DKK'];
 
 	const categoryConfig = {
-		accommodation: { label: 'Accommodation', color: 'bg-blue-500' },
-		food:          { label: 'Food & Drink',   color: 'bg-orange-400' },
-		transport:     { label: 'Transport',       color: 'bg-purple-500' },
-		activities:    { label: 'Activities',      color: 'bg-green-500' },
-		other:         { label: 'Other',           color: 'bg-gray-400' }
+		accommodation: { label: 'Accommodation', color: 'bg-blue-500',   dot: 'bg-blue-500',   border: 'border-l-blue-500'   },
+		food:          { label: 'Food & Drink',   color: 'bg-orange-400', dot: 'bg-orange-400', border: 'border-l-orange-400' },
+		transport:     { label: 'Transport',       color: 'bg-purple-500', dot: 'bg-purple-500', border: 'border-l-purple-500' },
+		activities:    { label: 'Activities',      color: 'bg-green-500',  dot: 'bg-green-500',  border: 'border-l-green-500'  },
+		other:         { label: 'Other',           color: 'bg-gray-400',   dot: 'bg-gray-400',   border: 'border-l-gray-400'   }
 	};
 	const categoryKeys = Object.keys(categoryConfig);
 
@@ -464,7 +464,7 @@
 		<!-- Expense list -->
 		<div class="space-y-2 mb-8">
 			{#each expenses as expense}
-				<div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
+				<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 border-l-4 {categoryConfig[expense.category || 'other'].border} overflow-hidden">
 					{#if editingId === expense.id}
 						<form onsubmit={saveEditExpense}>
 							<div class="mb-2">
@@ -541,31 +541,28 @@
 							</div>
 						</form>
 					{:else}
-						<div class="flex justify-between items-center">
-							<div>
-								<div class="flex items-center gap-2 mb-0.5">
-									<p class="font-semibold text-gray-800 dark:text-gray-100">{expense.description}</p>
-									<span class="text-xs px-1.5 py-0.5 rounded-full text-white {categoryConfig[expense.category || 'other'].color}">
-										{categoryConfig[expense.category || 'other'].label}
-									</span>
+						<div class="flex items-center gap-3 px-4 py-3">
+							<!-- Info -->
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2">
+									<p class="font-semibold text-gray-800 dark:text-gray-100 truncate">{expense.description}</p>
+									<span class="text-xs px-2 py-0.5 rounded-full text-white shrink-0 {categoryConfig[expense.category || 'other'].color}">{categoryConfig[expense.category || 'other'].label}</span>
 								</div>
-								<p class="text-xs text-gray-500 dark:text-gray-400">
+								<p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
 									{new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-									· paid by <span class="font-medium text-gray-700 dark:text-gray-200">
-										{memberMap[expense.paidBy] ?? 'Unknown'}
-										{expense.paidBy === currentUserId ? ' (you)' : ''}
-									</span>
+									· paid by <span class="font-semibold text-gray-700 dark:text-gray-200">{memberMap[expense.paidBy] ?? 'Unknown'}{expense.paidBy === currentUserId ? ' (you)' : ''}</span>
 								</p>
 								{#if expense.participants?.length > 0 && expense.participants.length < members.length}
-									<p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-										Split with: {expense.participants.map((uid) => memberMap[uid] ?? 'Unknown').join(', ')}
+									<p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
+										Split with: <span class="font-semibold text-gray-700 dark:text-gray-200">{expense.participants.map((uid) => memberMap[uid] ?? 'Unknown').join(', ')}</span>
 									</p>
 								{/if}
 							</div>
-							<div class="flex items-center gap-3">
-								<span class="font-semibold text-gray-800 dark:text-gray-100">{fmt(expense.amount)}</span>
-								<button onclick={() => startEditExpense(expense)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
-								<button onclick={() => requestDeleteExpense(expense)} class="text-gray-400 hover:text-gray-600"><Trash2 size={14} /></button>
+							<!-- Amount + actions -->
+							<div class="flex items-center gap-2 shrink-0">
+								<span class="text-base font-bold text-gray-800 dark:text-gray-100">{fmt(expense.amount)}</span>
+								<button onclick={() => startEditExpense(expense)} class="text-gray-300 hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400 transition"><Pencil size={14} /></button>
+								<button onclick={() => requestDeleteExpense(expense)} class="text-gray-300 hover:text-gray-500 dark:text-gray-600 dark:hover:text-gray-400 transition"><Trash2 size={14} /></button>
 							</div>
 						</div>
 					{/if}
@@ -594,54 +591,83 @@
 
 		<!-- Group settlement (only for group trips) -->
 		{#if settlement}
-			<div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-				<!-- Who paid what -->
-				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2"><Wallet size={18} /> Who paid what</h3>
-				<div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden mb-6">
-					<table class="w-full text-sm">
-						<thead>
-							<tr class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs uppercase">
-								<th class="text-left px-4 py-2">Member</th>
-								<th class="text-right px-4 py-2">Paid</th>
-								<th class="text-right px-4 py-2">Owes</th>
-								<th class="text-right px-4 py-2">Balance</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each settlement.balances as row}
-								<tr class="border-t border-gray-200 dark:border-gray-700">
-									<td class="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">
-										{row.name}{row.userId === currentUserId ? ' (you)' : ''}
-									</td>
-									<td class="px-4 py-2 text-right text-gray-700 dark:text-gray-200">{fmt(row.paid)}</td>
-									<td class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">{fmt(row.owes)}</td>
-									<td class="px-4 py-2 text-right font-semibold {row.balance > 0 ? 'text-green-600' : row.balance < 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'}">
-										{row.balance > 0 ? '+' : ''}{fmt(row.balance)}
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
+			<div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-8">
 
-				<!-- Settlements -->
-				<h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2"><ArrowRightLeft size={18} /> Who owes whom</h3>
-				{#if settlement.settlements.length === 0}
-					<p class="text-green-600 text-sm font-medium">Everyone is even — nothing to settle!</p>
-				{:else}
-					<div class="space-y-2">
-						{#each settlement.settlements as s}
-							<div class="flex items-center justify-between bg-amber-50 border border-amber-100 rounded-lg px-4 py-3">
-								<span class="text-gray-800 text-sm">
-									<span class="font-semibold">{s.from}</span>
-									<span class="text-gray-500 mx-2">pays</span>
-									<span class="font-semibold">{s.to}</span>
+				<!-- Who paid what -->
+				<div>
+					<div class="flex items-center gap-2 mb-4">
+						<div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+							<Wallet size={14} class="text-blue-600 dark:text-blue-400" />
+						</div>
+						<h3 class="text-base font-bold text-gray-800 dark:text-gray-100">Who paid what</h3>
+					</div>
+					<div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+						{#each settlement.balances as row, i}
+							<div class="flex items-center gap-4 px-4 py-3.5 {i % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50/60 dark:bg-gray-800/60'}">
+								<div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+									{row.name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}
+								</div>
+								<div class="flex-1 min-w-0">
+									<p class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+										{row.name}{row.userId === currentUserId ? ' (you)' : ''}
+									</p>
+									<div class="flex items-center gap-3 mt-1">
+										<span class="text-sm text-gray-600 dark:text-gray-300">Paid <span class="font-bold text-gray-900 dark:text-white">{fmt(row.paid)}</span></span>
+										<span class="text-gray-300 dark:text-gray-600">·</span>
+										<span class="text-sm text-gray-600 dark:text-gray-300">Share <span class="font-bold text-gray-900 dark:text-white">{fmt(row.owes)}</span></span>
+									</div>
+								</div>
+								<span class="inline-block text-sm font-bold px-3 py-1 rounded-lg shrink-0 {row.balance > 0.01 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : row.balance < -0.01 ? 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'}">
+									{row.balance > 0 ? '+' : ''}{fmt(row.balance)}
 								</span>
-								<span class="font-bold text-amber-700">{fmt(s.amount)}</span>
 							</div>
 						{/each}
 					</div>
-				{/if}
+				</div>
+
+				<!-- Who owes whom -->
+				<div>
+					<div class="flex items-center gap-2 mb-4">
+						<div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+							<ArrowRightLeft size={14} class="text-blue-600 dark:text-blue-400" />
+						</div>
+						<h3 class="text-base font-bold text-gray-800 dark:text-gray-100">Who owes whom</h3>
+					</div>
+					{#if settlement.settlements.length === 0}
+						<div class="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl px-4 py-4">
+							<div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center shrink-0">
+								<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-green-600 dark:text-green-400"><polyline points="20 6 9 17 4 12"/></svg>
+							</div>
+							<div>
+								<p class="text-sm font-semibold text-green-700 dark:text-green-400">All settled up!</p>
+								<p class="text-xs text-green-600/70 dark:text-green-500">Everyone is even — nothing to pay.</p>
+							</div>
+						</div>
+					{:else}
+						<div class="space-y-2">
+							{#each settlement.settlements as s}
+								<div class="flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5">
+									<div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 text-xs font-bold shrink-0">
+										{s.from.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}
+									</div>
+									<div class="flex-1 min-w-0">
+										<p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">pays</p>
+										<div class="flex items-center gap-2">
+											<span class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{s.from}</span>
+											<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400 shrink-0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+											<span class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{s.to}</span>
+										</div>
+									</div>
+									<div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 text-xs font-bold shrink-0">
+										{s.to.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}
+									</div>
+									<span class="text-sm font-bold text-blue-600 dark:text-blue-400 ml-2 shrink-0">{fmt(s.amount)}</span>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
+
 			</div>
 		{/if}
 	{/if}
