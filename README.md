@@ -24,7 +24,7 @@
 ## 1. Ausgangslage
 Gruppenreisen werden heute oft über mehrere Tools gleichzeitig koordiniert — WhatsApp für Absprachen, Excel für Kosten, Notizen für Packlisten. Das führt zu Unübersichtlichkeit, vergessenen Aufgaben und Mehraufwand. Travelyt löst dieses Problem mit einer zentralen Web-App, die alle Planungsbereiche einer Gruppenreise an einem Ort bündelt. Die Lösung richtet sich an Reisegruppen (Freunde, Paare, Familien), die Aktivitäten, Ausgaben und Packlisten gemeinsam koordinieren wollen.
 
-- **Problem:** Gruppenreisen erfordern die Abstimmung vieler Beteiligter über Aktivitäten, Ausgaben, Packlisten und Kommunikation — heute auf mehrere Apps und Chats verteilt, was zu Informationsverlust und Koordinationsaufwand führt.
+- **Problem:** Gruppenreisen erfordern die Abstimmung vieler Beteiligter über Aktivitäten, Ausgaben, Packlisten und Kommunikation. Diese sind heute auf mehrere Apps und Chats verteilt, was zu Informationsverlust und Koordinationsaufwand führt.
 
 - **Ziele:** Entwicklung eines funktionalen Web-Prototyps, mit dem Gruppenreisen strukturiert geplant und verwaltet werden können. Mehrere Personen sollen denselben Trip gemeinsam einsehen und bearbeiten können — von der Aktivitätsplanung über die Kostenteilung bis zur Packliste.
 
@@ -32,21 +32,24 @@ Gruppenreisen werden heute oft über mehrere Tools gleichzeitig koordiniert — 
 
 
 ## 2. Lösungsidee
+Beschreibt die Lösungsidee.
+
 Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lösungsidee besteht darin, alle relevanten Planungsbereiche – von der Reiseübersicht über Aktivitäten, Packliste und Budget bis hin zu Karte, Wetter, Galerie und Gruppen-Chat – in einer einzigen Anwendung zu bündeln. Dadurch sollen Reisende nicht mehr zwischen mehreren Tools, Chats oder Dokumenten wechseln müssen. Im Zentrum steht die kollaborative Nutzung: Mehrere Personen können denselben Trip gemeinsam einsehen und bearbeiten.
 
 - **Kernfunktionalität:**  Die zentrale Funktion ist das Erstellen und Verwalten von Trips. User können einen neuen Trip mit Titel, Reiseziel und Zeitraum anlegen. Trips mit mehreren Zwischenstopps werden durch eine Multi-Destination-Funktion unterstützt: Jede Station erhält ein eigenes Ziel und einen eigenen Zeitraum. Trips können über einen Einladungslink mit Mitreisenden geteilt werden, sodass alle Beteiligten Zugriff auf dieselben Informationen haben.
 
-  Innerhalb eines Trips können Aktivitäten geplant und verwaltet werden – zum Beispiel Ausflüge, Restaurantbesuche oder Sehenswürdigkeiten. Jede Aktivität kann mit Titel, Datum, Uhrzeit, Ort, Kategorie und Beschreibung ergänzt werden.
+  Innerhalb eines Trips können Aktivitäten geplant und verwaltet werden, wie zum Beispiel Ausflüge, Restaurantbesuche oder Sehenswürdigkeiten. Jede Aktivität kann mit Titel, Datum, Uhrzeit, Ort, Kategorie und Beschreibung ergänzt werden.
 
-  Die Packlisten-Funktion ermöglicht es, Einträge zu erfassen, abzuhaken und nach Kategorien zu organisieren. Es gibt zwei Arten von Listen: eine **geteilte Packliste**, die für alle Mitreisenden sichtbar ist und Gegenstände enthält, die jede Person individuell mitbringen muss (z. B. Kleider, Schuhe, Sonnenbrille). Jeder kann Einträge hinzufügen und alle profitieren davon – so muss niemand eine Packliste von Grund auf selbst erstellen. Jede Person hakt ihre eigenen Einträge für sich ab. Daneben gibt es eine **private Packliste**, die nur für die jeweilige Person sichtbar ist und persönliche Gegenstände enthält, die niemand sonst sehen soll.
+  Die Packlisten-Funktion ermöglicht es, Einträge zu erfassen, abzuhaken und nach Kategorien zu organisieren. Es gibt zwei Arten von Listen: eine **geteilte Packliste**, die für alle Mitreisenden sichtbar ist und Gegenstände enthält, die jede Person individuell mitbringen muss (z. B. Kleider, Schuhe, Sonnenbrille). Jeder kann Einträge hinzufügen und alle profitieren davon, so muss niemand eine Packliste von Grund auf selbst erstellen. Jede Person hakt ihre eigenen Einträge für sich ab. Daneben gibt es eine **private Packliste**, die nur für die jeweilige Person sichtbar ist und persönliche Gegenstände enthält, die niemand sonst sehen soll.
 
-  Die Budget-Funktion erlaubt das Erfassen von Ausgaben mit Betrag, Kategorie und Beschreibung. Bei jeder Ausgabe kann festgelegt werden, auf welche Personen die Kosten aufgeteilt werden – es müssen nicht zwingend alle Mitreisenden beteiligt sein. Die App berechnet automatisch, wer wem wie viel schuldet, und zeigt offene Salden übersichtlich an.
+  Die Budget-Funktion erlaubt das Erfassen von Ausgaben mit Betrag, Kategorie und Beschreibung. Bei jeder Ausgabe kann festgelegt werden, auf welche Personen die Kosten aufgeteilt werden, wobei nicht zwingend alle Mitreisenden beteiligt sein müssen. Die App berechnet automatisch, wer wem wie viel schuldet, und zeigt offene Salden übersichtlich an.
 
   Ergänzend stehen folgende Funktionen zur Verfügung: eine **Galerie** für gemeinsame Reisefotos, ein **Gruppen-Chat** für Absprachen innerhalb des Trips, eine **Checkliste** für reisebezogene Aufgaben, eine **Wettervorschau** pro Reiseziel sowie eine interaktive **Karte**, die Aktivitäten und Reisestationen visualisiert. Alle Trips sind ausserdem in einer **Kalenderansicht** dargestellt.
 
 - **Abgrenzung:** Die gezielte Unterstützung von Solo-Reisen gehört nicht zum aktuellen Umfang des Prototyps. Solo-Nutzung ist zwar möglich, jedoch ist die Benutzeroberfläche (z. B. Ausgaben-Splitting, Mitglieder-Verwaltung, Gruppen-Chat) auf gemeinsame Reisen ausgerichtet. Eine UI-Anpassung für Solo-Reisende ist als zukünftige Erweiterung geplant. Der Prototyp wurde zudem ausschliesslich als Desktop-Web-App entwickelt und ist nicht für mobile Geräte optimiert. Eine native Mobile App ist für einen späteren Entwicklungsschritt vorgesehen.
 
 ## 3. Vorgehen & Artefakte
+Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergebnisse je Phase.
 
 ### 3.1 Understand & Define
 - **Zielgruppenverständnis:** Im Rahmen einer informellen Zielgruppenanalyse wurden drei typische Usergruppen identifiziert, für die gemeinsame Reiseplanung besonders relevant ist:
@@ -56,7 +59,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 
 - **Wesentliche Erkenntnisse:**
   - Reisende nutzen heute mehrere Tools parallel (WhatsApp, Notes, Excel, Splitwise), was zu Informationsverlust und Mehraufwand führt
-  - Es gibt viele Reise-Apps, aber kaum eine, die Aktivitäten, Ausgaben, Packliste, Kommunikation und Karte in einem vereint – User müssen zwischen mehreren Apps wechseln
+  - Es gibt viele Reise-Apps, aber kaum eine, die Aktivitäten, Ausgaben, Packliste, Kommunikation und Karte in einem vereint, sodass User zwischen mehreren Apps wechseln müssen
   - Apps wie Splitwise lösen das Ausgabenproblem, haben aber keinen Reisekontext; Google Maps und Kalender-Apps fehlt die kollaborative Planungsebene
   - Bei Gruppenreisen ist die Kostenteilung ein zentrales Frustrationspotenzial
   - Packlisten werden oft mündlich oder in Chat-Gruppen koordiniert und häufig vergessen
@@ -79,8 +82,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 - **Gewählte Variante & Begründung:** Gewählt wurde ein **card- und tab-basiertes Layout** mit einer persistenten Kopfnavigation. Die Trip-Detailseite ist in acht Tabs unterteilt (Itinerary, Packing, Budget, Gallery, Checklist, Members, Weather, Map), um die vielen Funktionsbereiche übersichtlich zu strukturieren, ohne die Usern zu überfordern. Diese Variante wurde gegenüber einer rein listen- oder scroll-basierten Ansicht bevorzugt, da Tabs einen schnellen Kontextwechsel ermöglichen und der Umfang der Funktionen eine klare Trennung erfordert. Das Dashboard bietet eine kompakte Übersicht über den nächsten Trip, offene Salden und den Activity Feed, damit User sofort den relevantesten Inhalt sehen.
 
 - **End-to-End-Ablauf:** Ein typischer Nutzungsfluss sieht wie folgt aus:
-  1. **Registrierung/Login** – Userin erstellt einen Account oder meldet sich an
-  1. **Registrierung / Login** – Userin erstellt einen Account oder meldet sich an
+  1. **Registrierung / Login** – User erstellt einen Account oder meldet sich an
   2. **Trip erstellen** – Titel, Reiseziel(e) und Zeitraum werden erfasst; bei Mehrfachzielen können mehrere Stationen hinzugefügt werden
   3. **Mitglieder einladen** – ein Einladungslink wird generiert und geteilt; Mitreisende treten dem Trip über den Link bei
   4. **Aktivitäten planen** – alle Mitglieder können Aktivitäten mit Datum, Uhrzeit, Ort, Kategorie und Beschreibung erfassen
@@ -89,9 +91,11 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
   7. **Während der Reise** – Fotos in die Galerie hochladen, im Gruppen-Chat kommunizieren, Checkliste abhaken
   8. **Abschluss** – offene Salden einsehen und Schulden begleichen
 
-- **Mockup:** Das Wireframe wurde in Figma erstellt, mit Figma Make als Inspirationsquelle für Layoutideen: [Travelyt – Figma Wireframe](https://www.figma.com/proto/eGOPITLXT65c9L0HnifHD1/Travelyt-Prototype?node-id=2-5&starting-point-node-id=3%3A85&t=yd1KnFcDivep3yxE-1)
+- **Mockup:** Das Wireframe wurde eigenständig in Figma erstellt: [Travelyt – Figma Wireframe](https://www.figma.com/proto/eGOPITLXT65c9L0HnifHD1/Travelyt-Prototype?node-id=2-5&starting-point-node-id=3%3A85&t=yd1KnFcDivep3yxE-1)
 
-  Das Wireframe zeigt die grundlegende Layoutstruktur mit Tab-Navigation auf der Trip-Detailseite und dem Dashboard-Aufbau. Einzelne Details (z. B. zusätzliche Tabs, Farbgebung, Formularfelder) haben sich im Verlauf der Umsetzung weiterentwickelt und weichen vom ursprünglichen Wireframe ab.
+  Figma Make diente dabei als Inspirationsquelle für einzelne Layoutideen. Das Wireframe zeigt die grundlegende Layoutstruktur mit Tab-Navigation auf der Trip-Detailseite und dem Dashboard-Aufbau. Einzelne Details (z. B. zusätzliche Tabs, Farbgebung, Formularfelder) haben sich im Verlauf der Umsetzung weiterentwickelt und weichen vom ursprünglichen Wireframe ab.
+
+  > Die folgenden Screenshots stammen aus **Figma Make** und dienten als Inspiration — es handelt sich nicht um die eigenständig erstellten Wireframes (siehe Link oben).
 
   **My Trips – Übersicht**
   ![Wireframe My Trips](doc/figma_mytrips.png)
@@ -108,6 +112,8 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 ### 3.4 Prototype
 
 #### 3.4.1. Entwurf (Design)
+Beschreibt die Gestaltung und Interaktion.
+> **Hinweis:** Hier wird der **Prototyp** beschrieben, nicht das **Mockup**.
 - **Informationsarchitektur:** Die App ist in drei Hauptbereiche gegliedert, die über eine persistente Kopfnavigation erreichbar sind:
   - **Dashboard** – Übersicht mit dem nächsten Trip, offenen Salden und dem Activity Feed
   - **My Trips** – Listenansicht aller eigenen Trips; Erstellen neuer Trips; Detail-Ansicht mit acht Tabs (Activities, Packing, Budget, Gallery, Checklist, Members, Weather, Map)
@@ -223,6 +229,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
   - **Onboarding-Tour** beim ersten Login, die interaktiv durch die wichtigsten Navigationspunkte führt
 
 #### 3.4.2. Umsetzung (Technik)
+Fasst die technische Realisierung zusammen.
 - **Technologie-Stack:**
   - **Framework:** SvelteKit 5 mit Svelte 5 Runes (`$state`, `$derived`, `$props`, `$effect`)
   - **Sprache:** JavaScript (kein TypeScript)
@@ -272,7 +279,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
   - **Bilder** (Profilfotos, Galerie) werden als Base64-Strings direkt in MongoDB gespeichert (Prototyp-Entscheidung; für Produktion wäre Cloudinary o. Ä. sinnvoll)
   - **Echtzeit:** Kein WebSocket; Updates erfolgen per Polling: Activity Feed alle 12 Sekunden, Chat alle 5 Sekunden (wenn geöffnet) bzw. alle 8 Sekunden (wenn geschlossen)
 
-- **Deployment:** https://travelyt-v2.netlify.app/
+- **Deployment:** _[URL folgt]_
 
 - **Besondere Entscheidungen:**
   - **Base64-Bildspeicherung in MongoDB:** Für den Prototyp wurde auf einen externen Bildhosting-Dienst verzichtet. Bilder werden direkt als Base64 in der Datenbank gespeichert. Dies vereinfacht die Umsetzung, ist aber für den Produktiveinsatz nicht skalierbar.
@@ -348,6 +355,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 
 ## 4. Erweiterungen [Optional]
 Dokumentiert Erweiterungen über den Mindestumfang hinaus.
+> **Hinweis:** Jede Erweiterung ist separat nach dem folgenden Schema zu beschreiben.
 
 ### 4.1 Login & Registrierung (Authentifizierung)
 - **Beschreibung & Nutzen:** User können sich mit E-Mail und Passwort registrieren und anmelden. Passwörter werden sicher mit bcryptjs gehasht gespeichert. Nach erfolgreichem Login wird ein `userId`-Cookie gesetzt, das bei jeder API-Anfrage serverseitig geprüft wird. Ohne gültige Session ist kein Zugriff auf Trips oder Daten möglich.
@@ -554,6 +562,7 @@ Dokumentiert Erweiterungen über den Mindestumfang hinaus.
 - **Commit-Praxis:** Zu Beginn des Projekts wurden Commits ohne festes Schema gemacht. Nach der Einführung von GitHub Issues im Unterricht wurde die Arbeitsweise angepasst: Ab diesem Zeitpunkt schliesst jeder Commit genau ein GitHub Issue (`Closes #XX`), sodass jede Änderung direkt einer definierten Aufgabe zugeordnet ist. Insgesamt wurden rund 105 Commits gemacht.
 
 ## 6. KI-Deklaration
+Die folgende Deklaration ist verpflichtend und beschreibt den Einsatz von KI im Projekt.
 
 ### 6.1 KI-Tools
 - **Eingesetzte Tools:**
@@ -584,6 +593,6 @@ Die Zusammenarbeit mit Claude Code erfolgte iterativ und kontextbezogen. Claude 
 
 **Risiken & Qualitätssicherung:** Das grösste Risiko bestand darin, generierten Code unkritisch zu übernehmen. Als Gegenmassnahme wurden alle Änderungen im Browser manuell getestet und bei Unklarheiten gezielt nachgebessert. Die Verantwortung für die finale Qualität und Korrektheit des Codes lag stets bei der Entwicklerin.
 
-## 7. Anhang
+## 7. Anhang [Optional]
 - **Quellen:** Zwei Testbilder für die Galerie-Funktion stammen von [Pixabay](https://pixabay.com) (Lizenz: Pixabay Content License, kostenlos für private und kommerzielle Nutzung, keine Namensnennung erforderlich).  
 
