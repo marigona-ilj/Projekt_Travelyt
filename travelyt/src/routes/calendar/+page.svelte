@@ -10,6 +10,10 @@
 	let loading = $state(true);
 	let viewYear = $state(new Date().getFullYear());
 	let viewMonth = $state(new Date().getMonth()); // 0-indexed
+	let showMonthPicker = $state(false);
+	let showYearPicker = $state(false);
+	const currentYear = new Date().getFullYear();
+	const yearRange = Array.from({ length: 12 }, (_, i) => currentYear - 3 + i);
 
 	let upcomingCount = $derived(trips.filter(t => {
 		const legs = t.legs ?? [];
@@ -320,6 +324,10 @@
 	</div>
 {/if}
 
+{#if showMonthPicker || showYearPicker}
+	<div class="fixed inset-0 z-20" role="presentation" onclick={() => { showMonthPicker = false; showYearPicker = false; }}></div>
+{/if}
+
 <main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	<!-- Page title + navigation -->
 	<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -332,9 +340,53 @@
 			>
 				<ChevronLeft size={20} />
 			</button>
-			<span class="font-semibold text-gray-800 dark:text-gray-100 min-w-[170px] text-center text-base select-none">
-				{MONTHS[viewMonth]} {viewYear}
-			</span>
+
+			<!-- Month picker -->
+			<div class="relative">
+				<button
+					onclick={() => { showMonthPicker = !showMonthPicker; showYearPicker = false; }}
+					class="font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-base"
+				>
+					{MONTHS[viewMonth]}
+				</button>
+				{#if showMonthPicker}
+					<div class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 p-2 w-52">
+						<div class="grid grid-cols-3 gap-1">
+							{#each MONTHS as m, i}
+								<button
+									onclick={() => { viewMonth = i; showMonthPicker = false; }}
+									class="px-1 py-2 text-sm rounded-lg text-center transition font-medium {i === viewMonth ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+								>
+									{m.slice(0, 3)}
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/if}
+			</div>
+
+			<!-- Year picker -->
+			<div class="relative">
+				<button
+					onclick={() => { showYearPicker = !showYearPicker; showMonthPicker = false; }}
+					class="font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-base"
+				>
+					{viewYear}
+				</button>
+				{#if showYearPicker}
+					<div class="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 p-2 w-28 max-h-52 overflow-y-auto">
+						{#each yearRange as y}
+							<button
+								onclick={() => { viewYear = y; showYearPicker = false; }}
+								class="w-full px-3 py-1.5 text-sm rounded-lg text-center transition font-medium {y === viewYear ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+							>
+								{y}
+							</button>
+						{/each}
+					</div>
+				{/if}
+			</div>
+
 			<button
 				onclick={nextMonth}
 				class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
