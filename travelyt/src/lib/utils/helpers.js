@@ -6,7 +6,7 @@
 export function formatDate(date) {
 	const d = new Date(date);
 	const options = { year: 'numeric', month: 'short', day: 'numeric' };
-	return d.toLocaleDateString('en-US', options);
+	return d.toLocaleDateString('en-GB', options);
 }
 
 /**
@@ -17,7 +17,7 @@ export function formatDate(date) {
 export function formatDateTime(date) {
 	const d = new Date(date);
 	const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-	return d.toLocaleDateString('en-US', options);
+	return d.toLocaleDateString('en-GB', options);
 }
 
 /**
@@ -40,7 +40,7 @@ export function daysBetween(startDate, endDate) {
  * @returns {string}
  */
 export function formatCurrency(amount, currency = 'USD') {
-	return new Intl.NumberFormat('en-US', {
+	return new Intl.NumberFormat('en-GB', {
 		style: 'currency',
 		currency
 	}).format(amount);

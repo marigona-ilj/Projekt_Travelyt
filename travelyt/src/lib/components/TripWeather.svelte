@@ -42,13 +42,13 @@
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		if (d.getTime() === today.getTime()) return 'Today';
 		if (d.getTime() === tomorrow.getTime()) return 'Tomorrow';
-		return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+		return d.toLocaleDateString('en-GB', { weekday: 'short', month: 'short', day: 'numeric' });
 	}
 
 	function formatLegDateRange(leg) {
 		const opts = { month: 'short', day: 'numeric' };
-		const s = parseLocalDate(leg.startDate).toLocaleDateString('en-US', opts);
-		const e = parseLocalDate(leg.endDate).toLocaleDateString('en-US', opts);
+		const s = parseLocalDate(leg.startDate).toLocaleDateString('en-GB', opts);
+		const e = parseLocalDate(leg.endDate).toLocaleDateString('en-GB', opts);
 		return `${s} – ${e}`;
 	}
 
@@ -105,7 +105,7 @@
 				fetchStart = toDateString(tripStart < today ? today : tripStart);
 				fetchEnd = toDateString(forecastLimit);
 				useArchive = false;
-				partialNote = `Showing forecast up to ${forecastLimit.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}. Check back for remaining days.`;
+				partialNote = `Showing forecast up to ${forecastLimit.toLocaleDateString('en-GB', { month: 'long', day: 'numeric' })}. Check back for remaining days.`;
 			} else {
 				mode = 'forecast';
 				fetchStart = toDateString(tripStart < today ? today : tripStart);

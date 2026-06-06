@@ -35,7 +35,7 @@
 
 	function formatDate(str) {
 		const [y, m, d] = String(str).split('T')[0].split('-').map(Number);
-		return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+		return new Date(y, m - 1, d).toLocaleDateString('en-GB', {
 			weekday: 'short', month: 'short', day: 'numeric'
 		});
 	}
@@ -122,8 +122,8 @@
 					<div style="width:11px;height:11px;background:#1d4ed8;border-radius:50%;box-shadow:0 0 0 3px white,0 2px 8px rgba(0,0,0,0.25)"></div>
 				`;
 
-				const start = parseLocalDate(leg.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-				const end = parseLocalDate(leg.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+				const start = parseLocalDate(leg.startDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+				const end = parseLocalDate(leg.endDate).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
 
 				new maplibregl.Marker({ element: el, anchor: 'bottom' })
 					.setLngLat(coords)
