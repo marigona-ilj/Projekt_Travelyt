@@ -66,22 +66,35 @@ export async function GET({ cookies }) {
 			}))
 			.sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
 
-		// Members of the next trip
-		let nextTripMembers = [];
-		if (nextTrip) {
-			const memberRows = await tripMembers
-				.find({ tripId: nextTrip._id })
-				.toArray();
-			const memberUserIds = memberRows.map((m) => m.userId);
-			const memberUsers = await usersCol
-				.find({ _id: { $in: memberUserIds } })
-				.toArray();
+		// All upcoming/ongoing trips for carousel (endDate >= today)
+		const carouselTrips = userTrips
+			.filter((t) => new Date(t.endDate) >= now)
+			.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+		let upcomingTripsData = [];
+		if (carouselTrips.length > 0) {
+			const carouselIds = carouselTrips.map((t) => t._id);
+			const allCarouselMembers = await tripMembers.find({ tripId: { $in: carouselIds } }).toArray();
+			const allMemberUserIds = [...new Set(allCarouselMembers.map((m) => m.userId.toString()))].map((id) => new ObjectId(id));
+			const memberUsers = await usersCol.find({ _id: { $in: allMemberUserIds } }).toArray();
 			const userMap = Object.fromEntries(memberUsers.map((u) => [u._id.toString(), u.name]));
-			nextTripMembers = memberRows.map((m) => ({
-				userId: m.userId.toString(),
-				name: userMap[m.userId.toString()] || 'Unknown',
-				role: m.role
-			}));
+
+			upcomingTripsData = carouselTrips.map((t) => {
+				const members = allCarouselMembers
+					.filter((m) => m.tripId.toString() === t._id.toString())
+					.map((m) => ({ userId: m.userId.toString(), name: userMap[m.userId.toString()] || 'Unknown', role: m.role }));
+				return {
+					id: t._id.toString(),
+					title: t.title,
+					destination: t.destination,
+					startDate: t.startDate,
+					endDate: t.endDate,
+					coverImage: t.coverImage || '',
+					currency: t.currency || 'CHF',
+					legs: t.legs ?? [],
+					members
+				};
+			});
 		}
 
 		// Travel stats
@@ -130,18 +143,7 @@ export async function GET({ cookies }) {
 			success: true,
 			userName,
 			stats,
-			nextTrip: nextTrip
-				? {
-						id: nextTrip._id.toString(),
-						title: nextTrip.title,
-						destination: nextTrip.destination,
-						startDate: nextTrip.startDate,
-						endDate: nextTrip.endDate,
-						coverImage: nextTrip.coverImage || '',
-						currency: nextTrip.currency || 'CHF'
-					}
-				: null,
-			nextTripMembers,
+			upcomingTrips: upcomingTripsData,
 			balances
 		});
 	} catch (error) {

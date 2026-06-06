@@ -3,17 +3,34 @@
 	import Header from '$lib/components/Header.svelte';
 	import ActivityFeed from '$lib/components/ActivityFeed.svelte';
 	import { onMount } from 'svelte';
-	import { Plane, TrendingDown, TrendingUp, CheckCircle, ArrowRight, MapPin, Calendar, Wallet, Globe } from 'lucide-svelte';
+	import { Plane, TrendingDown, TrendingUp, CheckCircle, ArrowRight, MapPin, Calendar, Wallet, Globe, ChevronLeft, ChevronRight } from 'lucide-svelte';
 
 	let userName = $state('');
-	let nextTrip = $state(null);
-	let nextTripMembers = $state([]);
+	let upcomingTrips = $state([]);
+	let carouselIndex = $state(0);
 	let balances = $state([]);
 	let stats = $state(null);
 	let feedEntries = $state([]);
 	let feedLoading = $state(true);
 	let dashLoading = $state(true);
 	let feedError = $state('');
+
+	let currentTrip = $derived(upcomingTrips[carouselIndex] ?? null);
+	let currentMembers = $derived(currentTrip?.members ?? []);
+	let slideDir = $state('right');
+
+	function carouselPrev() {
+		slideDir = 'left';
+		carouselIndex = (carouselIndex - 1 + upcomingTrips.length) % upcomingTrips.length;
+	}
+	function carouselNext() {
+		slideDir = 'right';
+		carouselIndex = (carouselIndex + 1) % upcomingTrips.length;
+	}
+	function carouselGoto(i) {
+		slideDir = i > carouselIndex ? 'right' : 'left';
+		carouselIndex = i;
+	}
 
 	let greeting = $derived.by(() => {
 		const h = new Date().getHours();
@@ -32,10 +49,10 @@
 	);
 
 	let countdown = $derived.by(() => {
-		if (!nextTrip) return null;
+		if (!currentTrip) return null;
 		const now = new Date();
 		now.setHours(0, 0, 0, 0);
-		const start = new Date(nextTrip.startDate);
+		const start = new Date(currentTrip.startDate);
 		start.setHours(0, 0, 0, 0);
 		const diff = Math.round((start - now) / 86400000);
 		if (diff <= 0) return { days: null, label: 'Ongoing now', isNow: true };
@@ -72,8 +89,7 @@
 		const dash = await dashRes.json();
 		if (dash.success) {
 			userName = dash.userName;
-			nextTrip = dash.nextTrip;
-			nextTripMembers = dash.nextTripMembers ?? [];
+			upcomingTrips = dash.upcomingTrips ?? [];
 			balances = dash.balances;
 			stats = dash.stats ?? null;
 		}
@@ -98,10 +114,10 @@
 		</h1>
 		{#if !dashLoading}
 			<div class="mt-4 flex flex-wrap gap-2">
-				{#if nextTrip && countdown}
+				{#if currentTrip && countdown}
 					<span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-3.5 py-1.5 rounded-full">
 						<Plane size={13} />
-						{nextTrip.title}
+						{currentTrip.title}
 						·
 						{countdown.isNow ? countdown.label : countdown.days === 1 ? 'Tomorrow' : `In ${countdown.days} days`}
 					</span>
@@ -160,50 +176,62 @@
 				<!-- Left column (2/3) -->
 				<div class="lg:col-span-2 flex flex-col gap-5">
 
-					<!-- Next Trip Card -->
-					{#if nextTrip}
+					<!-- Upcoming Trips Carousel -->
+					{#if upcomingTrips.length > 0}
 						<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden group">
 							<!-- Image hero -->
 							<div class="relative h-60 overflow-hidden">
-								{#if nextTrip.coverImage}
-									<img
-										src={nextTrip.coverImage}
-										alt={nextTrip.title}
-										class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-									/>
-								{:else}
-									<div class="w-full h-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700"></div>
-									<div class="absolute inset-0 flex items-center justify-center opacity-10">
-										<Plane size={120} class="text-white rotate-12" />
+								{#key carouselIndex}
+									<div class="absolute inset-0 carousel-slide-{slideDir}">
+										{#if currentTrip.coverImage}
+											<img src={currentTrip.coverImage} alt={currentTrip.title} class="w-full h-full object-cover" />
+										{:else}
+											<div class="w-full h-full bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700"></div>
+											<div class="absolute inset-0 flex items-center justify-center opacity-10">
+												<Plane size={120} class="text-white rotate-12" />
+											</div>
+										{/if}
+										<div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div>
 									</div>
-								{/if}
-								<div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div>
+								{/key}
 
 								<!-- Countdown badge -->
 								{#if countdown}
 									{#if countdown.isNow}
-										<div class="absolute top-4 right-4 bg-green-500 text-white rounded-xl px-3 py-1.5 shadow-lg">
+										<div class="absolute top-4 right-4 bg-green-500 text-white rounded-xl px-3 py-1.5 shadow-lg z-10">
 											<p class="text-sm font-bold">Ongoing</p>
 										</div>
 									{:else if countdown.days === 1}
-										<div class="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-xl px-3 py-1.5 shadow-lg text-center">
+										<div class="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-xl px-3 py-1.5 shadow-lg text-center z-10">
 											<p class="text-sm font-black text-blue-600">Tomorrow</p>
 										</div>
 									{:else}
-										<div class="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-xl px-3.5 py-2 shadow-lg text-center min-w-[64px]">
+										<div class="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-xl px-3.5 py-2 shadow-lg text-center min-w-[64px] z-10">
 											<p class="text-3xl font-black text-blue-600 leading-none">{countdown.days}</p>
 											<p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mt-0.5">days to go</p>
 										</div>
 									{/if}
 								{/if}
 
+								<!-- Carousel arrows -->
+								{#if upcomingTrips.length > 1}
+									<button onclick={carouselPrev} class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition z-10">
+										<ChevronLeft size={18} />
+									</button>
+									<button onclick={carouselNext} class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition z-10">
+										<ChevronRight size={18} />
+									</button>
+								{/if}
+
 								<!-- Trip info overlay -->
-								<div class="absolute bottom-0 left-0 right-0 p-5">
-									<p class="text-blue-300 text-[11px] font-semibold uppercase tracking-widest mb-1">Next Trip</p>
-									<h2 class="text-2xl font-bold text-white leading-tight">{nextTrip.title}</h2>
+								<div class="absolute bottom-0 left-0 right-0 p-5 z-10">
+									<p class="text-blue-300 text-[11px] font-semibold uppercase tracking-widest mb-1">
+										{countdown?.isNow ? 'Ongoing' : 'Upcoming Trip'}{upcomingTrips.length > 1 ? ` · ${carouselIndex + 1} / ${upcomingTrips.length}` : ''}
+									</p>
+									<h2 class="text-2xl font-bold text-white leading-tight">{currentTrip.title}</h2>
 									<p class="text-white/75 flex items-center gap-1 text-sm mt-0.5">
 										<MapPin size={12} />
-										{nextTrip.legs?.length > 1 ? nextTrip.legs.map((l) => l.destination).join(' → ') : nextTrip.destination}
+										{currentTrip.legs?.length > 1 ? currentTrip.legs.map((l) => l.destination).join(' → ') : currentTrip.destination}
 									</p>
 								</div>
 							</div>
@@ -214,44 +242,53 @@
 									<div class="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
 										<Calendar size={14} class="shrink-0" />
 										<span>
-											{new Date(nextTrip.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+											{new Date(currentTrip.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
 											–
-											{new Date(nextTrip.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+											{new Date(currentTrip.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
 										</span>
 									</div>
-									{#if nextTripMembers.length > 0}
+									{#if currentMembers.length > 0}
 										<div class="flex items-center gap-2">
 											<div class="flex -space-x-2">
-												{#each nextTripMembers.slice(0, 5) as member (member.userId)}
+												{#each currentMembers.slice(0, 5) as member (member.userId)}
 													{@const initials = member.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
 													{@const colors = ['bg-blue-500','bg-indigo-500','bg-violet-500','bg-pink-500','bg-teal-500']}
 													{@const colorIdx = member.userId.charCodeAt(member.userId.length - 1) % colors.length}
-													<div
-														class="w-7 h-7 rounded-full {colors[colorIdx]} text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-gray-800 shrink-0"
-														title={member.name}
-													>
+													<div class="w-7 h-7 rounded-full {colors[colorIdx]} text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-gray-800 shrink-0" title={member.name}>
 														{initials}
 													</div>
 												{/each}
-												{#if nextTripMembers.length > 5}
+												{#if currentMembers.length > 5}
 													<div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-gray-800">
-														+{nextTripMembers.length - 5}
+														+{currentMembers.length - 5}
 													</div>
 												{/if}
 											</div>
 											<span class="text-xs text-gray-400 dark:text-gray-500 truncate">
-												{nextTripMembers.map((m) => m.name.split(' ')[0]).join(', ')}
+												{currentMembers.map((m) => m.name.split(' ')[0]).join(', ')}
 											</span>
 										</div>
 									{/if}
 								</div>
 								<button
-									onclick={() => goto(`/trips/${nextTrip.id}`)}
+									onclick={() => goto(`/trips/${currentTrip.id}`)}
 									class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shrink-0"
 								>
 									View Trip <ArrowRight size={14} />
 								</button>
 							</div>
+
+							<!-- Dot indicators -->
+							{#if upcomingTrips.length > 1}
+								<div class="flex justify-center gap-1.5 pb-3">
+									{#each upcomingTrips as _, i}
+										<button
+											onclick={() => carouselGoto(i)}
+											class="h-2 rounded-full transition-all duration-300 {i === carouselIndex ? 'bg-blue-600 w-4' : 'bg-gray-300 dark:bg-gray-600 w-2'}"
+										></button>
+									{/each}
+								</div>
+							{/if}
 						</div>
 					{:else}
 						<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
@@ -262,10 +299,7 @@
 								<div class="relative text-center px-6">
 									<p class="text-white/80 text-sm mb-2">No upcoming trips yet</p>
 									<h2 class="text-2xl font-bold text-white mb-4">Where to next?</h2>
-									<button
-										onclick={() => goto('/trips')}
-										class="bg-white text-blue-600 hover:bg-blue-50 text-sm font-bold px-5 py-2.5 rounded-xl transition-colors shadow"
-									>
+									<button onclick={() => goto('/trips')} class="bg-white text-blue-600 hover:bg-blue-50 text-sm font-bold px-5 py-2.5 rounded-xl transition-colors shadow">
 										Plan a trip
 									</button>
 								</div>
@@ -360,3 +394,20 @@
 		{/if}
 	</div>
 </main>
+
+<style>
+	.carousel-slide-right {
+		animation: slide-from-right 0.35s ease;
+	}
+	.carousel-slide-left {
+		animation: slide-from-left 0.35s ease;
+	}
+	@keyframes slide-from-right {
+		from { transform: translateX(100%); }
+		to { transform: translateX(0); }
+	}
+	@keyframes slide-from-left {
+		from { transform: translateX(-100%); }
+		to { transform: translateX(0); }
+	}
+</style>
