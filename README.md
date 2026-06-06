@@ -279,7 +279,9 @@ Fasst die technische Realisierung zusammen.
   - **Bilder** (Profilfotos, Galerie) werden als Base64-Strings direkt in MongoDB gespeichert (Prototyp-Entscheidung; für Produktion wäre Cloudinary o. Ä. sinnvoll)
   - **Echtzeit:** Kein WebSocket; Updates erfolgen per Polling: Activity Feed alle 12 Sekunden, Chat alle 5 Sekunden (wenn geöffnet) bzw. alle 8 Sekunden (wenn geschlossen)
 
-- **Deployment:** _[URL folgt]_
+- **Deployment:** https://travelyt-planner.netlify.app/
+
+  > **Hinweis:** Zugangsdaten werden separat über Moodle eingereicht. Um beide Accounts gleichzeitig zu testen, müssen zwei verschiedene Browser verwendet werden (z. B. Chrome und Edge) oder einer davon im Inkognito-Modus, da jeder Browser seinen eigenen Cookie-Speicher hat.
 
 - **Besondere Entscheidungen:**
   - **Base64-Bildspeicherung in MongoDB:** Für den Prototyp wurde auf einen externen Bildhosting-Dienst verzichtet. Bilder werden direkt als Base64 in der Datenbank gespeichert. Dies vereinfacht die Umsetzung, ist aber für den Produktiveinsatz nicht skalierbar.
