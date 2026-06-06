@@ -13,7 +13,7 @@
 	import TripMap from '$lib/components/TripMap.svelte';
 	import TripChat from '$lib/components/TripChat.svelte';
 	import DestinationInput from '$lib/components/DestinationInput.svelte';
-	import { formatDate, daysBetween } from '$lib/utils/helpers.js';
+	import { formatDate } from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
 	import { MapPin, Calendar, Target, Package, Wallet, Users, Images, ClipboardList, FileDown, Cloud, Map, Plus, X, ChevronDown, Pencil, Trash2 } from 'lucide-svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
