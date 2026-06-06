@@ -1,5 +1,5 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Header from '$lib/components/Header.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
@@ -385,7 +385,7 @@
 			<div class="flex flex-wrap gap-1.5">
 				{#each ['activities', 'members', 'expenses', 'packing', 'checklist', 'weather', 'map', 'gallery'] as tab}
 					<button
-						onclick={() => (activeTab = tab)}
+						onclick={() => { activeTab = tab; replaceState(`?tab=${tab}`, {}); }}
 						class="flex items-center gap-1.5 py-2 px-4 rounded-xl text-sm font-semibold transition {activeTab === tab
 							? 'bg-blue-600 text-white shadow-sm'
 							: 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'}"
