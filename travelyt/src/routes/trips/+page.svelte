@@ -73,6 +73,14 @@
 				error = `Destination ${i + 1}: end date cannot be before start date`;
 				return;
 			}
+			const minYear = new Date().getFullYear() - 5;
+			const maxYear = new Date().getFullYear() + 10;
+			const startYear = new Date(leg.startDate).getFullYear();
+			const endYear = new Date(leg.endDate).getFullYear();
+			if (startYear < minYear || startYear > maxYear || endYear < minYear || endYear > maxYear) {
+				error = `Destination ${i + 1}: year must be between ${minYear} and ${maxYear}`;
+				return;
+			}
 			if (i > 0 && new Date(leg.startDate) < new Date(newLegs[i - 1].endDate)) {
 				error = `Destination ${i + 1} start date overlaps with previous leg`;
 				return;

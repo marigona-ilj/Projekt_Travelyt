@@ -32,6 +32,15 @@ export function validateTrip(trip) {
 		errors.push('Trip title is required');
 	}
 
+	const currentYear = new Date().getFullYear();
+	const minYear = currentYear - 5;
+	const maxYear = currentYear + 10;
+
+	function isYearValid(dateStr) {
+		const y = new Date(dateStr).getFullYear();
+		return y >= minYear && y <= maxYear;
+	}
+
 	if (trip.legs?.length > 0) {
 		for (let i = 0; i < trip.legs.length; i++) {
 			const leg = trip.legs[i];
@@ -40,9 +49,13 @@ export function validateTrip(trip) {
 			}
 			if (!leg.startDate || isNaN(new Date(leg.startDate))) {
 				errors.push(`Destination ${i + 1}: valid start date is required`);
+			} else if (!isYearValid(leg.startDate)) {
+				errors.push(`Destination ${i + 1}: year must be between ${minYear} and ${maxYear}`);
 			}
 			if (!leg.endDate || isNaN(new Date(leg.endDate))) {
 				errors.push(`Destination ${i + 1}: valid end date is required`);
+			} else if (!isYearValid(leg.endDate)) {
+				errors.push(`Destination ${i + 1}: year must be between ${minYear} and ${maxYear}`);
 			}
 			if (leg.startDate && leg.endDate && new Date(leg.startDate) > new Date(leg.endDate)) {
 				errors.push(`Destination ${i + 1}: start date must be before end date`);
@@ -54,9 +67,13 @@ export function validateTrip(trip) {
 		}
 		if (!trip.startDate || isNaN(new Date(trip.startDate))) {
 			errors.push('Valid start date is required');
+		} else if (!isYearValid(trip.startDate)) {
+			errors.push(`Start date: year must be between ${minYear} and ${maxYear}`);
 		}
 		if (!trip.endDate || isNaN(new Date(trip.endDate))) {
 			errors.push('Valid end date is required');
+		} else if (!isYearValid(trip.endDate)) {
+			errors.push(`End date: year must be between ${minYear} and ${maxYear}`);
 		}
 		if (new Date(trip.startDate) > new Date(trip.endDate)) {
 			errors.push('Start date must be before end date');
