@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
 	import { Bell, LogOut, User, Settings } from 'lucide-svelte';
 	import ActivityFeed from '$lib/components/ActivityFeed.svelte';
 
@@ -100,9 +100,9 @@
 		feedOpen = false;
 	}
 
-	async function logout() {
-		await fetch('/api/auth', { method: 'DELETE' });
-		goto('/login');
+	function logout() {
+		document.cookie = 'userId=; Max-Age=0; Path=/;';
+		window.location.href = '/auth';
 	}
 </script>
 
