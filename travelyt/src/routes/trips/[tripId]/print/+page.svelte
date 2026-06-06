@@ -16,6 +16,12 @@
 
 	let memberMap = $derived(Object.fromEntries(members.map((m) => [m.userId, m.name])));
 
+	let destinationLabel = $derived(
+		trip?.legs?.length > 1
+			? trip.legs.map((l) => l.destination).join(' → ')
+			: trip?.destination ?? ''
+	);
+
 	let activitiesByDay = $derived.by(() => {
 		const grouped = {};
 		activities.forEach((a) => {
@@ -134,7 +140,7 @@
 		<!-- Header -->
 		<div class="trip-header">
 			<h1 class="trip-title">{trip.title}</h1>
-			<p class="trip-meta">{trip.destination} &bull; {formatDate(trip.startDate)} – {formatDate(trip.endDate)}</p>
+			<p class="trip-meta">{destinationLabel} &bull; {formatDate(trip.startDate)} – {formatDate(trip.endDate)}</p>
 			{#if trip.description}
 				<p class="trip-description">{trip.description}</p>
 			{/if}
