@@ -257,7 +257,7 @@
 	<div class="fixed inset-0 z-40" role="presentation" onclick={() => (tripMenuOpen = false)}></div>
 {/if}
 
-<main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
+<main class="max-w-7xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	{#if error}
 		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4">
 			{error}

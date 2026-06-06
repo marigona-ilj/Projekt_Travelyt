@@ -107,7 +107,7 @@
 </script>
 
 <header class="sticky top-0 z-50 bg-white border-b border-gray-200 dark:!bg-gray-900 dark:border-gray-700">
-	<div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-6">
+	<div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-6">
 
 		<!-- Logo -->
 		<a href="/" class="flex items-center gap-0.5 shrink-0 no-underline">

@@ -107,7 +107,7 @@
 			class="absolute -right-6 top-1/2 -translate-y-1/2 text-white opacity-[0.07] rotate-12"
 		/>
 	</div>
-	<div class="max-w-6xl mx-auto px-4 py-7 relative">
+	<div class="max-w-7xl mx-auto px-4 py-7 relative">
 		<p class="text-blue-200 text-sm font-medium mb-1">{todayStr}</p>
 		<h1 class="text-3xl font-bold text-white">
 			{greeting}{userName ? `, ${userName}` : ''}!
@@ -140,7 +140,7 @@
 </div>
 
 <main class="dark:bg-gray-900 min-h-screen">
-	<div class="max-w-6xl mx-auto px-4 py-6">
+	<div class="max-w-7xl mx-auto px-4 py-6">
 		{#if dashLoading}
 			<div class="flex justify-center py-20">
 				<div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>

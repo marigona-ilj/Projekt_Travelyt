@@ -328,7 +328,7 @@
 	<div class="fixed inset-0 z-20" role="presentation" onclick={() => { showMonthPicker = false; showYearPicker = false; }}></div>
 {/if}
 
-<main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
+<main class="max-w-7xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 	<!-- Page title + navigation -->
 	<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
 		<h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Calendar</h1>

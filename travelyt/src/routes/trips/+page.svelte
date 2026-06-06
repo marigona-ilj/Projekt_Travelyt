@@ -190,7 +190,7 @@
 	{/snippet}
 </PageHeader>
 
-<main class="max-w-6xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
+<main class="max-w-7xl mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen">
 
 	{#if !showNewTripForm}
 		<div class="flex justify-end mb-6">
