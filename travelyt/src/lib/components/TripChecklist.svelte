@@ -319,7 +319,7 @@
 				</div>
 				<ul class="space-y-1">
 					{#each personalItems as item (item.id)}
-						<li class="flex items-center gap-3 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2.5">
+						<li class="flex items-center gap-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg px-3 py-2.5">
 							{#if editingId === item.id}
 								<input
 									type="text"
@@ -336,7 +336,7 @@
 									onchange={() => toggleItem(item)}
 									class="w-4 h-4 cursor-pointer accent-indigo-500"
 								/>
-								<span class="flex-1 text-sm {item.checked ? 'line-through text-gray-400' : 'text-gray-800'}">
+								<span class="flex-1 text-sm {item.checked ? 'line-through text-gray-400' : 'text-gray-800 dark:text-gray-100'}">
 									{item.text}
 								</span>
 								<button onclick={() => startEdit(item)} class="text-gray-400 hover:text-blue-500"><Pencil size={14} /></button>
@@ -378,7 +378,7 @@
 						{#each unusedPersonalSuggestions as s}
 							<button
 								onclick={() => addItem(s, true)}
-								class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full border border-indigo-200 transition"
+								class="text-xs bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-700 transition"
 							>
 								+ {s}
 							</button>

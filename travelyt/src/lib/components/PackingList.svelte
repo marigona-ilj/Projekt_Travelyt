@@ -334,7 +334,7 @@
 							<h4 class="font-semibold text-gray-600 dark:text-gray-300 capitalize text-sm mb-1">{category}</h4>
 							<div class="space-y-1">
 								{#each categoryItems as item}
-									<div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded p-2">
+									<div class="flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded p-2">
 										<input
 											type="checkbox"
 											checked={item.packed}

@@ -236,7 +236,7 @@
 
 <div>
 	<div class="flex justify-between items-center mb-5">
-		<h2 class="text-2xl font-bold text-gray-800">Map</h2>
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Map</h2>
 		{#if status === 'geocoding'}
 			<span class="text-sm text-gray-500">{progress} / {total} locations resolved</span>
 		{/if}
@@ -244,7 +244,7 @@
 
 	<div
 		bind:this={mapContainer}
-		class="w-full rounded-xl border border-gray-200 overflow-hidden"
+		class="w-full rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
 		style="height: 520px; display: {status === 'empty' || status === 'error' || status === 'loading' ? 'none' : 'block'};"
 	></div>
 
@@ -254,25 +254,25 @@
 			<span class="text-sm">Loading map...</span>
 		</div>
 	{:else if status === 'error'}
-		<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+		<div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded text-sm">
 			{errorMsg}
 		</div>
 	{:else if status === 'geocoding'}
 		<div class="mt-3">
-			<div class="w-full bg-gray-200 rounded-full h-1.5">
+			<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
 				<div class="bg-blue-500 h-1.5 rounded-full transition-all" style="width:{(progress/total)*100}%"></div>
 			</div>
 			<p class="text-xs text-gray-400 mt-1">Resolving locations...</p>
 		</div>
 	{:else if status === 'empty'}
 		<div class="text-center py-16 text-gray-400">
-			<p class="font-semibold text-gray-600 mb-1">No locations to show</p>
+			<p class="font-semibold text-gray-600 dark:text-gray-300 mb-1">No locations to show</p>
 			<p class="text-sm">Add a location to your activities and they will appear here.</p>
 		</div>
 	{:else if status === 'done'}
 		<p class="text-xs text-gray-400 mt-2 text-right">
-			Map: <a href="https://openfreemap.org" target="_blank" class="underline hover:text-gray-600">OpenFreeMap</a>
-			· © <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-gray-600">OpenStreetMap</a>
+			Map: <a href="https://openfreemap.org" target="_blank" class="underline hover:text-gray-600 dark:hover:text-gray-300">OpenFreeMap</a>
+			· © <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-gray-600 dark:hover:text-gray-300">OpenStreetMap</a>
 		</p>
 	{/if}
 </div>
