@@ -45,6 +45,7 @@
 	});
 
 	async function fetchItems() {
+		await flushPendingDelete();
 		try {
 			const response = await fetch(`/api/trips/${tripId}/packing`);
 			const data = await response.json();
@@ -123,12 +124,12 @@
 	let deleteTimer = null;
 	const UNDO_DURATION = 5000;
 
-	function flushPendingDelete() {
+	async function flushPendingDelete() {
 		if (!pendingDelete) return;
 		clearTimeout(deleteTimer);
 		const id = pendingDelete.id;
 		pendingDelete = null;
-		fetch(`/api/trips/${tripId}/packing/${id}`, { method: 'DELETE' });
+		await fetch(`/api/trips/${tripId}/packing/${id}`, { method: 'DELETE' });
 	}
 
 	function startEdit(item) {
