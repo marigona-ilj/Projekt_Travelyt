@@ -1,4 +1,4 @@
-# Projektdokumentation - [Projekttitel]
+# Projektdokumentation - Travelyt
 
 ## Inhaltsverzeichnis
 
@@ -32,8 +32,6 @@ Das angestrebte Ergebnis ist ein funktionaler Web-Prototyp, der die Reiseplanung
 
 - **Primäre Zielgruppe:**  Die primäre Zielgruppe sind Personen, die gemeinsam mit Freunden, Familie oder Partnern reisen und Aktivitäten, Kosten sowie Vorbereitungsschritte koordinieren wollen. Der aktuelle Fokus liegt bewusst auf Gruppenreisen, da kollaborative Planung den zentralen Mehrwert der App darstellt. Solo-Reisen sind technisch bereits möglich, jedoch ist die Benutzeroberfläche noch nicht gezielt darauf ausgerichtet. Eine Erweiterung und UI-Anpassung für Solo-Reisende ist für einen späteren Entwicklungsschritt vorgesehen.
 
-- **Weitere Stakeholder [Optional]:** _[z. B. Verwaltung, Geschäftsleitung]_  
-
 
 ## 2. Lösungsidee
 Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lösungsidee besteht darin, alle relevanten Planungsbereiche – von der Reiseübersicht über Aktivitäten, Packliste und Budget bis hin zu Karte, Wetter, Galerie und Gruppen-Chat – in einer einzigen Anwendung zu bündeln. Dadurch sollen Reisende nicht mehr zwischen mehreren Tools, Chats oder Dokumenten wechseln müssen. Im Zentrum steht die kollaborative Nutzung: Mehrere Personen können denselben Trip gemeinsam einsehen und bearbeiten.
@@ -48,8 +46,7 @@ Travelyt ist eine Web-App zur zentralen Organisation von Gruppenreisen. Die Lös
 
   Ergänzend stehen folgende Funktionen zur Verfügung: eine **Galerie** für gemeinsame Reisefotos, ein **Gruppen-Chat** für Absprachen innerhalb des Trips, eine **Checkliste** für reisebezogene Aufgaben, eine **Wettervorschau** pro Reiseziel sowie eine interaktive **Karte**, die Aktivitäten und Reisestationen visualisiert. Alle Trips sind ausserdem in einer **Kalenderansicht** dargestellt.
 
-- **Annahmen [Optional]:** _[welche Hypothesen werden geprüft?]_
-- **Abgrenzung [Optional]:** Die gezielte Unterstützung von Solo-Reisen gehört nicht zum aktuellen Umfang des Prototyps. Solo-Nutzung ist zwar möglich, jedoch ist die Benutzeroberfläche (z. B. Ausgaben-Splitting, Mitglieder-Verwaltung, Gruppen-Chat) auf gemeinsame Reisen ausgerichtet. Eine UI-Anpassung für Solo-Reisende ist als zukünftige Erweiterung geplant.
+- **Abgrenzung [Optional]:** Die gezielte Unterstützung von Solo-Reisen gehört nicht zum aktuellen Umfang des Prototyps. Solo-Nutzung ist zwar möglich, jedoch ist die Benutzeroberfläche (z. B. Ausgaben-Splitting, Mitglieder-Verwaltung, Gruppen-Chat) auf gemeinsame Reisen ausgerichtet. Eine UI-Anpassung für Solo-Reisende ist als zukünftige Erweiterung geplant. Der Prototyp wurde zudem ausschliesslich als Desktop-Web-App entwickelt und ist nicht für mobile Geräte optimiert. Eine native Mobile App ist für einen späteren Entwicklungsschritt vorgesehen.
 
 ## 3. Vorgehen & Artefakte
 Die Durchführung erfolgt phasenbasiert; dokumentieren Sie die wichtigsten Ergebnisse je Phase.
@@ -110,6 +107,44 @@ Beschreibt die Gestaltung und Interaktion.
   - **My Trips** – Listenansicht aller eigenen Trips; Erstellen neuer Trips; Detail-Ansicht mit acht Tabs (Activities, Packing, Budget, Gallery, Checklist, Members, Weather, Map)
   - **Calendar** – Monatskalender, der alle Trips als farbige Balken darstellt; Erstellen neuer Trips direkt aus dem Kalender
   - Zusätzlich gibt es in der Navigation ein **Bell-Icon** (Activity Feed / Notifications), das tripübergreifend Aktivitäten anzeigt, sowie ein **Avatar-Menü** mit Zugriff auf Profile, Settings und Logout
+
+  **Navigationsstruktur:**
+
+  ```mermaid
+  flowchart TD
+      AUTH["/auth\nLogin / Registrierung"]
+      AUTH --> DASH
+
+      subgraph MAINNAV["Hauptnavigation (Header)"]
+          DASH["/ — Dashboard"]
+          TRIPS["/trips — My Trips"]
+          CAL["/calendar — Kalender"]
+      end
+
+      DASH --- TRIPS
+      DASH --- CAL
+      TRIPS --> DETAIL["/trips/[tripId]\nTrip-Detail"]
+
+      subgraph TABS["Tab-Navigation (Trip-Detail)"]
+          T1[Activities]
+          T2[Packing]
+          T3[Budget]
+          T4[Gallery]
+          T5[Checklist]
+          T6[Members]
+          T7[Weather]
+          T8[Map]
+      end
+
+      DETAIL --> TABS
+      DETAIL --> PRINT["/trips/[tripId]/print\nDruckansicht"]
+
+      DASH -.->|Avatar-Menü| PROFILE["/profile — Profil"]
+      DASH -.->|Avatar-Menü| SETTINGS["/settings — Einstellungen"]
+
+      JOIN["/trips/join/[code]\nEinladungslink"] --> DETAIL
+      PENDING["/join/pending\nWarteseite"] -.->|nach Login| DETAIL
+  ```
 
 - **User Interface Design:**
 
@@ -208,16 +243,19 @@ Fasst die technische Realisierung zusammen.
 
 - **Struktur & Komponenten:**
   - **Routen (Seiten):**
-    - `/` – Dashboard
-    - `/auth` – Login / Registrierung
-    - `/trips` – Trip-Liste und Erstellungsformular
-    - `/trips/[tripId]` – Trip-Detail mit Tab-Navigation
-    - `/trips/[tripId]/print` – Druckansicht (PDF-Export)
-    - `/calendar` – Kalenderansicht
-    - `/profile` – Profilseite
-    - `/settings` – Einstellungen
-    - `/join/pending` – Einladungs-Warteseite
-    - `/trips/join/[code]` – Einladungslink-Handler
+
+    | Route | Seite | Beschreibung |
+    |---|---|---|
+    | `/auth` | Login / Registrierung | Registrierung und Login per E-Mail & Passwort |
+    | `/` | Dashboard | Nächste Trips, offene Salden, Activity Feed |
+    | `/trips` | My Trips | Alle Trips als Karten; Erstellungsformular |
+    | `/trips/[tripId]` | Trip-Detail | Tab-Navigation mit 8 Tabs (Activities, Packing, Budget, Gallery, Checklist, Members, Weather, Map) |
+    | `/trips/[tripId]/print` | Druckansicht | Druckoptimierte Ansicht für PDF-Export |
+    | `/calendar` | Kalender | Monatskalender mit allen Trips als Balken |
+    | `/profile` | Profil | Name, E-Mail und Profilfoto bearbeiten |
+    | `/settings` | Einstellungen | Dark Mode, Benachrichtigungs-Präferenzen |
+    | `/trips/join/[code]` | Einladungslink | Tritt einem Trip über einen Einladungscode bei |
+    | `/join/pending` | Warteseite | Zwischenseite für nicht eingeloggte Nutzende beim Öffnen eines Einladungslinks |
   - **API-Routen** unter `src/routes/api/` für alle Datenzugriffe (trips, activities, expenses, packing, gallery, members, messages, feed, dashboard, auth, user)
   - **Wiederverwendbare Komponenten** unter `src/lib/components/`: `Header`, `PageHeader`, `TripCard`, `ActivityList`, `ExpenseList`, `PackingList`, `MemberList`, `Gallery`, `TripChat`, `TripWeather`, `TripMap`, `TripChecklist`, `ActivityFeed`, `DestinationInput`, `OnboardingTour`, `Toast`, `ConfirmDialog`
   - **State-Management:** Ausschliesslich lokales Komponentenstate via Svelte 5 Runes; kein globaler Store
