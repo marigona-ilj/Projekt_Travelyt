@@ -5,8 +5,8 @@
 	const todayStr = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 </script>
 
-<div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 relative overflow-hidden">
-	<div class="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
+<div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 relative">
+	<div class="absolute inset-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
 		<Plane size={220} class="absolute -right-4 top-1/2 -translate-y-1/2 text-white opacity-[0.07] rotate-12" />
 	</div>
 	<div class="max-w-7xl mx-auto px-4 py-7 relative">
