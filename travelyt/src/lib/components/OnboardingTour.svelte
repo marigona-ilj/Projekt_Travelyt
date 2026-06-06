@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { ChevronRight, ChevronLeft, X, LayoutDashboard, MapPin, CalendarDays, Bell, UserCircle, Settings } from 'lucide-svelte';
+	import { ChevronRight, ChevronLeft, X, LayoutDashboard, MapPin, CalendarDays, Bell, UserCircle } from 'lucide-svelte';
 
 	const STEPS = [
 		{
@@ -24,20 +24,14 @@
 		{
 			selector: '[data-tour="feed"]',
 			icon: Bell,
-			title: 'Activity Feed',
-			description: 'Stay updated on everything happening in your trips — new expenses, chat messages, members joining, and more. Adjust what you see in Settings.'
+			title: 'Notifications',
+			description: 'Stay updated on everything happening in your trips — new expenses, chat messages, members joining, and more.'
 		},
 		{
-			selector: '[data-tour="profile"]',
+			selector: '[data-tour="user-menu"]',
 			icon: UserCircle,
-			title: 'Profile',
-			description: 'Update your name and profile photo or change your password.'
-		},
-		{
-			selector: '[data-tour="settings"]',
-			icon: Settings,
-			title: 'Settings',
-			description: 'Toggle dark mode and choose which events trigger notifications in your activity feed.'
+			title: 'Your Account',
+			description: 'Click your avatar to access your Profile (name, photo, password), Settings (dark mode, notifications), and sign out.'
 		}
 	];
 

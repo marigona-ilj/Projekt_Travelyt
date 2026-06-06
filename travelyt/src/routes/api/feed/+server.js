@@ -56,8 +56,8 @@ export async function GET({ cookies }) {
 
 		const filtered = entries
 			.filter((e) => {
-				// Never show your own chat messages
-				if (e.actionType === 'chat_message' && e.userId.toString() === userId) return false;
+				// Never show your own actions
+				if (e.userId.toString() === userId) return false;
 				// Apply notification preferences
 				const pref = ACTION_TO_PREF[e.actionType];
 				if (pref && !prefs[pref]) return false;

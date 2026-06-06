@@ -3,6 +3,22 @@ import { getCollection } from '$lib/server/db.js';
 import { verifyPassword } from '$lib/server/auth.js';
 import { ObjectId } from 'mongodb';
 
+// GET: current user's basic info (name, avatar)
+export async function GET({ cookies }) {
+	const userId = cookies.get('userId');
+	if (!userId) return json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+	try {
+		const users = await getCollection('users');
+		const user = await users.findOne({ _id: new ObjectId(userId) }, { projection: { name: 1, avatar: 1 } });
+		if (!user) return json({ success: false, error: 'User not found' }, { status: 404 });
+		return json({ success: true, name: user.name || '', avatar: user.avatar || '' });
+	} catch (error) {
+		console.error('Error fetching user:', error);
+		return json({ success: false, error: 'Failed to fetch user' }, { status: 500 });
+	}
+}
+
 // PATCH: update name and/or avatar
 export async function PATCH({ request, cookies }) {
 	const userId = cookies.get('userId');
